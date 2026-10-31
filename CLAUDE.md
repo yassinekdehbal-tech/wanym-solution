@@ -1,7 +1,7 @@
 # WANYM SOLUTION — site web
 
 Site vitrine + landing de conversion pour WANYM SOLUTION, commissionnaire de transport (groupe WANYM, Île-de-France).
-Domaine : wanymsolution.com (DNS chez Squarespace, MX Google à ne jamais modifier).
+Domaine : wanymsolution.com, enregistré chez OVH (juillet 2026), DNS gérés chez OVH. Mails sur Google Workspace : MX/SPF Google à ne jamais modifier. wanym-solution.com (avec tiret) n'est PAS enregistré — ne pas l'utiliser dans les textes.
 
 ## Contexte existant
 Un premier site statique (HTML/CSS) existe dans le dépôt `yassinekdehbal-tech/wanym-solution` (juillet 2026). Son contenu — positionnement « dernier kilomètre sans engagement », 3 offres (externalisation pro, express à la demande, transport dédié), FAQ, page tarifs, à-propos (FISSA LIV → WANYM SOLUTION, Drancy, depuis 2016) — est repris dans `supabase/seed.sql`. Réutiliser ces textes et le JSON-LD (LocalBusiness, FAQPage) plutôt que réécrire. Coordonnées : exploitation 07 67 16 60 15, 125 rue Diderot 93700 Drancy. **Vérifier l'email de contact** : l'ancien site utilise contact@wanym-solution.com (avec tiret), le domaine actuel est wanymsolution.com (sans tiret).

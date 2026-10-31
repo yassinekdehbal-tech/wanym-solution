@@ -22,4 +22,4 @@ Déjà appliqués sur le projet Supabase « Agent Secretaire » (`ksdzzcqcrtluam
 
 Push sur `main` → Vercel déploie en production. Les variables d'environnement se configurent dans Vercel → Settings → Environment Variables.
 
-DNS (Squarespace) : `A @ → 76.76.21.21`, `CNAME www → cname.vercel-dns.com`. Ne pas toucher aux MX (Google Workspace).
+DNS (OVH → Zone DNS) : `A @ → 76.76.21.21`, `CNAME www → cname.vercel-dns.com`. Ne pas toucher aux MX (Google Workspace).
