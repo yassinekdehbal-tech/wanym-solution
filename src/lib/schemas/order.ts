@@ -63,7 +63,7 @@ export type OrderInput = z.infer<typeof orderInputSchema>;
 export const orderPatchSchema = z
   .object({
     status: z.enum(["new", "quoted", "confirmed", "in_progress", "delivered", "cancelled", "sav"]).optional(),
-    payment_status: z.enum(["not_required", "pending", "paid", "failed", "refunded"]).optional(),
+    payment_status: z.enum(["not_required", "pending", "authorized", "paid", "failed", "refunded"]).optional(),
     price_cents: z.number().int().min(0).nullable().optional(),
     total_cents: z.number().int().min(0).nullable().optional(),
     wanted_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),

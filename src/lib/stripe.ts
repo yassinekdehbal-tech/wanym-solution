@@ -17,7 +17,13 @@ export async function createCheckoutSession(order: Order): Promise<Stripe.Checko
     customer_email: order.email,
     client_reference_id: order.id,
     metadata: { order_id: order.id, reference: order.reference },
-    payment_intent_data: { description: `Transport ${order.reference}`, metadata: { order_id: order.id, reference: order.reference } },
+    // Pré-autorisation : l'empreinte est posée ici, la capture (ou la relâche) est
+    // faite par NAMY à l'acceptation / au refus de la commande (même compte Stripe).
+    payment_intent_data: {
+      capture_method: "manual",
+      description: `Transport ${order.reference}`,
+      metadata: { order_id: order.id, reference: order.reference },
+    },
     line_items: [
       {
         quantity: 1,

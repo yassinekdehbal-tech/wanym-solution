@@ -64,12 +64,12 @@ Distance : Google Distance Matrix si `GOOGLE_MAPS_API_KEY` est renseignée, sino
 ### Cycle de vie et répartition des rôles
 
 `status` : `new` → `quoted` → `confirmed` → `in_progress` → `delivered` ; `cancelled` ; `sav`.
-`payment_status` : `not_required` (devis) · `pending` · `paid` · `failed` · `refunded`.
+`payment_status` : `not_required` (devis) · `pending` · `authorized` (empreinte posée) · `paid` (capturé par NAMY) · `failed` · `refunded` (relâché / remboursé).
 
 | Événement | Qui prévient le client | Qui prévient l'exploitation | NAMY |
 |---|---|---|---|
 | Demande de devis (`new`, `not_required`) | le site : accusé de réception « devis sous 24h » | le site : e-mail | non |
-| Paiement Stripe réussi (`confirmed`, `paid`) | **NAMY** (confirmation, suivi, message de fin) | le site : e-mail | **transmise automatiquement** |
+| Empreinte Stripe posée (`new`, `authorized`) | **NAMY** (confirmation à l'acceptation, suivi, message de fin) | le site : e-mail | **transmise automatiquement** ; NAMY capture à l'acceptation |
 | Devis confirmé par l'exploitation (`PATCH status=confirmed`) | **NAMY** | — | **transmise automatiquement** |
 | Facture, message ponctuel | le site, via `PATCH` ou `POST …/events` avec `notify_customer: true` | — | peut déclencher l'appel |
 | Changement de statut par NAMY (`in_progress`, `delivered`…) | NAMY | — | `PATCH` sur le site pour le suivi client |
@@ -110,20 +110,44 @@ curl -X POST https://wanymsolution.com/api/orders/WS-2026-00012/events \
 
 ## Intégration NAMY
 
-À chaque commande actionnable (payée, ou devis reçu), le site envoie `POST NAMY_WEBHOOK_URL` avec
-`Authorization: Bearer NAMY_API_KEY`, en-têtes `x-wanym-event: order.created`, `x-wanym-order: <référence>`, et le corps :
+NAMY est le TMS de WANYM SOLUTION. Le site ne crée pas de second circuit : il dépose ses commandes dans le **canal des commandes publiques** de NAMY, et NAMY lui renvoie chaque changement d'état.
 
-```json
+### Site → NAMY (`src/lib/namy.ts`)
+
+Dès qu'une commande est actionnable (empreinte Stripe posée, ou devis confirmé par l'exploitation), le site envoie :
+
+```
+POST {NAMY_WEBHOOK_URL}          # https://gwbvfohizdxwhmcoqvgh.supabase.co/functions/v1/creer-commande-publique
+x-wanym-site-key: {NAMY_API_KEY} # = secret Edge WANYM_SITE_API_KEY côté NAMY
+x-wanym-event: order.created
+x-wanym-order: WS-2026-00042
 { "event": "order.created", "source": "wanymsolution.com", "order": { …toutes les colonnes de la commande… } }
 ```
 
-Si NAMY répond `{ "reference": "…" }` (ou `id`/`ref`), la valeur est stockée dans `namy_ref`. Les échecs sont journalisés (`type: namy`) et
-`GET /orders?unsynced=1` permet à NAMY de rattraper les commandes non transmises. NAMY peut aussi tout piloter en retour via `PATCH /orders/{id}`.
+NAMY répond `{ "ok": true, "reference": "<id commande publique>", "statut": "payee|devis|nouvelle" }` ; `reference` est stockée dans `namy_ref`. Le rejeu est idempotent (clé `WS-…`). Échec → événement `namy`, et `GET /api/orders?unsynced=1` liste ce qui reste à transmettre.
+
+Côté NAMY la commande apparaît sur `commandes-publiques.html` avec le badge « 🌐 Site WS-… ». L'acceptation **capture** l'empreinte Stripe et crée l'expédition ; le refus la **relâche**. Pas de commission NAMY sur ce canal.
+
+### NAMY → site (`POST /api/webhooks/namy`, Bearer `CONTENT_API_KEY`)
+
+Déclenché par les triggers de NAMY (`fn_wanym_site_notify`). Corps :
+
+| `event` | Champs | Effet sur le site |
+|---|---|---|
+| `commande.convertie` | `expedition_id`, `paiement_statut` | statut `confirmed`, `namy_ref` = n° d'expédition, `paid` si capturé |
+| `commande.refusee` | `motif` | statut `cancelled`, empreinte marquée relâchée |
+| `expedition.statut` | `statut`, `expedition_id`, `motif`, `date_livraison`, `creneau` | `planifie`→`confirmed`, `retire`→`in_progress`, `livre`→`delivered`, `echec_*`/`retourne`→`sav`, `annule`→`cancelled` |
+
+Chaque appel ajoute un événement visible par le client sur `/suivi`. Rejouer un événement ne change rien.
+
+### Paiement : pré-autorisation
+
+Le Checkout Stripe du site est en **capture manuelle** (`payment_status = authorized`). Le client n'est débité que lorsque l'exploitation accepte la commande dans NAMY (`payment_intent.succeeded` → `paid`). Un refus relâche l'empreinte (`payment_intent.canceled` → `refunded`). Site et NAMY utilisent le même compte Stripe.
 
 ## Stripe
 
-Endpoint webhook à déclarer : `https://wanymsolution.com/api/webhooks/stripe`, événements `checkout.session.completed`,
-`checkout.session.async_payment_succeeded`, `checkout.session.expired`, `charge.refunded`. Renseigner `STRIPE_WEBHOOK_SECRET`.
+Endpoint webhook à déclarer : `https://www.wanymsolution.com/api/webhooks/stripe`, événements `checkout.session.completed`,
+`checkout.session.async_payment_succeeded`, `checkout.session.expired`, `payment_intent.succeeded`, `payment_intent.canceled`, `charge.refunded`. Renseigner `STRIPE_WEBHOOK_SECRET`.
 Sans `STRIPE_SECRET_KEY`, le site fonctionne en mode devis uniquement (le prix reste calculé et stocké).
 
 ## Google Ads

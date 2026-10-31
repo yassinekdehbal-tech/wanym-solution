@@ -99,14 +99,15 @@ export async function createOrder(input: OrderInput, ip: string): Promise<{ orde
 /**
  * Who talks to the customer:
  *  - NAMY handles confirmation, tracking and end-of-delivery messages for every
- *    order it receives. The site therefore never e-mails a paid/confirmed customer.
+ *    order it receives. The site therefore never e-mails a customer whose card
+ *    was pre-authorised (or charged) or whose order ops confirmed.
  *  - The site only acknowledges quote requests (NAMY does not know them yet) and
  *    sends ops-triggered messages/invoices through PATCH /api/orders/[id].
  *
  * Called right after creation (quotes) and after Stripe confirms payment.
  */
 export async function dispatchOrder(order: Order) {
-  const confirmed = order.status === "confirmed" || order.payment_status === "paid";
+  const confirmed = order.status === "confirmed" || order.payment_status === "paid" || order.payment_status === "authorized";
   const [internal, customer] = await Promise.all([
     sendInternalNotification(order),
     confirmed ? Promise.resolve({ skipped: true as const, reason: "handled by NAMY" }) : sendCustomerConfirmation(order),

@@ -2,8 +2,10 @@ import { env } from "@/lib/env";
 import type { Order } from "@/lib/types";
 
 /**
- * Push an order to NAMY (the ops / TMS back-office). NAMY exposes an inbound
- * webhook; we POST the full order and store whatever reference it returns.
+ * Push an order to NAMY (the ops / TMS back-office). The order lands in NAMY's
+ * public-orders channel (`commandes_publiques`): staff accepts it there, which
+ * captures the Stripe pre-authorisation and creates the expedition. NAMY then
+ * calls back POST /api/webhooks/namy on every state change.
  * Configured with NAMY_WEBHOOK_URL + NAMY_API_KEY. No-op when unset.
  */
 export async function pushOrderToNamy(order: Order): Promise<{ ok: boolean; ref?: string; error?: string; skipped?: boolean }> {
@@ -13,7 +15,8 @@ export async function pushOrderToNamy(order: Order): Promise<{ ok: boolean; ref?
       method: "POST",
       headers: {
         "content-type": "application/json",
-        ...(env.namyApiKey ? { authorization: `Bearer ${env.namyApiKey}` } : {}),
+        // NAMY route sur cet en-tête (Edge creer-commande-publique, clé WANYM_SITE_API_KEY).
+        ...(env.namyApiKey ? { "x-wanym-site-key": env.namyApiKey } : {}),
         "x-wanym-event": "order.created",
         "x-wanym-order": order.reference,
       },

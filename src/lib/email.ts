@@ -50,7 +50,7 @@ function orderTable(o: Order) {
     ${row("Poids", o.weight_kg != null ? `${o.weight_kg} kg` : null)}
     ${row("Options", opts || null)}
     ${row("Prix", o.price_cents != null ? `${formatEuros(o.price_cents)} HT · ${formatEuros(o.total_cents)} TTC` : "Sur devis")}
-    ${row("Paiement", { not_required: "Non requis (devis)", pending: "En attente", paid: "Payé", failed: "Échoué", refunded: "Remboursé" }[o.payment_status])}
+    ${row("Paiement", { not_required: "Non requis (devis)", pending: "En attente", authorized: "Empreinte posée (débit à la prise en charge)", paid: "Payé", failed: "Échoué", refunded: "Remboursé / relâché" }[o.payment_status])}
     ${row("Société", o.company)}
     ${row("Contact", `${o.contact_name} · ${o.email} · ${o.phone}`)}
     ${row("Commentaire", o.notes)}
@@ -74,7 +74,10 @@ async function send(to: string | string[], subject: string, html: string, replyT
 /** Internal notification: a new order / request is in. */
 export function sendInternalNotification(o: Order) {
   if (!env.ordersNotifyEmail) return Promise.resolve({ skipped: true as const });
-  const kind = o.pricing_mode === "instant" ? (o.payment_status === "paid" ? "Commande payée" : "Commande en attente de paiement") : "Demande de devis";
+  const kind =
+    o.pricing_mode === "instant"
+      ? o.payment_status === "paid" ? "Commande payée" : o.payment_status === "authorized" ? "Commande avec empreinte bancaire" : "Commande en attente de paiement"
+      : "Demande de devis";
   const body = `${orderTable(o)}
     <p style="margin-top:16px"><a href="${esc(env.siteUrl)}/api/orders/${o.id}" style="color:#0b1f3a">Voir dans l'API</a>${o.gclid ? " · Trafic Google Ads" : ""}</p>`;
   return send(env.ordersNotifyEmail, `[${o.reference}] ${kind} — ${o.contact_name}${o.company ? " (" + o.company + ")" : ""}`, layout(kind, body), o.email);

@@ -8,7 +8,8 @@ import { getStripe } from "@/lib/stripe";
 /**
  * POST /api/webhooks/stripe — Stripe → site. Configure the endpoint in the Stripe
  * dashboard with events: checkout.session.completed, checkout.session.expired,
- * charge.refunded. Signature verified with STRIPE_WEBHOOK_SECRET.
+ * payment_intent.succeeded, payment_intent.canceled, charge.refunded.
+ * Signature verified with STRIPE_WEBHOOK_SECRET.
  */
 export async function POST(req: Request) {
   const stripe = getStripe();
@@ -30,19 +31,37 @@ export async function POST(req: Request) {
         const orderId = session.metadata?.order_id ?? session.client_reference_id;
         if (!orderId || session.payment_status !== "paid") break;
         const order = await getOrder(orderId);
-        if (!order || order.payment_status === "paid") break; // idempotent
-        const paid = await updateOrder(order.id, {
-          payment_status: "paid",
-          status: order.status === "new" ? "confirmed" : order.status,
+        if (!order || order.payment_status === "paid" || order.payment_status === "authorized") break; // idempotent
+        // Capture manuelle : "paid" côté Checkout = empreinte AUTORISÉE, pas encore
+        // débitée. NAMY capture à l'acceptation (→ payment_intent.succeeded) ou
+        // relâche au refus (→ payment_intent.canceled).
+        const authorized = await updateOrder(order.id, {
+          payment_status: "authorized",
           paid_at: new Date().toISOString(),
           stripe_session_id: session.id,
           stripe_payment_intent: typeof session.payment_intent === "string" ? session.payment_intent : (session.payment_intent?.id ?? null),
         });
-        await logEvent(order.id, "payment", `Paiement reçu (${((session.amount_total ?? 0) / 100).toFixed(2)} € TTC)`, {
+        await logEvent(order.id, "payment", `Empreinte bancaire enregistrée (${((session.amount_total ?? 0) / 100).toFixed(2)} € TTC), débit à la prise en charge`, {
           public: true,
           data: { session: session.id, amount_total: session.amount_total },
         });
-        after(() => dispatchOrder(paid));
+        after(() => dispatchOrder(authorized));
+        break;
+      }
+      case "payment_intent.succeeded": {
+        const pi = event.data.object;
+        const order = pi.metadata?.order_id ? await getOrder(pi.metadata.order_id) : null;
+        if (!order || order.payment_status === "paid") break;
+        await updateOrder(order.id, { payment_status: "paid", paid_at: new Date().toISOString(), stripe_payment_intent: pi.id });
+        await logEvent(order.id, "payment", `Paiement débité (${((pi.amount_received ?? pi.amount ?? 0) / 100).toFixed(2)} € TTC)`, { public: true, data: { payment_intent: pi.id } });
+        break;
+      }
+      case "payment_intent.canceled": {
+        const pi = event.data.object;
+        const order = pi.metadata?.order_id ? await getOrder(pi.metadata.order_id) : null;
+        if (!order || order.payment_status === "refunded") break;
+        await updateOrder(order.id, { payment_status: "refunded", status: order.status === "delivered" ? order.status : "cancelled" });
+        await logEvent(order.id, "payment", "Empreinte bancaire relâchée, aucun débit", { public: true, data: { payment_intent: pi.id } });
         break;
       }
       case "checkout.session.expired": {

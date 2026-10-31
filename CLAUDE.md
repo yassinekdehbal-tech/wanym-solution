@@ -18,7 +18,8 @@ Un premier site statique (HTML/CSS) existe dans le dépôt `yassinekdehbal-tech/
 - Supabase (Postgres) : contenu éditable + commandes. Client serveur uniquement (`@supabase/supabase-js`), jamais la clé service côté client.
 - Resend pour les mails transactionnels (notification interne + accusé client + mises à jour SAV).
 - Stripe Checkout pour le paiement des courses à prix immédiat ; webhook `/api/webhooks/stripe`.
-- NAMY : webhook sortant `NAMY_WEBHOOK_URL` dès qu'une commande est **confirmée** (payée en ligne, ou devis confirmé par l'exploitation via `PATCH status=confirmed`), `src/lib/namy.ts` / `syncOrderToNamy`. En retour NAMY pilote la commande via `PATCH /api/orders/[id]`.
+- NAMY (dépôt `yassinekdehbal-tech/NAM-Y`, Supabase `gwbvfohizdxwhmcoqvgh`) : le site dépose ses commandes dans le canal `commandes_publiques` de NAMY via `POST {NAMY_WEBHOOK_URL}` = Edge `creer-commande-publique`, en-tête `x-wanym-site-key` (`src/lib/namy.ts` / `syncOrderToNamy`), dès que la commande est actionnable (empreinte Stripe `authorized`, ou devis confirmé par `PATCH status=confirmed`). NAMY renvoie les états sur `POST /api/webhooks/namy` (triggers `fn_wanym_site_notify`). Contrat : `docs/API.md` § Intégration NAMY.
+- Stripe en **capture manuelle** : le site pose l'empreinte (`payment_status = authorized`), NAMY capture à l'acceptation (`paid`) ou relâche au refus (`refunded`). Même compte Stripe des deux côtés.
 - **Répartition des e-mails client** : NAMY envoie confirmation, suivi et message de fin pour toute commande qu'il reçoit ; le site n'envoie au client que l'accusé de réception d'une demande de devis, et les messages/factures déclenchés par l'API (`notify_customer: true`). L'exploitation reçoit un e-mail du site à chaque commande ou devis.
 - Cache Components (`cacheComponents: true`) : toutes les lectures Supabase passent par `"use cache"` + `cacheTag` dans `src/lib/supabase/content.ts` ; les routes d'écriture appellent `revalidateTag(tag, "max")`. Ne pas lire `headers()`/`cookies()` dans une fonction cachée.
 - Déploiement Vercel, branche `main` = production. Preview sur chaque PR.
@@ -73,7 +74,7 @@ create table orders (
   gclid text
 );
 ```
-Migration `20261101000000_orders_pipeline.sql` : `orders` étendue (`reference` WS-AAAA-NNNNN, `service_slug`, `options`, `distance_km`, `pricing_mode`, `price_cents` HT / `total_cents` TTC, `payment_status`, `stripe_*`, `namy_ref`, `invoice_*`, `utm`), statuts `new|quoted|confirmed|in_progress|delivered|cancelled|sav`, table `order_events` (journal : payment, status, note, sav, invoice, namy, email ; `public` = visible client) et table `pricing_rules` (règle de prix par service, `instant_booking` = prix immédiat + Stripe).
+Migrations `20261101000000_orders_pipeline.sql` (additive, appliquée) et `20261101000001_status_lifecycle.sql` (contraintes `status` / `payment_status`, à passer dans le SQL editor) : `orders` étendue (`reference` WS-AAAA-NNNNN, `service_slug`, `options`, `distance_km`, `pricing_mode`, `price_cents` HT / `total_cents` TTC, `payment_status` (`not_required|pending|authorized|paid|failed|refunded`), `stripe_*`, `namy_ref`, `invoice_*`, `utm`), statuts `new|quoted|confirmed|in_progress|delivered|cancelled|sav`, table `order_events` (journal : payment, status, note, sav, invoice, namy, email ; `public` = visible client) et table `pricing_rules` (règle de prix par service, `instant_booking` = prix immédiat + Stripe).
 RLS activé sur toutes les tables. Lecture publique de `services` (published = true), `site_content` et `pricing_rules` (active). Écriture uniquement via les routes API avec la clé service. Types TypeScript dans `src/lib/types.ts`.
 
 ## API
@@ -81,7 +82,7 @@ Référence complète : `docs/API.md`. Toutes les routes d'écriture exigent `Au
 - Contenu : `GET /api/content`, `PUT /api/content` (bulk), `GET|PUT|DELETE /api/content/[key]`.
 - Services : `GET|POST /api/services`, `GET|PUT|DELETE /api/services/[slug]`.
 - Tarifs : `GET /api/pricing`, `PUT /api/pricing/[slug]`, `POST /api/quote` (public).
-- Commandes : `POST /api/orders` (public, rate-limité, honeypot), `GET /api/orders` (filtres status, payment_status, since, q, unsynced, uninvoiced), `GET|PATCH /api/orders/[id]` (id ou référence), `GET|POST /api/orders/[id]/events`, `POST /api/track` (public), `POST /api/webhooks/stripe`.
+- Commandes : `POST /api/orders` (public, rate-limité, honeypot), `GET /api/orders` (filtres status, payment_status, since, q, unsynced, uninvoiced), `GET|PATCH /api/orders/[id]` (id ou référence), `GET|POST /api/orders/[id]/events`, `POST /api/track` (public), `POST /api/webhooks/stripe`, `POST /api/webhooks/namy` (NAMY → site).
 Après chaque écriture : `revalidateTag(TAGS.x, "max")`, pas de rebuild.
 
 ## Variables d'environnement

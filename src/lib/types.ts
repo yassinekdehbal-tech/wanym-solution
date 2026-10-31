@@ -39,7 +39,7 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
-export const PAYMENT_STATUSES = ["not_required", "pending", "paid", "failed", "refunded"] as const;
+export const PAYMENT_STATUSES = ["not_required", "pending", "authorized", "paid", "failed", "refunded"] as const;
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 
 export const EVENT_TYPES = ["created", "payment", "status", "note", "sav", "invoice", "namy", "email"] as const;
