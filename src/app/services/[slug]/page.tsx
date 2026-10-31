@@ -8,7 +8,10 @@ import { getContent, getService, getServices } from "@/lib/supabase/content";
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return (await getServices()).map((s) => ({ slug: s.slug }));
+  const services = await getServices();
+  // Cache Components requires at least one param at build time; before the
+  // database is configured we prerender a single placeholder that 404s.
+  return services.length ? services.map((s) => ({ slug: s.slug })) : [{ slug: "service-indisponible" }];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

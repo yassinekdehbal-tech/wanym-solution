@@ -9,7 +9,9 @@ export async function getContent(): Promise<SiteContent> {
   "use cache";
   cacheTag(TAGS.content);
   cacheLife("max");
-  const { data, error } = await supabasePublic().from("site_content").select("key,value");
+  const db = supabasePublic();
+  if (!db) return {};
+  const { data, error } = await db.from("site_content").select("key,value");
   if (error) {
     console.error("[content] fetch failed:", error.message);
     return {};
@@ -21,7 +23,9 @@ export async function getServices(): Promise<Service[]> {
   "use cache";
   cacheTag(TAGS.services);
   cacheLife("max");
-  const { data, error } = await supabasePublic()
+  const db = supabasePublic();
+  if (!db) return [];
+  const { data, error } = await db
     .from("services")
     .select("*")
     .eq("published", true)
@@ -37,7 +41,9 @@ export async function getService(slug: string): Promise<Service | null> {
   "use cache";
   cacheTag(TAGS.services);
   cacheLife("max");
-  const { data } = await supabasePublic()
+  const db = supabasePublic();
+  if (!db) return null;
+  const { data } = await db
     .from("services")
     .select("*")
     .eq("slug", slug)
@@ -50,7 +56,9 @@ export async function getPricingRules(): Promise<PricingRule[]> {
   "use cache";
   cacheTag(TAGS.pricing);
   cacheLife("max");
-  const { data, error } = await supabasePublic().from("pricing_rules").select("*").eq("active", true);
+  const db = supabasePublic();
+  if (!db) return [];
+  const { data, error } = await db.from("pricing_rules").select("*").eq("active", true);
   if (error) {
     console.error("[pricing] fetch failed:", error.message);
     return [];
