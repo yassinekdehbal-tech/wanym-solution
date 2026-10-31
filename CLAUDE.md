@@ -25,6 +25,7 @@ Un premier site statique (HTML/CSS) existe dans le dépôt `yassinekdehbal-tech/
 - `/contact`, `/mentions-legales`, `/cgv` — obligatoires (Google Ads exige mentions légales et CGV visibles).
 
 ## Base de données (Supabase)
+Projet Supabase : **« Agent Secretaire »** (ref `ksdzzcqcrtluamdkddzf`, eu-central-1, org FISSA LIV), réutilisé pour ce site. Il contient d'autres tables (organizations, entities, invoices…) d'un projet en pause : **ne pas y toucher**. Le schéma ci-dessous est déjà appliqué (migration `wanym_site_init`) et le seed est chargé. Fichiers de référence : `supabase/migrations/`, `supabase/seed.sql`.
 ```sql
 create table services (
   id uuid primary key default gen_random_uuid(),
@@ -77,9 +78,9 @@ Après chaque écriture de contenu : `revalidatePath` des pages concernées (ISR
 
 ## Variables d'environnement
 ```
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_SUPABASE_URL=https://ksdzzcqcrtluamdkddzf.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_bIJp6VW5CStygDa29M7Tjw_zoXjT_2g
+SUPABASE_SERVICE_ROLE_KEY=    # Supabase dashboard → Settings → API Keys (secret), jamais côté client
 RESEND_API_KEY=
 ORDERS_NOTIFY_EMAIL=          # adresse @wanymsolution.com qui reçoit les commandes
 CONTENT_API_KEY=              # clé longue aléatoire pour l'API de contenu
@@ -96,7 +97,7 @@ NEXT_PUBLIC_GTAG_CONVERSION_LABEL=
 
 ## Ordre de travail suggéré
 1. Scaffold + layout (header, footer, CTA sticky mobile).
-2. Schéma Supabase + seed + client.
+2. Client Supabase (`src/lib/supabase`) — le schéma et le seed sont déjà en base.
 3. Page `/commander` + `POST /api/orders` + mails. C'est la page qui rapporte, elle passe en premier.
 4. Accueil et services.
 5. API de contenu + tag Google + pages légales.

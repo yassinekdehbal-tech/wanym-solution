@@ -16,7 +16,7 @@ npm run dev
 - Schéma : `supabase/migrations/`
 - Contenu initial : `supabase/seed.sql`
 
-Appliquer sur le projet Supabase (SQL editor ou `supabase db push`), puis exécuter le seed.
+Déjà appliqués sur le projet Supabase « Agent Secretaire » (`ksdzzcqcrtluamdkddzf`). Pour rejouer : SQL editor ou `supabase db push`.
 
 ## Déploiement
 
