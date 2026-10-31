@@ -41,6 +41,7 @@ export async function POST(req: Request) {
       }
       // Stripe not configured: keep the price, treat as a quote to confirm by phone
       const fallback = await updateOrder(order.id, { payment_status: "not_required" });
+      await logEvent(order.id, "note", "Prix calculé, confirmation par notre exploitation (paiement en ligne indisponible)", { public: true });
       after(() => dispatchOrder(fallback));
       return NextResponse.json({ id: order.id, reference: order.reference, mode: "quote", total_cents: order.total_cents }, { status: 201 });
     }
