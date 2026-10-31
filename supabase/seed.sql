@@ -103,3 +103,66 @@ on conflict (slug) do update set
   body = excluded.body,
   icon = excluded.icon,
   sort_order = excluded.sort_order;
+
+-- Pricing rules (editable via PUT /api/pricing/[slug])
+insert into public.pricing_rules (service_slug, label, instant_booking, base_cents, per_km_cents, per_unit_cents, min_cents, max_km, max_units, surcharges) values
+  ('livraison-express-a-la-demande', 'Course express Île-de-France', true, 2500, 120, 500, 3500, 120, 10, '{"handling": 1500, "floor": 2000, "urgent_pct": 25}'),
+  ('livraison-professionnels-externalisee', 'Livraison externalisée (devis)', false, 0, 0, 0, 0, null, null, '{}'),
+  ('transport-dedie-sur-mesure', 'Transport dédié (devis)', false, 0, 0, 0, 0, null, null, '{}')
+on conflict (service_slug) do update set
+  label = excluded.label, instant_booking = excluded.instant_booking, base_cents = excluded.base_cents,
+  per_km_cents = excluded.per_km_cents, per_unit_cents = excluded.per_unit_cents, min_cents = excluded.min_cents,
+  max_km = excluded.max_km, max_units = excluded.max_units, surcharges = excluded.surcharges;
+
+-- Additional editable copy for the order funnel, tracking and legal pages
+insert into public.site_content (key, value) values
+  ('hero.route_title', 'Où devons-nous livrer ?'),
+  ('hero.route_from', 'Adresse de départ'),
+  ('hero.route_to', 'Adresse d''arrivée'),
+  ('hero.route_button', 'Obtenir un prix'),
+  ('order.title', 'Commander un transport'),
+  ('order.lead', 'Décrivez votre transport en 4 étapes. Prix immédiat et paiement en ligne pour l''express en Île-de-France, chiffrage sous 24h pour le reste.'),
+  ('order.quote_notice', 'Ce transport fait l''objet d''un chiffrage personnalisé : nous vous envoyons un devis sous 24h, sans engagement.'),
+  ('order.success_title', 'Merci, votre demande est bien enregistrée.'),
+  ('order.success_body', 'Vous recevez un e-mail de confirmation avec votre numéro de commande. Notre exploitation vous rappelle si un détail manque.'),
+  ('order.cancelled_body', 'Le paiement n''a pas été finalisé. Votre demande est conservée : vous pouvez réessayer ou nous appeler pour régler autrement.'),
+  ('track.title', 'Suivre ma commande'),
+  ('track.lead', 'Saisissez votre numéro de commande (WS-…) et l''e-mail utilisé lors de la commande.'),
+  ('contact.title', 'Contactez l''exploitation'),
+  ('contact.lead', 'Un flux à organiser, une urgence, une question sur une commande en cours : nous répondons 24h/24.'),
+  ('cgv.body', $md$## 1. Objet
+
+Les présentes conditions générales de vente (CGV) régissent les prestations de transport et de commission de transport proposées par WANYM SOLUTION sur le site wanymsolution.com.
+
+## 2. Commande
+
+Toute commande passée sur le site vaut acceptation des présentes CGV. Pour les prestations à prix immédiat, la commande est ferme après paiement en ligne. Pour les prestations sur devis, la commande est ferme après acceptation écrite du devis par le client.
+
+## 3. Prix et paiement
+
+Les prix sont indiqués en euros hors taxes et toutes taxes comprises. Le paiement en ligne est sécurisé par Stripe. Les prestations sur devis sont facturées selon les conditions du devis accepté.
+
+## 4. Exécution
+
+WANYM SOLUTION s'engage à exécuter le transport dans le créneau convenu. Les délais sont donnés à titre indicatif et peuvent être affectés par les conditions de circulation ou des événements extérieurs. Le client s'engage à fournir des adresses exactes, un interlocuteur joignable et une marchandise correctement emballée.
+
+## 5. Annulation
+
+Toute annulation moins de 2 heures avant l'enlèvement d'une course express peut être facturée à hauteur de 50 % du prix. Les annulations de prestations sur devis sont régies par les conditions du devis.
+
+## 6. Responsabilité
+
+La responsabilité de WANYM SOLUTION est engagée dans les conditions prévues par le contrat type applicable aux transports publics routiers de marchandises (Code des transports). Les marchandises dangereuses, illicites ou de valeur non déclarée sont exclues.
+
+## 7. Réclamations et SAV
+
+Toute réclamation doit être adressée par e-mail dans les 3 jours suivant la livraison, avec le numéro de commande. Le suivi des réclamations est accessible depuis la page « Suivre ma commande ».
+
+## 8. Données personnelles
+
+Les données collectées lors de la commande sont utilisées pour l'exécution de la prestation et la relation client. Voir les mentions légales pour l'exercice de vos droits.
+
+## 9. Droit applicable
+
+Les présentes CGV sont soumises au droit français. Tout litige relève des tribunaux compétents du ressort du siège de WANYM SOLUTION.$md$)
+on conflict (key) do update set value = excluded.value;

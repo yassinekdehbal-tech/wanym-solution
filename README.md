@@ -1,6 +1,7 @@
 # WANYM SOLUTION — wanymsolution.com
 
-Site vitrine + commande de transport en ligne. Next.js 16 · Supabase · Vercel.
+Site vitrine + commande de transport en ligne (prix immédiat, paiement Stripe, transmission à NAMY) + API de pilotage du contenu et des commandes.
+Next.js 16 · Supabase · Resend · Stripe · Vercel. Documentation de l'API : `docs/API.md`.
 Les règles du projet pour Claude Code sont dans `CLAUDE.md`.
 
 ## Démarrer
@@ -16,7 +17,19 @@ npm run dev
 - Schéma : `supabase/migrations/`
 - Contenu initial : `supabase/seed.sql`
 
-Déjà appliqués sur le projet Supabase « Agent Secretaire » (`ksdzzcqcrtluamdkddzf`). Pour rejouer : SQL editor ou `supabase db push`.
+Projet Supabase « Agent Secretaire » (`ksdzzcqcrtluamdkddzf`), partagé avec un autre projet en pause : seules les tables `services`, `site_content`, `orders`, `order_events`, `pricing_rules` appartiennent au site. Pour (re)jouer : SQL editor ou `supabase db push`, puis le seed.
+
+## Services externes à configurer
+
+| Service | Rôle | Variables |
+|---|---|---|
+| Supabase | contenu + commandes | `SUPABASE_SERVICE_ROLE_KEY` |
+| Resend | e-mails (exploitation + client), domaine `wanymsolution.com` à vérifier | `RESEND_API_KEY`, `EMAIL_FROM`, `ORDERS_NOTIFY_EMAIL` |
+| Stripe | paiement des courses à prix immédiat, webhook `/api/webhooks/stripe` | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` |
+| NAMY | réception automatique des commandes | `NAMY_WEBHOOK_URL`, `NAMY_API_KEY` |
+| Google Ads | balise + conversion | `NEXT_PUBLIC_GTAG_ID`, `NEXT_PUBLIC_GTAG_CONVERSION_LABEL` |
+| Google Maps (optionnel) | distance exacte pour le prix | `GOOGLE_MAPS_API_KEY` |
+| API du site | clé des routes d'écriture | `CONTENT_API_KEY` |
 
 ## Déploiement
 

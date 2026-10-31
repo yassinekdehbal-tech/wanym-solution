@@ -1,0 +1,17 @@
+export const env = {
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://wanymsolution.com",
+  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+  supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
+  resendApiKey: process.env.RESEND_API_KEY ?? "",
+  emailFrom: process.env.EMAIL_FROM ?? "WANYM SOLUTION <commandes@wanymsolution.com>",
+  ordersNotifyEmail: process.env.ORDERS_NOTIFY_EMAIL ?? "",
+  contentApiKey: process.env.CONTENT_API_KEY ?? "",
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+  namyWebhookUrl: process.env.NAMY_WEBHOOK_URL ?? "",
+  namyApiKey: process.env.NAMY_API_KEY ?? "",
+  googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY ?? "",
+  gtagId: process.env.NEXT_PUBLIC_GTAG_ID ?? "",
+  gtagConversionLabel: process.env.NEXT_PUBLIC_GTAG_CONVERSION_LABEL ?? "",
+};
