@@ -18,7 +18,8 @@ Un premier site statique (HTML/CSS) existe dans le dépôt `yassinekdehbal-tech/
 - Supabase (Postgres) : contenu éditable + commandes. Client serveur uniquement (`@supabase/supabase-js`), jamais la clé service côté client.
 - Resend pour les mails transactionnels (notification interne + accusé client + mises à jour SAV).
 - Stripe Checkout pour le paiement des courses à prix immédiat ; webhook `/api/webhooks/stripe`.
-- NAMY : webhook sortant `NAMY_WEBHOOK_URL` à chaque commande actionnable (`src/lib/namy.ts`), et `PATCH /api/orders/[id]` en retour.
+- NAMY : webhook sortant `NAMY_WEBHOOK_URL` dès qu'une commande est **confirmée** (payée en ligne, ou devis confirmé par l'exploitation via `PATCH status=confirmed`), `src/lib/namy.ts` / `syncOrderToNamy`. En retour NAMY pilote la commande via `PATCH /api/orders/[id]`.
+- **Répartition des e-mails client** : NAMY envoie confirmation, suivi et message de fin pour toute commande qu'il reçoit ; le site n'envoie au client que l'accusé de réception d'une demande de devis, et les messages/factures déclenchés par l'API (`notify_customer: true`). L'exploitation reçoit un e-mail du site à chaque commande ou devis.
 - Cache Components (`cacheComponents: true`) : toutes les lectures Supabase passent par `"use cache"` + `cacheTag` dans `src/lib/supabase/content.ts` ; les routes d'écriture appellent `revalidateTag(tag, "max")`. Ne pas lire `headers()`/`cookies()` dans une fonction cachée.
 - Déploiement Vercel, branche `main` = production. Preview sur chaque PR.
 - Google Tag (gtag.js) chargé via `next/script`, événement `conversion` déclenché à la soumission réussie du formulaire.

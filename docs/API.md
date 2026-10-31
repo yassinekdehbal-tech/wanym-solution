@@ -61,13 +61,20 @@ Distance : Google Distance Matrix si `GOOGLE_MAPS_API_KEY` est renseignée, sino
 | POST | `/track` | public | Suivi client `{ reference, email }` → vue limitée |
 | POST | `/webhooks/stripe` | Stripe | Confirmation de paiement, expiration, remboursement |
 
-### Cycle de vie
+### Cycle de vie et répartition des rôles
 
 `status` : `new` → `quoted` → `confirmed` → `in_progress` → `delivered` ; `cancelled` ; `sav`.
 `payment_status` : `not_required` (devis) · `pending` · `paid` · `failed` · `refunded`.
 
-- Express avec prix immédiat : création (`new`/`pending`) → Stripe Checkout → webhook `checkout.session.completed` → `confirmed`/`paid` → e-mails + transmission NAMY.
-- Devis : création (`new`/`not_required`) → e-mails + transmission NAMY immédiats → l'exploitation passe en `quoted` avec `price_cents`, puis `confirmed`.
+| Événement | Qui prévient le client | Qui prévient l'exploitation | NAMY |
+|---|---|---|---|
+| Demande de devis (`new`, `not_required`) | le site : accusé de réception « devis sous 24h » | le site : e-mail | non |
+| Paiement Stripe réussi (`confirmed`, `paid`) | **NAMY** (confirmation, suivi, message de fin) | le site : e-mail | **transmise automatiquement** |
+| Devis confirmé par l'exploitation (`PATCH status=confirmed`) | **NAMY** | — | **transmise automatiquement** |
+| Facture, message ponctuel | le site, via `PATCH` ou `POST …/events` avec `notify_customer: true` | — | peut déclencher l'appel |
+| Changement de statut par NAMY (`in_progress`, `delivered`…) | NAMY | — | `PATCH` sur le site pour le suivi client |
+
+Le site ne double jamais les e-mails de NAMY : aucune confirmation client n'est envoyée pour une commande payée ou confirmée.
 
 ### PATCH /orders/{id}
 

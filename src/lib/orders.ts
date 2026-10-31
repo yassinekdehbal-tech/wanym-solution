@@ -97,23 +97,37 @@ export async function createOrder(input: OrderInput, ip: string): Promise<{ orde
 }
 
 /**
- * Called once an order is actionable: right after creation for quotes, after
- * Stripe confirms payment for instant bookings. Notifies ops + customer and
- * pushes the order to NAMY. Idempotent on NAMY sync.
+ * Who talks to the customer:
+ *  - NAMY handles confirmation, tracking and end-of-delivery messages for every
+ *    order it receives. The site therefore never e-mails a paid/confirmed customer.
+ *  - The site only acknowledges quote requests (NAMY does not know them yet) and
+ *    sends ops-triggered messages/invoices through PATCH /api/orders/[id].
+ *
+ * Called right after creation (quotes) and after Stripe confirms payment.
  */
 export async function dispatchOrder(order: Order) {
-  const [internal, customer] = await Promise.all([sendInternalNotification(order), sendCustomerConfirmation(order)]);
-  await logEvent(order.id, "email", "Notifications envoyées", { data: { internal, customer } });
+  const confirmed = order.status === "confirmed" || order.payment_status === "paid";
+  const [internal, customer] = await Promise.all([
+    sendInternalNotification(order),
+    confirmed ? Promise.resolve({ skipped: true as const, reason: "handled by NAMY" }) : sendCustomerConfirmation(order),
+  ]);
+  await logEvent(order.id, "email", confirmed ? "Exploitation prévenue (confirmation client assurée par NAMY)" : "Exploitation prévenue, accusé de réception envoyé au client", {
+    data: { internal, customer },
+  });
+  if (confirmed) await syncOrderToNamy(order);
+}
 
-  if (!order.namy_synced_at) {
-    const r = await pushOrderToNamy(order);
-    if (r.ok) {
-      await updateOrder(order.id, { namy_ref: r.ref ?? order.namy_ref, namy_synced_at: new Date().toISOString() });
-      await logEvent(order.id, "namy", `Transmise à NAMY${r.ref ? " (" + r.ref + ")" : ""}`, { data: r });
-    } else if (!r.skipped) {
-      await logEvent(order.id, "namy", `Échec de transmission à NAMY : ${r.error}`, { data: r });
-    }
+/** Push a confirmed order to NAMY once. Safe to call repeatedly. */
+export async function syncOrderToNamy(order: Order): Promise<Order> {
+  if (order.namy_synced_at) return order;
+  const r = await pushOrderToNamy(order);
+  if (r.ok) {
+    const synced = await updateOrder(order.id, { namy_ref: r.ref ?? order.namy_ref, namy_synced_at: new Date().toISOString() });
+    await logEvent(order.id, "namy", `Transmise à NAMY${r.ref ? " (" + r.ref + ")" : ""}`, { data: r });
+    return synced;
   }
+  if (!r.skipped) await logEvent(order.id, "namy", `Échec de transmission à NAMY : ${r.error}`, { data: r });
+  return order;
 }
 
 /** Only the ops notification: used when a paid order was created but the customer left before paying. */
