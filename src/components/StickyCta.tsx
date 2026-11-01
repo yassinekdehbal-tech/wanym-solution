@@ -13,7 +13,7 @@ export function StickyCta({ content }: { content: SiteContent }) {
   const pathname = usePathname();
   if (pathname?.startsWith("/commander")) return null;
   return (
-    <div className="safe-bottom fixed inset-x-0 bottom-0 z-40 grid grid-cols-[1fr_1.4fr] gap-2 border-t border-slate-200 bg-white/95 px-3 pt-2 backdrop-blur md:hidden">
+    <div className="safe-bottom fixed inset-x-0 bottom-0 z-40 grid grid-cols-[1fr_1.4fr] gap-2 border-t border-slate-200 bg-white/95 px-3 pt-2 [&>*]:min-w-0 [&>*]:px-3 backdrop-blur md:hidden">
       <a href={`tel:${content["contact.phone_e164"] ?? "+33767166015"}`} className="btn-outline btn-sm">
         <Icon name="phone" className="h-4 w-4" />
         Appeler
