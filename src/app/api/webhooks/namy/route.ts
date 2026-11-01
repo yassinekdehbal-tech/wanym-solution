@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { badRequest, isAuthorized, notFound, readJson, unauthorized } from "@/lib/api";
+import { env } from "@/lib/env";
 import { getOrder, getOrderEvents, logEvent, updateOrder } from "@/lib/orders";
 import { STATUS_LABELS, type Order, type OrderStatus } from "@/lib/types";
 import { z } from "zod";
@@ -8,7 +9,7 @@ import { z } from "zod";
  * POST /api/webhooks/namy — NAMY → site. Fired by NAMY's trigger
  * (trg_wanym_site_expedition_statut) on every status change of a course the
  * site created (event `expedition.statut`).
- * Auth: Bearer CONTENT_API_KEY (stored in NAMY's vault as wanym_site_api_key).
+ * Auth: Bearer NAMY_INBOUND_KEY (stored in NAMY's vault as wanym_site_api_key), CONTENT_API_KEY as fallback.
  * Idempotent: replaying an event changes nothing.
  */
 const schema = z.object({
@@ -50,7 +51,7 @@ const EXPEDITION_LABEL: Record<string, string> = {
 };
 
 export async function POST(req: Request) {
-  if (!isAuthorized(req)) return unauthorized();
+  if (!isAuthorized(req, env.namyInboundKey)) return unauthorized();
   const parsed = schema.safeParse(await readJson(req));
   if (!parsed.success) return badRequest(parsed.error);
   const ev = parsed.data;

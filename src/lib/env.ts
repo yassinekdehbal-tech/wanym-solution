@@ -11,6 +11,8 @@ export const env = {
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   namyWebhookUrl: process.env.NAMY_WEBHOOK_URL ?? "",
   namyApiKey: process.env.NAMY_API_KEY ?? "",
+  // Key NAMY presents on POST /api/webhooks/namy (vault secret wanym_site_api_key). Falls back to CONTENT_API_KEY.
+  namyInboundKey: process.env.NAMY_INBOUND_KEY || process.env.CONTENT_API_KEY || "",
   googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY ?? "",
   gtagId: process.env.NEXT_PUBLIC_GTAG_ID ?? "",
   gtagConversionLabel: process.env.NEXT_PUBLIC_GTAG_CONVERSION_LABEL ?? "",
