@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Manrope } from "next/font/google";
 import { AttributionCapture } from "@/components/AttributionCapture";
 import { Footer } from "@/components/Footer";
 import { GoogleTag } from "@/components/GoogleTag";
@@ -7,6 +8,9 @@ import { StickyCta } from "@/components/StickyCta";
 import { env } from "@/lib/env";
 import { getContent } from "@/lib/supabase/content";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
+const manrope = Manrope({ subsets: ["latin"], display: "swap", variable: "--font-manrope", weight: ["600", "700", "800"] });
 
 export async function generateMetadata(): Promise<Metadata> {
   const c = await getContent();
@@ -39,8 +43,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     foundingDate: "2016",
   };
   return (
-    <html lang="fr">
-      <body className="min-h-screen bg-white pb-16 text-slate-900 antialiased md:pb-0">
+    <html lang="fr" className={`${inter.variable} ${manrope.variable}`}>
+      <body className="min-h-screen bg-surface pb-16 text-brand-900 antialiased md:pb-0">
         <Header content={content} />
         {children}
         <Footer content={content} />

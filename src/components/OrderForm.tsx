@@ -6,8 +6,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AddressInput } from "@/components/AddressInput";
 import { readAttribution } from "@/components/AttributionCapture";
 import { Icon } from "@/components/Icon";
+import { PriceBar, type PriceBarState } from "@/components/PriceBar";
+import { PriceDetail } from "@/components/PriceDetail";
 import { SizeAdvisor, type Inventaire } from "@/components/SizeAdvisor";
 import { TruckIcon } from "@/components/TruckIcon";
+import { track } from "@/lib/analytics";
 import type { NamyContexte, NamyPrix } from "@/lib/namy";
 import type { CatalogueItem, VehiculeCapacite } from "@/lib/vehicle-advisor";
 import { formatEuros } from "@/lib/pricing";
@@ -146,14 +149,10 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [advisorOpen, setAdvisorOpen] = useState(false);
+  const [quoteKey, setQuoteKey] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
   const quoteSeq = useRef(0);
-  const track = (name: string, params: Record<string, unknown> = {}) => {
-    try {
-      window.gtag?.("event", name, params);
-    } catch {
-      /* analytics is optional */
-    }
-  };
   const cancelled = params.get("cancelled") === "1";
   const sellsOnline = namySlugs.length === 0 || namySlugs.includes(v.service_slug);
 
@@ -175,6 +174,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
 
   // ── Prefill (hero addresses) + draft restore ──
   useEffect(() => {
+    track("commander_vue", { from: params.has("from"), vehicule: params.has("vehicule") });
     let draft: Partial<Values> | null = null;
     try {
       draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY) ?? "null");
@@ -189,6 +189,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
       pickup_address: params.get("from") ?? draft?.pickup_address ?? cur.pickup_address,
       delivery_address: params.get("to") ?? draft?.delivery_address ?? cur.delivery_address,
       service_slug: params.get("service") ?? draft?.service_slug ?? cur.service_slug,
+      vehicule_id: params.get("vehicule") ?? draft?.vehicule_id ?? cur.vehicule_id,
       wanted_date: draft?.wanted_date && draft.wanted_date >= todayIso() ? draft.wanted_date : todayIso(),
       accept_terms: false,
     }));
@@ -304,10 +305,14 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
   const showContact = showDate && okDate;
   const showPrix = showContact;
 
+  // Everything that moves the price, in one key: the quote is "fresh" only when it was computed for this key.
+  const pricingKey = JSON.stringify([v.pickup_address, v.delivery_address, v.vehicule_id, v.porte_depart, v.porte_arrivee, v.etage_depart, v.etage_arrivee, v.ascenseur_depart, v.ascenseur_arrivee, v.equipier, v.options, v.wanted_date, v.creneau, v.poids_total_kg, v.longueur_max_cm, v.nb_colis, v.service_slug]);
+
   // ── Live price from NAMY as soon as the pricing inputs are there (debounced) ──
   useEffect(() => {
     if (!okTrajet || !okTaille || !/^\d{4}-\d{2}-\d{2}$/.test(v.wanted_date)) return;
     const seq = ++quoteSeq.current;
+    const key = pricingKey;
     const t = setTimeout(async () => {
       setQuoting(true);
       try {
@@ -315,6 +320,8 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
         const json = (await res.json()) as QuoteResponse;
         if (seq !== quoteSeq.current) return;
         setQuote(res.ok ? json : { mode: "quote", reason: json.error ?? "erreur", fields: json.fields });
+        setQuoteKey(key);
+        if (res.ok && json.mode === "instant" && json.total_cents != null) track("prix_confirme", { total: json.total_cents / 100 });
       } catch {
         if (seq === quoteSeq.current) setQuote({ mode: "quote", reason: "namy_non_configure" });
       } finally {
@@ -323,7 +330,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
     }, 500);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [okTrajet, okTaille, v.pickup_address, v.delivery_address, v.vehicule_id, v.porte_depart, v.porte_arrivee, v.etage_depart, v.etage_arrivee, v.ascenseur_depart, v.ascenseur_arrivee, v.equipier, v.options, v.wanted_date, v.creneau, v.poids_total_kg, v.longueur_max_cm, v.nb_colis, v.service_slug]);
+  }, [okTrajet, okTaille, pricingKey]);
 
   const validate = (): Record<string, string> => {
     const e: Record<string, string> = {};
@@ -371,9 +378,11 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
         /* ignore */
       }
       if (json.checkout_url) {
+        track("paiement_debut", { total: (quote?.total_cents ?? 0) / 100 });
         window.location.assign(json.checkout_url);
         return;
       }
+      track("devis_envoye");
       router.push(`/commander/merci?ref=${json.reference}`);
     } catch {
       setServerError("Connexion impossible. Vérifiez votre réseau ou appelez-nous.");
@@ -382,9 +391,38 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
     }
   };
 
-  const err = (k: string) => (errors[k] ? <p className="mt-1 text-sm text-red-600">{errors[k]}</p> : null);
+  const err = (k: string) =>
+    errors[k] ? (
+      <p className="error" id={`err-${k}`} role="alert">
+        <Icon name="alert" className="mt-0.5 h-4 w-4 shrink-0" /> {errors[k]}
+      </p>
+    ) : null;
+  const inv = (k: string) => (errors[k] ? { "aria-invalid": true as const, "aria-describedby": `err-${k}` } : {});
   const prix = quote?.prix ?? null;
   const instant = quote?.mode === "instant" && !!prix;
+  const fresh = !!quote && quoteKey === pricingKey && !quoting;
+  const activeN = !okTrajet ? 1 : !okTaille ? 2 : !okDate ? 4 : !okContact ? 5 : 6;
+  const barState: PriceBarState = !okTrajet || !okTaille
+    ? "indisponible"
+    : quoting && (!quote || !instant)
+      ? "calcul"
+      : instant && fresh
+        ? "calcule"
+        : instant
+          ? "recalcul"
+          : quote && ["erreur", "adresse_introuvable", "date_indisponible", "vehicule_invalide"].includes(quote.reason ?? "")
+            ? "erreur"
+            : quote
+              ? "devis"
+              : "calcul";
+  const nextTarget = activeN === 2 ? "f-vehicule_id" : activeN === 4 ? "f-wanted_date" : activeN === 5 ? "f-contact_name" : "f-accept_terms";
+  const barAction = () => {
+    if (showPrix && (barState === "calcule" || barState === "devis" || barState === "erreur")) {
+      void submit();
+      return;
+    }
+    document.getElementById(nextTarget)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
   const vehiculeChoisi = vehicules.find((x) => x.id === v.vehicule_id) ?? null;
   const prixOption = (code: string) => {
     const o = optionByCode(code);
@@ -394,19 +432,24 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
   return (
     <div className="space-y-6">
       {cancelled && (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+        <div className="alert-warn" role="status">
           {copy.cancelledBody} {params.get("ref") && <strong>Référence : {params.get("ref")}</strong>}
         </div>
       )}
-      {ctxError && <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">Le calcul de prix en ligne est momentanément indisponible : votre demande sera chiffrée par notre exploitation sous 24h.</div>}
-      {!sellsOnline && <div className="rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm text-brand-800">{QUOTE_REASONS.service_on_quote} Décrivez votre besoin, nous revenons vers vous sous 24h.</div>}
+      {ctxError && <div className="alert-warn" role="status">Le calcul de prix en ligne est momentanément indisponible : votre demande sera chiffrée par notre exploitation sous 24h.</div>}
+      {!sellsOnline && <div className="alert-info" role="status">{QUOTE_REASONS.service_on_quote} Décrivez votre besoin, nous revenons vers vous sous 24h.</div>}
 
       <form
-        className="space-y-6"
+        className="space-y-5 pb-24 sm:pb-0"
         onSubmit={(e) => {
           e.preventDefault();
           void submit();
         }}
+        onFocusCapture={(e) => {
+          const el = e.target as unknown as HTMLElement & { type?: string };
+          setTyping(["INPUT", "SELECT", "TEXTAREA"].includes(el.tagName) && el.type !== "checkbox" && el.type !== "radio");
+        }}
+        onBlurCapture={() => setTyping(false)}
         noValidate
       >
         <div className="hidden" aria-hidden="true">
@@ -415,25 +458,29 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
         </div>
 
         {/* 1 · Trajet */}
-        <Section n={1} title="Votre trajet" done={okTrajet}>
+        <Section n={1} title="Votre trajet" done={okTrajet} active={activeN === 1} recap={okTrajet ? `${v.pickup_address} → ${v.delivery_address}${prix?.distance_km != null ? ` · ${prix.distance_km} km` : ""}` : undefined} collapsed={!!collapsed[1]} onToggle={() => setCollapsed((c) => ({ ...c, 1: !c[1] }))}>
           <div className="grid gap-4 md:grid-cols-2">
             <div id="f-pickup_address">
               <label className="label" htmlFor="pickup_address">Adresse de départ *</label>
-              <AddressInput id="pickup_address" value={v.pickup_address} onChange={(x) => set("pickup_address", x)} placeholder="12 rue de la Paix, 75002 Paris" required />
+              <AddressInput id="pickup_address" value={v.pickup_address} onChange={(x) => set("pickup_address", x)} placeholder="12 rue de la Paix, 75002 Paris" required invalid={!!errors.pickup_address} describedBy={errors.pickup_address ? "err-pickup_address" : undefined} />
               {err("pickup_address")}
             </div>
             <div id="f-delivery_address">
               <label className="label" htmlFor="delivery_address">Adresse d&apos;arrivée *</label>
-              <AddressInput id="delivery_address" value={v.delivery_address} onChange={(x) => set("delivery_address", x)} placeholder="125 rue Diderot, 93700 Drancy" required accent />
+              <AddressInput id="delivery_address" value={v.delivery_address} onChange={(x) => set("delivery_address", x)} placeholder="125 rue Diderot, 93700 Drancy" required accent invalid={!!errors.delivery_address} describedBy={errors.delivery_address ? "err-delivery_address" : undefined} />
               {err("delivery_address")}
             </div>
           </div>
-          {okTrajet && prix?.distance_km != null && <p className="mt-3 text-sm text-slate-500">Distance estimée : {prix.distance_km} km{prix.zone?.rayon_km ? ` · ${prix.zone.rayon_km} km inclus dans le forfait` : ""}</p>}
+          {okTrajet && (prix?.distance_km != null ? (
+            <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5 text-sm font-medium text-primary-800"><Icon name="route" className="h-4 w-4" /> {prix.distance_km} km{prix.zone?.rayon_km ? ` · ${prix.zone.rayon_km} km inclus` : ""}</p>
+          ) : okTaille ? (
+            <p className="mt-3 inline-flex items-center gap-2 text-sm text-muted"><span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-600 border-t-transparent" aria-hidden="true" /> Calcul de la distance…</p>
+          ) : null)}
         </Section>
 
         {/* 2 · Taille du véhicule */}
         {showTaille && (
-          <Section n={2} title={zoneMode ? "Quelle place vous faut-il ?" : "Que transportons-nous ?"} done={okTaille}>
+          <Section n={2} title={zoneMode ? "Quelle place vous faut-il ?" : "Que transportons-nous ?"} done={okTaille} active={activeN === 2} recap={vehiculeChoisi ? `${vehiculeChoisi.surface_m2 != null ? `${vehiculeChoisi.surface_m2} m² · ` : ""}${vehiculeChoisi.nom}${vehiculeChoisi.volume ? ` · ${vehiculeChoisi.volume}` : ""}` : undefined} collapsed={!!collapsed[2]} onToggle={() => setCollapsed((c) => ({ ...c, 2: !c[2] }))}>
             {zoneMode ? (
               <div id="f-vehicule_id">
                 <p className="mb-3 text-sm text-slate-600">Choisissez la surface au sol dont vous avez besoin. Le prix comprend le chauffeur et {vehicules[0]?.rayon_km ?? 20} km.</p>
@@ -442,13 +489,14 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                     const active = v.vehicule_id === veh.id;
                     const size = (Math.min(4, Math.max(1, (veh.ordre ?? i + 1))) as 1 | 2 | 3 | 4);
                     return (
-                      <label key={veh.id} className={`flex cursor-pointer flex-col items-center rounded-2xl border-2 p-4 text-center transition ${active ? "border-brand-800 bg-brand-50 shadow-md" : "border-slate-200 bg-white hover:border-slate-300"}`}>
-                        <input type="radio" name="vehicule_id" className="sr-only" value={veh.id} checked={active} onChange={() => set("vehicule_id", veh.id)} />
+                      <label key={veh.id} className={`relative flex cursor-pointer flex-col items-center rounded-2xl border-2 p-3 text-center transition focus-within:ring-4 focus-within:ring-primary-500/30 sm:p-4 ${active ? "border-primary-600 bg-primary-50 shadow-md" : "border-slate-200 bg-white hover:border-slate-300"}`}>
+                        <input type="radio" name="vehicule_id" className="sr-only" value={veh.id} checked={active} onChange={() => { set("vehicule_id", veh.id); track("camion_selectionne", { vehicule_id: veh.id, source: "cartes" }); }} />
+                        {active && <span className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-primary-600 text-white"><Icon name="check" className="h-3.5 w-3.5" /></span>}
                         <TruckIcon size={size} className="h-16 w-full" color={active ? "#0b1f3a" : "#475569"} />
-                        <span className="mt-2 text-2xl font-extrabold text-brand-800">{veh.surface_m2 != null ? `${veh.surface_m2} m²` : veh.nom}</span>
+                        <span className="mt-2 font-display text-2xl font-extrabold text-brand-800">{veh.surface_m2 != null ? `${veh.surface_m2} m²` : veh.nom}</span>
                         <span className="text-xs font-medium uppercase tracking-wide text-slate-500">{veh.nom}{veh.volume ? ` · ${veh.volume}` : ""}</span>
                         {veh.prix_base_ht != null && (
-                          <span className="mt-2 rounded-full bg-accent-500/15 px-3 py-1 text-sm font-semibold text-accent-700">
+                          <span className="chip-primary mt-2 text-sm">
                             dès {formatEuros(Math.round(veh.prix_base_ht * TVA * 100))} <span className="font-normal text-slate-500">TTC</span>
                           </span>
                         )}
@@ -465,7 +513,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                   {advisor.catalogue.length > 0 && !advisorOpen && (
                     <button
                       type="button"
-                      className="text-sm font-semibold text-brand-600 underline"
+                      className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 underline"
                       onClick={() => {
                         setAdvisorOpen(true);
                         track("assistant_taille_ouvert");
@@ -490,6 +538,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                       setV((cur) => ({ ...cur, vehicule_id: id, goods_type: cur.goods_type.trim() ? cur.goods_type : resume }));
                       setAdvisorOpen(false);
                       track(changed ? "assistant_taille_change" : "assistant_taille_accepte", { vehicule_id: id });
+                      track("camion_selectionne", { vehicule_id: id, source: "assistant" });
                       document.getElementById("f-vehicule_id")?.scrollIntoView({ behavior: "smooth", block: "start" });
                     }}
                   />
@@ -503,12 +552,12 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                 </div>
                 <div id="f-poids_total_kg">
                   <label className="label" htmlFor="poids_total_kg">Poids total (kg) *</label>
-                  <input id="poids_total_kg" type="number" min={0.1} step="0.1" className="field" value={v.poids_total_kg} onChange={(e) => set("poids_total_kg", e.target.value)} />
+                  <input id="poids_total_kg" {...inv("poids_total_kg")} type="number" min={0.1} step="0.1" className="field" value={v.poids_total_kg} onChange={(e) => set("poids_total_kg", e.target.value)} />
                   {err("poids_total_kg")}
                 </div>
                 <div id="f-longueur_max_cm">
                   <label className="label" htmlFor="longueur_max_cm">Plus grande longueur (cm) *</label>
-                  <input id="longueur_max_cm" type="number" min={1} className="field" value={v.longueur_max_cm} onChange={(e) => set("longueur_max_cm", e.target.value)} />
+                  <input id="longueur_max_cm" {...inv("longueur_max_cm")} type="number" min={1} className="field" value={v.longueur_max_cm} onChange={(e) => set("longueur_max_cm", e.target.value)} />
                   {err("longueur_max_cm")}
                 </div>
               </div>
@@ -518,7 +567,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
 
         {/* 3 · Remise porte / trottoir + options */}
         {showRemise && (
-          <Section n={3} title="Comment on vous livre" done>
+          <Section n={3} title="Comment on vous livre" done active={false} recap={`Départ ${v.porte_depart ? "à la porte" : "au trottoir"} · arrivée ${v.porte_arrivee ? "à la porte" : "au trottoir"}${v.equipier ? " · équipier" : ""}`} collapsed={!!collapsed[3]} onToggle={() => setCollapsed((c) => ({ ...c, 3: !c[3] }))}>
             <div className="grid gap-4 md:grid-cols-2">
               <Remise
                 titre="Au départ"
@@ -544,11 +593,11 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
               />
             </div>
             {optionByCode("equipier") && (
-              <label className={`mt-4 flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm ${v.equipier ? "border-brand-800 bg-brand-50" : "border-slate-200"}`}>
-                <input type="checkbox" className="mt-1 h-4 w-4" checked={v.equipier} onChange={(e) => set("equipier", e.target.checked)} />
+              <label className={`mt-4 flex cursor-pointer items-start gap-3 rounded-xl border-2 p-3 text-sm transition ${v.equipier ? "border-primary-600 bg-primary-50" : "border-slate-200 hover:border-slate-300"}`}>
+                <input type="checkbox" className="mt-0.5 h-5 w-5 accent-primary-600" checked={v.equipier} onChange={(e) => set("equipier", e.target.checked)} />
                 <span>
-                  <span className="font-medium text-slate-900">💪 {optionByCode("equipier")?.nom}</span>
-                  {prixOption("equipier") && <span className="text-slate-500"> · +{prixOption("equipier")} TTC</span>}
+                  <span className="font-semibold text-brand-900"><Icon name="people" className="mr-1 inline h-4 w-4 align-text-bottom text-primary-700" />{optionByCode("equipier")?.nom}</span>
+                  {prixOption("equipier") && <span className="chip-primary ml-2">+{prixOption("equipier")} TTC</span>}
                   <span className="block text-xs text-slate-500">{optionByCode("equipier")?.description ?? "Un second homme pour charger et décharger les objets lourds ou encombrants."}</span>
                 </span>
               </label>
@@ -558,8 +607,8 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                 {otherOptions.map((o) => {
                   const on = v.options.includes(o.id);
                   return (
-                    <label key={o.id} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm ${on ? "border-brand-800 bg-brand-50" : "border-slate-200"}`}>
-                      <input type="checkbox" className="mt-1 h-4 w-4" checked={on} onChange={(e) => set("options", e.target.checked ? [...v.options, o.id] : v.options.filter((x) => x !== o.id))} />
+                    <label key={o.id} className={`flex cursor-pointer items-start gap-3 rounded-xl border-2 p-3 text-sm transition ${on ? "border-primary-600 bg-primary-50" : "border-slate-200 hover:border-slate-300"}`}>
+                      <input type="checkbox" className="mt-0.5 h-5 w-5 accent-primary-600" checked={on} onChange={(e) => set("options", e.target.checked ? [...v.options, o.id] : v.options.filter((x) => x !== o.id))} />
                       <span>
                         <span className="font-medium text-slate-900">{o.icone ? o.icone + " " : ""}{o.nom}</span>
                         {o.prix != null && <span className="text-slate-500"> · +{formatEuros(Math.round(o.prix * TVA * 100))} TTC{o.unite_label ? ` / ${o.unite_label}` : ""}</span>}
@@ -573,7 +622,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div id="f-goods_type">
                 <label className="label" htmlFor="goods_type">Que transportons-nous ? *</label>
-                <input id="goods_type" className="field" placeholder="Ex. : un canapé 3 places, 6 cartons, une machine à laver…" value={v.goods_type} onChange={(e) => set("goods_type", e.target.value)} />
+                <input id="goods_type" {...inv("goods_type")} className="field" placeholder="Ex. : un canapé 3 places, 6 cartons, une machine à laver…" value={v.goods_type} onChange={(e) => set("goods_type", e.target.value)} />
                 {err("goods_type")}
               </div>
               <div>
@@ -586,12 +635,12 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
 
         {/* 4 · Date */}
         {showDate && (
-          <Section n={4} title="Quand ?" done={okDate}>
+          <Section n={4} title="Quand ?" done={okDate} active={activeN === 4} recap={okDate ? `${new Date(v.wanted_date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} · ${creneaux.find((c) => c.value === v.creneau)?.label ?? v.creneau}` : undefined} collapsed={!!collapsed[4]} onToggle={() => setCollapsed((c) => ({ ...c, 4: !c[4] }))}>
             <div className="grid gap-4 md:grid-cols-2">
               <div id="f-wanted_date">
                 <label className="label" htmlFor="wanted_date">Date *</label>
                 <input
-                  id="wanted_date"
+                  id="wanted_date" {...inv("wanted_date")}
                   type="date"
                   className="field"
                   min={todayIso()}
@@ -603,12 +652,12 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                   required
                 />
                 {err("wanted_date")}
-                {!errors.wanted_date && dateBloquee && <p className="mt-1 text-sm text-amber-700">{dateBloquee} : choisissez une autre date.</p>}
+                {!errors.wanted_date && dateBloquee && <p className="alert-warn mt-2 flex items-start gap-2" role="status"><Icon name="alert" className="mt-0.5 h-4 w-4 shrink-0" /> {dateBloquee} : choisissez une autre date.</p>}
                 {ctx && <p className="mt-1 text-xs text-slate-500">Jours de livraison : {ctx.jours_service.join(", ")}{ctx.commande_jour_j ? ` · le jour même jusqu'à ${ctx.heure_limite_jour_j}` : ""}.</p>}
               </div>
               <div id="f-creneau">
                 <label className="label" htmlFor="creneau">Créneau *</label>
-                <select id="creneau" className="field" value={v.creneau} onChange={(e) => set("creneau", e.target.value)} disabled={!creneaux.length}>
+                <select id="creneau" {...inv("creneau")} className="field" value={v.creneau} onChange={(e) => set("creneau", e.target.value)} disabled={!creneaux.length}>
                   {!creneaux.length && <option value="">{dateBloquee ?? "Aucun créneau pour cette date"}</option>}
                   {creneaux.map((c) => (
                     <option key={c.value} value={c.value}>{c.label}</option>
@@ -622,11 +671,11 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
 
         {/* 5 · Coordonnées */}
         {showContact && (
-          <Section n={5} title="Vos coordonnées" done={okContact}>
+          <Section n={5} title="Vos coordonnées" done={okContact} active={activeN === 5} recap={okContact ? `${v.contact_name}${v.company ? ` · ${v.company}` : ""} · ${v.phone}` : undefined} collapsed={!!collapsed[5]} onToggle={() => setCollapsed((c) => ({ ...c, 5: !c[5] }))}>
             <div className="grid gap-4 md:grid-cols-2">
               <div id="f-contact_name">
                 <label className="label" htmlFor="contact_name">Nom et prénom *</label>
-                <input id="contact_name" className="field" value={v.contact_name} onChange={(e) => set("contact_name", e.target.value)} autoComplete="name" />
+                <input id="contact_name" {...inv("contact_name")} className="field" value={v.contact_name} onChange={(e) => set("contact_name", e.target.value)} autoComplete="name" />
                 {err("contact_name")}
               </div>
               <div>
@@ -635,12 +684,12 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
               </div>
               <div id="f-email">
                 <label className="label" htmlFor="email">E-mail *</label>
-                <input id="email" type="email" className="field" value={v.email} onChange={(e) => set("email", e.target.value)} autoComplete="email" inputMode="email" />
+                <input id="email" {...inv("email")} type="email" className="field" value={v.email} onChange={(e) => set("email", e.target.value)} autoComplete="email" inputMode="email" />
                 {err("email")}
               </div>
               <div id="f-phone">
                 <label className="label" htmlFor="phone">Téléphone *</label>
-                <input id="phone" type="tel" className="field" value={v.phone} onChange={(e) => set("phone", e.target.value)} autoComplete="tel" inputMode="tel" />
+                <input id="phone" {...inv("phone")} type="tel" className="field" value={v.phone} onChange={(e) => set("phone", e.target.value)} autoComplete="tel" inputMode="tel" />
                 {err("phone")}
               </div>
             </div>
@@ -661,42 +710,30 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
 
         {/* 6 · Prix + paiement */}
         {showPrix && (
-          <Section n={6} title="Votre prix" done={false}>
-            <div className="rounded-2xl bg-brand-50 p-5">
+          <Section n={6} title="Votre prix" done={false} active={activeN === 6}>
+            <div className={`rounded-2xl border p-5 ${instant ? "border-primary-100 bg-primary-50" : "border-slate-200 bg-surface"}`} aria-live="polite">
               {quoting && !quote ? (
-                <p className="text-brand-800">Calcul du prix…</p>
+                <p className="flex items-center gap-2 text-brand-800"><span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-primary-600 border-t-transparent" aria-hidden="true" /> Calcul du prix…</p>
               ) : instant && prix ? (
                 <>
                   <div className="flex flex-wrap items-end justify-between gap-2">
                     <div>
-                      <p className="text-sm font-semibold uppercase tracking-wide text-brand-600">Prix ferme{quoting ? " · mise à jour…" : ""}</p>
-                      <p className="mt-1 text-4xl font-extrabold text-brand-800">
+                      <p className={`text-xs font-bold uppercase tracking-[0.14em] ${fresh ? "text-primary-700" : "text-muted"}`}>{fresh ? "Prix ferme" : "Mise à jour du prix…"}</p>
+                      <p className={`price-xl mt-1 ${fresh ? "" : "opacity-40"}`}>
                         {formatEuros(quote?.total_cents ?? 0)} <span className="text-base font-semibold text-slate-500">TTC</span>
                       </p>
                       <p className="text-sm text-slate-600">soit {formatEuros(quote?.price_cents ?? 0)} HT · {prix.distance_km} km</p>
                     </div>
                     {vehiculeChoisi && <TruckIcon size={(Math.min(4, Math.max(1, vehiculeChoisi.ordre ?? 1)) as 1 | 2 | 3 | 4)} className="h-12 w-28 text-brand-800" />}
                   </div>
-                  <ul className="mt-4 space-y-1 text-sm text-slate-600">
-                    <li className="flex justify-between"><span>{prix.vehicule ? `${prix.vehicule.nom}${prix.vehicule.surface_m2 != null ? ` · ${prix.vehicule.surface_m2} m²` : ""}${prix.zone?.rayon_km ? ` · ${prix.zone.rayon_km} km inclus` : ""}` : `Prise en charge${prix.mode ? ` (${prix.mode.libelle})` : ""}`}</span><span>{formatEuros(Math.round((prix.zone?.forfait_ht ?? prix.base_ht) * 100))}</span></li>
-                    {prix.zone && prix.zone.extra_km > 0 && <li className="flex justify-between"><span>{prix.zone.extra_km} km au-delà × {formatEuros(Math.round(prix.zone.prix_km_ht * 100))}</span><span>{formatEuros(Math.round(prix.zone.extra_km * prix.zone.prix_km_ht * 100))}</span></li>}
-                    {prix.supplement_distance_ht > 0 && <li className="flex justify-between"><span>Distance au-delà du rayon inclus</span><span>{formatEuros(Math.round(prix.supplement_distance_ht * 100))}</span></li>}
-                    {prix.supplement_lourd_ht > 0 && <li className="flex justify-between"><span>Colis lourds</span><span>{formatEuros(Math.round(prix.supplement_lourd_ht * 100))}</span></li>}
-                    {prix.options.map((o) => (
-                      <li key={o.libelle} className="flex justify-between"><span>{o.libelle}</span><span>{formatEuros(Math.round(o.prix_ht * 100))}</span></li>
-                    ))}
-                    {prix.majoration_creneau?.delta_pct ? <li className="flex justify-between"><span>{prix.majoration_creneau.libelle_court || "Créneau"}</span><span>{prix.majoration_creneau.delta_pct > 0 ? "+" : ""}{prix.majoration_creneau.delta_pct} %</span></li> : null}
-                    {prix.remise?.delta_pct ? <li className="flex justify-between"><span>{prix.remise.libelles.join(", ") || "Tarif dynamique"}</span><span>{prix.remise.delta_pct > 0 ? "+" : ""}{prix.remise.delta_pct} %</span></li> : null}
-                    <li className="flex justify-between font-semibold text-slate-800"><span>Total HT</span><span>{formatEuros(Math.round(prix.ht * 100))}</span></li>
-                    <li className="flex justify-between"><span>TVA 20 %</span><span>{formatEuros(Math.round(prix.tva * 100))}</span></li>
-                  </ul>
+                  <PriceDetail prix={prix} className="mt-4" />
                   <p className="mt-3 flex items-center gap-2 text-sm text-slate-600">
                     <Icon name="shield" className="h-4 w-4" /> Paiement sécurisé par Stripe. Annulation possible, échec de retrait facturé 50 %.
                   </p>
                 </>
               ) : (
                 <>
-                  <p className="text-sm font-semibold uppercase tracking-wide text-brand-600">Sur devis</p>
+                  <p className="eyebrow">Sur devis</p>
                   <p className="mt-1 text-slate-700">{copy.quoteNotice}</p>
                   {quote?.reason && sellsOnline && <p className="mt-2 text-sm text-slate-500">{QUOTE_REASONS[quote.reason] ?? quote.reason}</p>}
                   {quote?.prix?.motifs?.length ? <p className="mt-1 text-xs text-slate-500">{quote.prix.motifs.join(" · ")}</p> : null}
@@ -705,7 +742,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
             </div>
 
             <label id="f-accept_terms" className="mt-4 flex items-start gap-3 text-sm text-slate-700">
-              <input type="checkbox" className="mt-1 h-4 w-4" checked={v.accept_terms} onChange={(e) => set("accept_terms", e.target.checked)} />
+              <input type="checkbox" className="mt-0.5 h-5 w-5 accent-primary-600" checked={v.accept_terms} {...inv("accept_terms")} onChange={(e) => set("accept_terms", e.target.checked)} />
               <span>
                 J&apos;accepte les{" "}
                 <Link href="/cgv" className="font-semibold text-brand-600 underline" target="_blank">conditions générales de vente</Link>{" "}
@@ -713,8 +750,9 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
               </span>
             </label>
             {err("accept_terms")}
-            {serverError && <p className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{serverError}</p>}
-            <button type="submit" className="btn-primary mt-5 w-full justify-center py-4 text-lg sm:w-auto" disabled={submitting || quoting}>
+            {serverError && <p className="alert-error mt-3" role="alert">{serverError}</p>}
+            <button type="submit" className="btn-primary mt-5 w-full justify-center py-4 text-lg sm:w-auto" disabled={submitting || quoting || (instant && !fresh)} aria-busy={submitting || undefined}>
+              <Icon name="lock" className="h-5 w-5" />
               {submitting ? "Envoi…" : instant ? `Payer ${formatEuros(quote?.total_cents ?? 0)} et réserver` : "Envoyer ma demande de devis"}
             </button>
             <p className="mt-3 text-center text-xs text-slate-500 sm:text-left">Sans engagement · Exploitation joignable 24h/24 au 07 67 16 60 15</p>
@@ -722,27 +760,44 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
         )}
       </form>
 
-      {/* Sticky total on mobile while the form unfolds */}
-      {instant && showPrix && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white/95 p-3 backdrop-blur sm:hidden">
-          <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-1">
-            <span className="text-sm text-slate-600">Total TTC</span>
-            <span className="text-xl font-extrabold text-brand-800">{formatEuros(quote?.total_cents ?? 0)}</span>
-          </div>
-        </div>
+      {okTrajet && (
+        <PriceBar
+          state={barState}
+          totalCents={quote?.total_cents}
+          previousCents={quote?.total_cents}
+          action={!showPrix ? "Continuer" : barState === "calcule" ? "Payer et réserver" : barState === "indisponible" || barState === "calcul" || barState === "recalcul" ? "Continuer" : "Envoyer ma demande"}
+          onAction={barAction}
+          actionDisabled={submitting || (showPrix && (barState === "calcul" || barState === "recalcul"))}
+          busy={submitting}
+          hidden={typing}
+          detail={instant && prix ? <PriceDetail prix={prix} /> : undefined}
+        />
       )}
     </div>
   );
 }
 
-function Section({ n, title, done, children }: { n: number; title: string; done: boolean; children: React.ReactNode }) {
+function Section({ n, title, done, active, recap, collapsed, onToggle, children }: { n: number; title: string; done: boolean; active?: boolean; recap?: string; collapsed?: boolean; onToggle?: () => void; children: React.ReactNode }) {
+  const showRecap = done && !!recap;
   return (
-    <section className="card scroll-mt-24">
-      <h2 className="mb-4 flex items-center gap-3 text-lg font-bold text-brand-800">
-        <span className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold ${done ? "bg-accent-500 text-white" : "bg-brand-800 text-white"}`}>{done ? <Icon name="check" className="h-4 w-4" /> : n}</span>
-        {title}
-      </h2>
-      {children}
+    <section className={`card scroll-mt-24 transition motion-safe:animate-[fadeIn_200ms_ease-out] ${active ? "ring-2 ring-primary-500/60 shadow-float" : ""}`} aria-current={active ? "step" : undefined} id={`bloc-${n}`}>
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <h2 className="flex items-center gap-3 font-display text-lg font-bold text-brand-800">
+          <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-bold ${done ? "bg-primary-600 text-white" : active ? "bg-brand-800 text-white" : "bg-slate-200 text-slate-600"}`}>{done ? <Icon name="check" className="h-4 w-4" /> : n}</span>
+          <span>
+            {title}
+            {showRecap && collapsed && <span className="block text-sm font-medium text-muted">{recap}</span>}
+          </span>
+        </h2>
+        {showRecap && onToggle && (
+          <button type="button" className="btn-ghost btn-sm -mr-2 text-primary-700" onClick={onToggle} aria-expanded={!collapsed} aria-controls={`bloc-${n}-body`}>
+            {collapsed ? "Modifier" : "Replier"}
+          </button>
+        )}
+      </div>
+      <div id={`bloc-${n}-body`} hidden={showRecap && collapsed}>
+        {children}
+      </div>
     </section>
   );
 }
@@ -760,13 +815,13 @@ function Remise({ titre, porte, onPorte, etage, onEtage, ascenseur, onAscenseur,
 }) {
   const seuil = regle?.seuil ?? 3;
   return (
-    <div className="rounded-xl border border-slate-200 p-3">
+    <div className="rounded-xl border border-slate-200 bg-white p-3">
       <p className="label">{titre}</p>
       <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label={titre}>
-        <button type="button" role="radio" aria-checked={!porte} onClick={() => onPorte(false)} className={`rounded-lg border px-3 py-2 text-sm font-medium ${!porte ? "border-brand-800 bg-brand-800 text-white" : "border-slate-300 text-slate-700"}`}>
+        <button type="button" role="radio" aria-checked={!porte} onClick={() => onPorte(false)} className={`min-h-12 rounded-xl border-2 px-3 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 ${!porte ? "border-primary-600 bg-primary-600 text-white" : "border-slate-300 text-slate-700 hover:border-slate-400"}`}>
           Au trottoir<span className="block text-xs font-normal opacity-80">inclus</span>
         </button>
-        <button type="button" role="radio" aria-checked={porte} onClick={() => onPorte(true)} className={`rounded-lg border px-3 py-2 text-sm font-medium ${porte ? "border-brand-800 bg-brand-800 text-white" : "border-slate-300 text-slate-700"}`}>
+        <button type="button" role="radio" aria-checked={porte} onClick={() => onPorte(true)} className={`min-h-12 rounded-xl border-2 px-3 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 ${porte ? "border-primary-600 bg-primary-600 text-white" : "border-slate-300 text-slate-700 hover:border-slate-400"}`}>
           À la porte<span className="block text-xs font-normal opacity-80">{prix ? `+${prix} TTC` : "en option"}</span>
         </button>
       </div>
@@ -777,7 +832,7 @@ function Remise({ titre, porte, onPorte, etage, onEtage, ascenseur, onAscenseur,
             <input type="number" min={0} max={60} className="field" value={etage} onChange={(e) => onEtage(e.target.value)} />
           </div>
           <label className="flex items-center gap-2 pb-3 text-sm text-slate-700">
-            <input type="checkbox" className="h-4 w-4" checked={ascenseur} onChange={(e) => onAscenseur(e.target.checked)} />
+            <input type="checkbox" className="h-5 w-5 accent-primary-600" checked={ascenseur} onChange={(e) => onAscenseur(e.target.checked)} />
             Ascenseur
           </label>
           <p className="col-span-2 text-xs text-slate-500">

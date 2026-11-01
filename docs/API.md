@@ -20,7 +20,7 @@ curl -X PUT https://wanymsolution.com/api/content/hero.title \
 ```
 
 Clés notables : `hero.*`, `badges` (séparées par `|`), `services.title/lead`, `included.items` (`|`),
-`pricing.*`, `about.*`, `cta.*`, `contact.*`, `legal.*`, `faq` (JSON `[{"q","a"}]`), `order.*` (dont `order.namy_services`), `track.*`, `cgv.body` (markdown).
+`pricing.*`, `about.*`, `cta.*`, `contact.*`, `legal.*`, `faq` (JSON `[{"q","a"}]`), `order.*` (dont `order.namy_services`, `order.quote_received_title/body`), `track.*`, `cgv.body` (markdown). Accueil refondu (01/11/2026) : `reassurance.items` (`icone:Titre:Sous-titre|…`, icônes de `src/components/Icon.tsx`), `vehicles.title`, `vehicles.lead`, `how.title`, `how.steps` (JSON `[{"t","d","icon"}]`), `pro.title`, `pro.body`, `pro.items` (`|`), `references.items` (JSON `[{"name","text","role"}]`, section masquée si vide — n'y mettre que des avis validés).
 La page se met à jour en arrière-plan dès l'appel (revalidation par tag).
 
 ## Services

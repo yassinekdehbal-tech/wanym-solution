@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/*
+ * WANYM design tokens — "Tech Logistics Premium".
+ * brand   = bleu nuit (textes forts, en-têtes sombres)
+ * primary = vert WANYM (actions, sélections, validations) — 600/700 passent AA avec du texte blanc
+ * accent  = orange (avertissements, attention) — jamais pour une action
+ * surface = fond gris clair, muted = texte secondaire
+ */
 @theme {
   --color-brand-50: #eef3fb;
   --color-brand-100: #d9e4f5;
@@ -9,52 +16,181 @@
   --color-brand-700: #10305c;
   --color-brand-800: #0b1f3a;
   --color-brand-900: #07142a;
-  --color-accent-400: #f8b84a;
-  --color-accent-500: #f5a524;
+
+  --color-primary-50: #e6f7f1;
+  --color-primary-100: #c9eee0;
+  --color-primary-200: #9adfc6;
+  --color-primary-400: #1fbf96;
+  --color-primary-500: #00a67e;
+  --color-primary-600: #00875f;
+  --color-primary-700: #046b4d;
+  --color-primary-800: #06523c;
+
+  --color-accent-50: #fff6e5;
+  --color-accent-100: #ffe9c2;
+  --color-accent-400: #ffc46b;
+  --color-accent-500: #ffb547;
   --color-accent-600: #d98b0f;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-accent-700: #9a5b00;
+
+  --color-danger-50: #fdecec;
+  --color-danger-600: #c62828;
+  --color-danger-700: #a51f1f;
+
+  --color-surface: #f4f6f8;
+  --color-muted: #526174;
+  --color-ink: #0b1f3a;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(11 31 58 / 0.06), 0 4px 16px -8px rgb(11 31 58 / 0.12);
+  --shadow-float: 0 12px 40px -12px rgb(11 31 58 / 0.25);
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-ink);
   font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @layer components {
+  /* ── Boutons : 48 px minimum, focus visible, états désactivé / chargement ── */
   .btn,
   .btn-primary,
   .btn-dark,
   .btn-outline,
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-base font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-accent-400/50 disabled:cursor-not-allowed disabled:opacity-60;
+  .btn-ghost,
+  .btn-light {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 py-3 text-base font-semibold leading-tight transition focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 disabled:cursor-not-allowed disabled:opacity-60 aria-busy:cursor-progress;
   }
   .btn-primary {
-    @apply bg-accent-500 text-brand-900 hover:bg-accent-400;
+    @apply bg-primary-600 text-white shadow-sm hover:bg-primary-700 active:bg-primary-800;
   }
   .btn-dark {
-    @apply bg-brand-800 text-white hover:bg-brand-700;
+    @apply bg-brand-800 text-white hover:bg-brand-700 active:bg-brand-900;
   }
   .btn-outline {
-    @apply border-2 border-brand-800 text-brand-800 hover:bg-brand-50;
+    @apply border-2 border-brand-800 bg-white text-brand-800 hover:bg-brand-50;
   }
   .btn-ghost {
     @apply text-brand-800 hover:bg-brand-50;
   }
+  .btn-light {
+    @apply bg-white text-brand-800 shadow-sm hover:bg-brand-50;
+  }
+  .btn-sm {
+    @apply min-h-11 px-4 py-2 text-sm;
+  }
+
+  /* ── Champs : 48 px minimum, erreur portée par aria-invalid ── */
   .field {
-    @apply block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-4 focus:ring-brand-100;
+    @apply block min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-brand-900 shadow-sm placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-500/20 disabled:bg-slate-50 disabled:text-slate-500 aria-[invalid=true]:border-danger-600 aria-[invalid=true]:ring-4 aria-[invalid=true]:ring-danger-600/15;
   }
   .label {
     @apply mb-1.5 block text-sm font-semibold text-slate-700;
   }
-  .card {
-    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm;
+  .hint {
+    @apply mt-1.5 text-sm text-muted;
   }
+  .error {
+    @apply mt-1.5 flex items-start gap-1.5 text-sm font-medium text-danger-700;
+  }
+
+  /* ── Surfaces ── */
+  .card {
+    @apply rounded-2xl border border-slate-200/80 bg-white p-5 shadow-card sm:p-6;
+  }
+  .card-interactive {
+    @apply rounded-2xl border border-slate-200/80 bg-white p-5 shadow-card transition sm:p-6 hover:-translate-y-0.5 hover:shadow-float focus-within:ring-4 focus-within:ring-primary-500/30;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+  .chip-primary {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-primary-50 text-primary-700;
+  }
+  .chip-warn {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-accent-50 text-accent-700;
+  }
+  .chip-muted {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-slate-100 text-slate-600;
+  }
+  .alert-info {
+    @apply rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm text-brand-800;
+  }
+  .alert-warn {
+    @apply rounded-xl border border-accent-100 bg-accent-50 p-4 text-sm text-accent-700;
+  }
+  .alert-error {
+    @apply rounded-xl border border-danger-600/20 bg-danger-50 p-4 text-sm text-danger-700;
+  }
+  .alert-success {
+    @apply rounded-xl border border-primary-100 bg-primary-50 p-4 text-sm text-primary-800;
+  }
+
+  /* ── Mise en page ── */
   .container-x {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+  .section {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+  .h1 {
+    @apply font-display text-[2rem] font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl;
+  }
+  .h2 {
+    @apply font-display text-2xl font-extrabold leading-tight text-brand-800 sm:text-3xl;
+  }
+  .lead {
+    @apply text-base text-muted sm:text-lg;
+  }
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.14em] text-primary-700;
+  }
+  .price-xl {
+    @apply font-display text-[2rem] font-extrabold leading-none tracking-tight text-brand-800 sm:text-[2.5rem];
+  }
+  .safe-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
 }
