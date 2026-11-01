@@ -14,7 +14,11 @@ export type NamyContexte = {
   client: { id: string; nom: string | null };
   grille: { id: string; nom: string | null; type: string; tarif_par_colis: boolean };
   modes: { id: string; code: string; libelle: string }[];
-  options: { id: string; nom: string; description: string | null; icone: string | null; prix: number | null; format_prix: string | null; unite_label: string | null }[];
+  /** Grille ZONE : les surfaces plancher vendues (catégories de véhicule NAMY), avec le forfait de la plus petite zone. */
+  vehicules: { id: string; nom: string; volume: string | null; surface_m2: number | null; couleur: string | null; ordre: number | null; prix_base_ht: number | null; rayon_km: number | null }[];
+  options: { id: string; code: string | null; nom: string; description: string | null; icone: string | null; prix: number | null; format_prix: string | null; unite_label: string | null }[];
+  /** Règles automatiques affichées au client (étage sans ascenseur…), jamais recalculées par le site. */
+  regles: { code: string | null; nom: string; description: string | null; champ: string | null; seuil: number | null; prix: number | null }[];
   seuils_devis: { poids_total: number | null; colis_kg: number | null; colis_cm: number | null };
   jours_service: string[];
   commande_jour_j: boolean;
@@ -25,6 +29,8 @@ export type NamyContexte = {
 
 export type NamyPrix = {
   mode: { id: string; code: string; libelle: string } | null;
+  vehicule: { id: string; nom: string; volume: string | null; surface_m2: number | null } | null;
+  zone: { mode: "fixe" | "depassement"; rayon_km: number | null; extra_km: number; prix_km_ht: number; forfait_ht: number } | null;
   distance_km: number;
   categorie: number | null;
   base_ht: number;
@@ -61,6 +67,9 @@ export type NamySiteInput = {
   date: string;
   creneau?: string | null;
   mode_id?: string | null;
+  vehicule_id?: string | null;
+  porte_depart?: boolean;
+  porte_arrivee?: boolean;
   nb_colis: number;
   poids_total_kg: number;
   poids_max_colis_kg?: number | null;
