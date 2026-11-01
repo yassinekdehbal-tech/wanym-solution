@@ -17,8 +17,9 @@ export const env = {
   stripeInvoiceDaysDue: Number(process.env.STRIPE_INVOICE_DAYS_DUE ?? 30) || 30,
   namyWebhookUrl: process.env.NAMY_WEBHOOK_URL ?? "",
   namyApiKey: process.env.NAMY_API_KEY ?? "",
-  // Key NAMY presents on POST /api/webhooks/namy (vault secret wanym_site_api_key). Falls back to CONTENT_API_KEY.
-  namyInboundKey: process.env.NAMY_INBOUND_KEY || process.env.CONTENT_API_KEY || "",
+  // Key NAMY presents on POST /api/webhooks/namy (NAMY vault secret wanym_site_api_key). One shared key by default:
+  // the same value as NAMY_API_KEY, so a single secret links the two systems in both directions.
+  namyInboundKey: process.env.NAMY_INBOUND_KEY || process.env.NAMY_API_KEY || process.env.CONTENT_API_KEY || "",
   googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY ?? "",
   gtagId: process.env.NEXT_PUBLIC_GTAG_ID ?? "",
   gtagConversionLabel: process.env.NEXT_PUBLIC_GTAG_CONVERSION_LABEL ?? "",

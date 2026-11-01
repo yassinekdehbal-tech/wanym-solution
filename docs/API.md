@@ -128,7 +128,7 @@ Toutes les requêtes vont sur `NAMY_WEBHOOK_URL` (Edge Function `creer-commande-
 
 Le payload `commande` reprend les saisies (adresses, date, créneau, mode, colis, poids, longueur, étage, options, contacts, paiement). NAMY **recalcule le prix** ; `expedition_id` est stocké dans `namy_ref`. Échec → événement `namy`, et `GET /api/orders?unsynced=1` liste ce qui reste à transmettre.
 
-### NAMY → site (`POST /api/webhooks/namy`, Bearer `NAMY_INBOUND_KEY` (repli `CONTENT_API_KEY`))
+### NAMY → site (`POST /api/webhooks/namy`, Bearer = la clé partagée (`NAMY_API_KEY`, ou `NAMY_INBOUND_KEY` si distincte))
 
 Déclenché par le trigger NAMY à chaque changement de statut d'une course du site :
 
