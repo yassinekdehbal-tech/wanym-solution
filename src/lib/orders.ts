@@ -1,3 +1,4 @@
+import { CATALOGUE_OBJETS } from "@/lib/catalogue-objets";
 import { createHash } from "node:crypto";
 import { sendCustomerConfirmation, sendInternalNotification } from "@/lib/email";
 import { namyCommande, namyConfigured, namyDevis, orderToNamyInput, type NamyDevis, type NamyError, type NamySiteInput } from "@/lib/namy";
@@ -81,12 +82,22 @@ export function inputToNamy(input: QuoteInput | OrderInput, reference?: string):
     acces_escalier: input.acces_escalier,
     options: input.options,
     marchandise: n(i.goods_type) as string | null,
-    notes: n(i.notes) as string | null,
+    notes: n([i.notes, inventaireResume(input)].filter(Boolean).join("\n")) as string | null,
     company: n(i.company) as string | null,
     contact_name: n(i.contact_name) as string | null,
     email: n(i.email) as string | null,
     phone: n(i.phone) as string | null,
   };
+}
+
+/** Human summary of the size-advisor inventory ("Inventaire déclaré : 3 carton standard, 1 lave-linge, autre : piano droit"), for the dispatch notes. */
+export function inventaireResume(input: Pick<OrderInput, "inventaire" | "inventaire_autre">): string | null {
+  const parts = Object.entries(input.inventaire ?? {})
+    .filter(([, q]) => q > 0)
+    .map(([id, q]) => `${q} ${(CATALOGUE_OBJETS.find((c) => c.id === id)?.nom ?? id).toLowerCase()}`);
+  const autre = input.inventaire_autre?.trim();
+  if (autre) parts.push(`autre : ${autre}`);
+  return parts.length ? `Inventaire déclaré : ${parts.join(", ")}` : null;
 }
 
 export type SiteQuote =
@@ -138,6 +149,8 @@ export async function createOrder(input: OrderInput, ip: string): Promise<{ orde
       porte_depart: input.porte_depart,
       porte_arrivee: input.porte_arrivee,
       option_ids: input.options,
+      inventaire: input.inventaire && Object.keys(input.inventaire).length ? input.inventaire : null,
+      inventaire_autre: n(input.inventaire_autre),
       poids_max_colis_kg: typeof input.poids_max_colis_kg === "number" ? input.poids_max_colis_kg : null,
       nb_colis_lourds: input.nb_colis_lourds,
       longueur_max_cm: input.longueur_max_cm,
