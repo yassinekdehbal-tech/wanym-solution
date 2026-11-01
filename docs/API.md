@@ -50,6 +50,18 @@ Réponse : `mode: "instant"` avec `price_cents` (HT), `total_cents` (TTC), `prix
 
 La clé de contenu `order.namy_services` (slugs séparés par `|`) liste les prestations vendues en ligne au prix NAMY ; les autres partent en devis.
 
+### Assistant de choix de taille (`/commander`)
+
+Sous les cartes de taille, le lien « Je ne sais pas quelle taille choisir » ouvre un inventaire d'objets ; un moteur local (`src/lib/vehicle-advisor.ts`, testé) suggère la plus petite taille qui passe (surface, volume, longueur, hauteur, charge utile, marge 10 %). Le prix reste celui de NAMY : choisir une suggestion présélectionne `vehicule_id` et déclenche le recalcul habituel. Trois clés de contenu, toutes optionnelles (le code porte les valeurs par défaut) :
+
+| Clé | Contenu |
+|---|---|
+| `order.exemples_cartes` | JSON `{"1":"un lave-linge et 6 cartons", …}` — l'exemple affiché sous chaque carte, indexé par m². |
+| `order.catalogue_objets` | JSON `[{id, nom, categorie, icone, longueur_cm, largeur_cm, hauteur_cm, poids_kg, empilable, supporte_charge, fragile, orientation: "libre"|"debout"|"a_plat", emprise_m2?, a_confirmer?}]` — remplace le catalogue par défaut (`src/lib/catalogue-objets.ts`). |
+| `order.vehicules_capacites` | JSON `[{surface_m2, volume_m3, longueur_int_cm, largeur_int_cm, hauteur_int_cm, charge_utile_kg}]` — dimensions intérieures et charge utile par taille. |
+
+La commande garde l'inventaire déclaré dans `orders.options.inventaire` (`{id: quantité}`) et `options.inventaire_autre` ; un résumé lisible (« Inventaire déclaré : 3 carton standard, 1 lave-linge ») est ajouté aux notes transmises à NAMY.
+
 ## Commandes
 
 | Méthode | Route | Accès | Description |

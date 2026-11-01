@@ -33,6 +33,9 @@ export const quoteInputSchema = z.object({
   etage: z.coerce.number().int().min(0).max(60).default(0),
   acces_escalier: z.coerce.boolean().default(false),
   options: z.array(z.string().max(60)).max(20).default([]),
+  /** Size advisor inventory (catalogue item id → quantity), kept on the order and summarised for the dispatch. */
+  inventaire: z.record(z.string().max(40), z.coerce.number().int().min(0).max(99)).optional(),
+  inventaire_autre: optionalText(160),
 });
 
 export const orderInputSchema = quoteInputSchema.extend({

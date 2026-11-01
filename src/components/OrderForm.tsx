@@ -6,8 +6,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AddressInput } from "@/components/AddressInput";
 import { readAttribution } from "@/components/AttributionCapture";
 import { Icon } from "@/components/Icon";
+import { SizeAdvisor, type Inventaire } from "@/components/SizeAdvisor";
 import { TruckIcon } from "@/components/TruckIcon";
 import type { NamyContexte, NamyPrix } from "@/lib/namy";
+import type { CatalogueItem, VehiculeCapacite } from "@/lib/vehicle-advisor";
 import { formatEuros } from "@/lib/pricing";
 import type { Service } from "@/lib/types";
 
@@ -36,6 +38,8 @@ type Values = {
   ascenseur_arrivee: boolean;
   equipier: boolean;
   options: string[]; // other manual options (ids)
+  inventaire: Inventaire; // size advisor: catalogue item id → quantity
+  autre_texte: string;
   // legacy weight-grid fields (shown only when NAMY serves no vehicle)
   nb_colis: string;
   poids_total_kg: string;
@@ -97,6 +101,8 @@ const initial = (service: string): Values => ({
   ascenseur_arrivee: true,
   equipier: false,
   options: [],
+  inventaire: {},
+  autre_texte: "",
   nb_colis: "1",
   poids_total_kg: "",
   longueur_max_cm: "",
@@ -122,7 +128,9 @@ const QUOTE_REASONS: Record<string, string> = {
   namy_non_configure: "Le calcul en ligne est momentanément indisponible, nous vous envoyons un devis.",
 };
 
-export function OrderForm({ services, namySlugs, copy }: { services: Service[]; namySlugs: string[]; copy: { quoteNotice: string; cancelledBody: string } }) {
+export type AdvisorConfig = { catalogue: CatalogueItem[]; capacites: VehiculeCapacite[]; exemples: Record<string, string> };
+
+export function OrderForm({ services, namySlugs, copy, advisor }: { services: Service[]; namySlugs: string[]; copy: { quoteNotice: string; cancelledBody: string }; advisor: AdvisorConfig }) {
   const router = useRouter();
   const params = useSearchParams();
   const defaultService = useMemo(() => services.find((s) => namySlugs.includes(s.slug))?.slug ?? services[0]?.slug ?? "", [services, namySlugs]);
@@ -137,7 +145,15 @@ export function OrderForm({ services, namySlugs, copy }: { services: Service[]; 
   const [quoting, setQuoting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [advisorOpen, setAdvisorOpen] = useState(false);
   const quoteSeq = useRef(0);
+  const track = (name: string, params: Record<string, unknown> = {}) => {
+    try {
+      window.gtag?.("event", name, params);
+    } catch {
+      /* analytics is optional */
+    }
+  };
   const cancelled = params.get("cancelled") === "1";
   const sellsOnline = namySlugs.length === 0 || namySlugs.includes(v.service_slug);
 
@@ -271,6 +287,8 @@ export function OrderForm({ services, namySlugs, copy }: { services: Service[]; 
       etage: f.etage,
       acces_escalier: f.acces_escalier,
       options: selectedOptionIds(),
+      inventaire: Object.fromEntries(Object.entries(v.inventaire).filter(([, q]) => q > 0)),
+      inventaire_autre: (v.inventaire.autre ?? 0) > 0 ? v.autre_texte : "",
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [v, ctx, zoneMode, selectedOptionIds]);
@@ -434,12 +452,48 @@ export function OrderForm({ services, namySlugs, copy }: { services: Service[]; 
                             dès {formatEuros(Math.round(veh.prix_base_ht * TVA * 100))} <span className="font-normal text-slate-500">TTC</span>
                           </span>
                         )}
+                        {veh.surface_m2 != null && advisor.exemples[String(veh.surface_m2)] && (
+                          <span className="mt-2 text-xs leading-snug text-slate-500">ex. {advisor.exemples[String(veh.surface_m2)]}</span>
+                        )}
                       </label>
                     );
                   })}
                 </div>
                 {err("vehicule_id")}
-                <p className="mt-3 text-xs text-slate-500">Au-delà des {vehicules[0]?.rayon_km ?? 20} km inclus, {prix?.zone?.prix_km_ht ? formatEuros(Math.round(prix.zone.prix_km_ht * TVA * 100)) : "2,40 €"} TTC par km supplémentaire.</p>
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                  <p>Au-delà des {vehicules[0]?.rayon_km ?? 20} km inclus, {prix?.zone?.prix_km_ht ? formatEuros(Math.round(prix.zone.prix_km_ht * TVA * 100)) : "2,40 €"} TTC par km supplémentaire.</p>
+                  {advisor.catalogue.length > 0 && !advisorOpen && (
+                    <button
+                      type="button"
+                      className="text-sm font-semibold text-brand-600 underline"
+                      onClick={() => {
+                        setAdvisorOpen(true);
+                        track("assistant_taille_ouvert");
+                      }}
+                    >
+                      Je ne sais pas quelle taille choisir
+                    </button>
+                  )}
+                </div>
+                {advisorOpen && (
+                  <SizeAdvisor
+                    catalogue={advisor.catalogue}
+                    capacites={advisor.capacites}
+                    vehicules={vehicules}
+                    inventaire={v.inventaire}
+                    autreTexte={v.autre_texte}
+                    onInventaire={(inv) => set("inventaire", inv)}
+                    onAutreTexte={(t) => set("autre_texte", t)}
+                    onClose={() => setAdvisorOpen(false)}
+                    onChoose={(id, resume) => {
+                      const changed = v.vehicule_id && v.vehicule_id !== id;
+                      setV((cur) => ({ ...cur, vehicule_id: id, goods_type: cur.goods_type.trim() ? cur.goods_type : resume }));
+                      setAdvisorOpen(false);
+                      track(changed ? "assistant_taille_change" : "assistant_taille_accepte", { vehicule_id: id });
+                      document.getElementById("f-vehicule_id")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                  />
+                )}
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-3">
