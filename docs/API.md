@@ -61,7 +61,8 @@ La clé de contenu `order.namy_services` (slugs séparés par `|`) liste les pre
 | GET | `/orders/{id}/events` | protégé | Journal complet |
 | POST | `/orders/{id}/events` | protégé | Ajoute une note / un échange SAV / une facture |
 | POST | `/track` | public | Suivi client `{ reference, email }` → vue limitée |
-| POST | `/webhooks/stripe` | Stripe | Confirmation de paiement, expiration, remboursement |
+| POST | `/orders/{id}/invoice` | clé API | Facture Stripe (Invoicing) pour une commande payée sur facture : créée, finalisée, envoyée |
+| POST | `/webhooks/stripe` | Stripe | Paiement, échec différé, expiration, facture payée/impayée, remboursement, litige |
 
 ### Cycle de vie et répartition des rôles
 
@@ -144,7 +145,16 @@ Le client est **débité à la commande** (Stripe Checkout). Une annulation apr�
 ## Stripe
 
 Endpoint webhook à déclarer : `https://www.wanymsolution.com/api/webhooks/stripe`, événements `checkout.session.completed`,
-`checkout.session.async_payment_succeeded`, `checkout.session.expired`, `charge.refunded`. Renseigner `STRIPE_WEBHOOK_SECRET`.
+`checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`, `invoice.paid`,
+`invoice.payment_failed`, `charge.refunded`, `charge.dispute.created`. Clé API : une **clé restreinte** (`rk_`) suffit, voir `docs/stripe.md`.
+
+### POST /orders/{id}/invoice — Stripe Invoicing
+
+Pour une commande **payée sur facture** (devis confirmé, compte pro) : crée le client Stripe (par e-mail), une facture à l'HT de la commande (`price_cents`), la finalise et l'envoie (page de paiement hébergée + PDF). Corps optionnel : `{ "days_until_due": 30, "memo": "…", "send": true, "author": "…" }`. Refusée si la commande est déjà payée (Checkout a émis sa facture) ou déjà facturée. `invoice.paid` passe ensuite la commande en `paid` / `confirmed` et crée la course dans NAMY.
+
+### Stripe Tax
+
+Par défaut le site encaisse le TTC calculé par NAMY (TVA 20 %). Avec `STRIPE_AUTOMATIC_TAX=1`, Checkout et les factures envoient l'HT (`tax_behavior: exclusive`) et Stripe calcule la TVA d'après l'adresse et le numéro de TVA collecté (`tax_id_collection`) ; le webhook enregistre les montants finaux. **Préalable obligatoire** : adresse du siège et enregistrement FR actifs dans Stripe → Tax, sinon Stripe n'encaisse aucune taxe sans erreur. Détail : `docs/stripe.md`. Renseigner `STRIPE_WEBHOOK_SECRET`.
 Sans `STRIPE_SECRET_KEY`, le site fonctionne en mode devis uniquement (le prix reste calculé et stocké).
 
 ## Google Ads

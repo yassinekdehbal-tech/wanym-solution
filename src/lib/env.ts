@@ -9,6 +9,12 @@ export const env = {
   contentApiKey: process.env.CONTENT_API_KEY ?? "",
   stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+  // Stripe Tax. Off by default: the TTC computed by NAMY (TVA 20 %) is charged as is. Turn on ONLY once the
+  // head-office address and the FR registration are active in Stripe → Tax, otherwise Stripe collects 0 tax.
+  stripeAutomaticTax: process.env.STRIPE_AUTOMATIC_TAX === "1",
+  // Product tax code for transport services, picked from https://docs.stripe.com/tax/tax-codes (account preset when empty).
+  stripeTaxCode: process.env.STRIPE_TAX_CODE ?? "",
+  stripeInvoiceDaysDue: Number(process.env.STRIPE_INVOICE_DAYS_DUE ?? 30) || 30,
   namyWebhookUrl: process.env.NAMY_WEBHOOK_URL ?? "",
   namyApiKey: process.env.NAMY_API_KEY ?? "",
   // Key NAMY presents on POST /api/webhooks/namy (vault secret wanym_site_api_key). Falls back to CONTENT_API_KEY.

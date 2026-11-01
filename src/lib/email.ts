@@ -104,3 +104,11 @@ export function sendCustomerUpdate(o: Order, subject: string, message: string) {
     <p style="margin-top:16px;font-size:14px;color:#64748b">Commande ${esc(o.reference)} · statut : ${STATUS_LABELS[o.status]}${o.invoice_url ? ` · <a href="${esc(o.invoice_url)}">Facture ${esc(o.invoice_number ?? "")}</a>` : ""}</p>`;
   return send(o.email, `${o.reference} — ${subject}`, layout(subject, body), env.ordersNotifyEmail || undefined);
 }
+
+/** Alert to the ops mailbox (dispute, failed payment…): short, with the order table. */
+export function sendOpsAlert(o: Order, subject: string, message: string) {
+  if (!env.ordersNotifyEmail) return Promise.resolve({ skipped: true as const });
+  const body = `<p style="white-space:pre-wrap">${esc(message)}</p>${orderTable(o)}
+    <p style="margin-top:16px"><a href="${esc(env.siteUrl)}/api/orders/${o.id}" style="color:#0b1f3a">Voir dans l'API</a></p>`;
+  return send(env.ordersNotifyEmail, `[${o.reference}] ${subject}`, layout(subject, body));
+}
