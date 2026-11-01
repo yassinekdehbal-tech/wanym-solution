@@ -32,9 +32,10 @@ function layout(title: string, body: string) {
 function orderTable(o: Order) {
   const slot = o.wanted_slot ?? null;
   const ox = (o.options ?? {}) as Record<string, unknown>;
-  const prix = ox.namy_prix as { options?: { libelle: string }[]; mode?: { libelle: string } | null } | null | undefined;
+  const prix = ox.namy_prix as { options?: { libelle: string }[]; mode?: { libelle: string } | null; vehicule?: { nom: string; volume: string | null; surface_m2: number | null } | null } | null | undefined;
+  const remise = (porte: unknown) => (porte ? "à la porte" : "au trottoir");
   const opts = [
-    prix?.mode?.libelle,
+    prix?.vehicule ? null : prix?.mode?.libelle,
     ...(prix?.options ?? []).map((x) => x.libelle),
     ox.etage ? `étage ${ox.etage}${ox.acces_escalier ? " sans ascenseur" : ""}` : null,
   ].filter(Boolean).join(", ");
@@ -47,9 +48,11 @@ function orderTable(o: Order) {
     ${row("Contact arrivée", o.delivery_contact)}
     ${row("Date souhaitée", o.wanted_date ? `${o.wanted_date}${slot ? " · " + slot : ""}` : null)}
     ${row("Marchandise", o.goods_type)}
-    ${row("Colis", o.quantity ? `${o.quantity} ${o.quantity_unit ?? ""}${ox.poids_max_colis_kg ? ` · le plus lourd ${ox.poids_max_colis_kg} kg` : ""}${ox.nb_colis_lourds ? ` · ${ox.nb_colis_lourds} > 70 kg` : ""}` : null)}
-    ${row("Plus grande longueur", o.dimensions)}
-    ${row("Poids total", o.weight_kg != null ? `${o.weight_kg} kg` : null)}
+    ${row("Véhicule", prix?.vehicule ? `${prix.vehicule.nom}${prix.vehicule.volume ? " " + prix.vehicule.volume : ""}${prix.vehicule.surface_m2 != null ? ` · ${prix.vehicule.surface_m2} m² plancher` : ""}` : null)}
+    ${row("Remise", prix?.vehicule ? `départ ${remise(ox.porte_depart)} · arrivée ${remise(ox.porte_arrivee)}` : null)}
+    ${row("Colis", !prix?.vehicule && o.quantity ? `${o.quantity} ${o.quantity_unit ?? ""}${ox.poids_max_colis_kg ? ` · le plus lourd ${ox.poids_max_colis_kg} kg` : ""}${ox.nb_colis_lourds ? ` · ${ox.nb_colis_lourds} > 70 kg` : ""}` : null)}
+    ${row("Plus grande longueur", prix?.vehicule ? null : o.dimensions)}
+    ${row("Poids total", !prix?.vehicule && o.weight_kg != null ? `${o.weight_kg} kg` : null)}
     ${row("Course NAMY", o.namy_ref ? `n° ${o.namy_ref}` : null)}
     ${row("Options", opts || null)}
     ${row("Prix", o.price_cents != null ? `${formatEuros(o.price_cents)} HT · ${formatEuros(o.total_cents)} TTC` : "Sur devis")}

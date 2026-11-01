@@ -41,12 +41,12 @@ Le site ne porte aucun barème : le prix est calculé par **NAMY** avec la grill
 
 | Méthode | Route | Accès | Description |
 |---|---|---|---|
-| GET | `/api/namy/contexte` | public | Modes de livraison, options au choix, jours de service, fermetures, seuils de devis |
+| GET | `/api/namy/contexte` | public | `vehicules` (surfaces plancher, « dès X € HT »), modes, options (avec `code`), règles d'étage, jours de service, fermetures |
 | GET | `/api/namy/creneaux?date=YYYY-MM-DD` | public | Créneaux proposés pour une date (ou la raison du blocage) |
 | POST | `/api/quote` | public | Prix calculé par NAMY pour les saisies du formulaire (rien n'est enregistré) |
 
-Entrée de `/api/quote` (mêmes champs que le formulaire vendeur NAMY) : `pickup_address`, `delivery_address`, `wanted_date`, `creneau?`, `mode_id?`, `nb_colis`, `poids_total_kg`, `poids_max_colis_kg?`, `nb_colis_lourds`, `longueur_max_cm`, `etage`, `acces_escalier`, `options[]`, `service_slug?`.
-Réponse : `mode: "instant"` avec `price_cents` (HT), `total_cents` (TTC), `prix` (détail itémisé NAMY : base, suppléments, options, majorations), `creneaux` ; ou `mode: "quote"` avec `reason` (`service_on_quote`, `hors_grille`, `capacite_depassee`, `date_indisponible`, `adresse_introuvable`, `namy_non_configure`).
+Entrée de `/api/quote` : `pickup_address`, `delivery_address`, `wanted_date`, `creneau?`, **`vehicule_id`** (surface plancher = catégorie de véhicule NAMY, obligatoire sur la grille zone), `porte_depart`, `porte_arrivee`, `etage`, `acces_escalier`, `options[]` (ids d'options NAMY ; les options `porte_depart` / `porte_arrivee` / `equipier` sont identifiées par leur `code` dans le contexte), `service_slug?` ; sur une grille poids : `nb_colis`, `poids_total_kg`, `poids_max_colis_kg?`, `nb_colis_lourds`, `longueur_max_cm`, `mode_id?`.
+Réponse : `mode: "instant"` avec `price_cents` (HT), `total_cents` (TTC), `prix` (détail itémisé NAMY : `vehicule`, `zone` {forfait, km au-delà, €/km}, options, majorations), `creneaux` ; ou `mode: "quote"` avec `reason` (`service_on_quote`, `hors_grille`, `capacite_depassee`, `date_indisponible`, `adresse_introuvable`, `namy_non_configure`).
 
 La clé de contenu `order.namy_services` (slugs séparés par `|`) liste les prestations vendues en ligne au prix NAMY ; les autres partent en devis.
 
