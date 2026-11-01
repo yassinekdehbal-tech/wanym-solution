@@ -21,9 +21,9 @@ export function Header({ content }: { content: SiteContent }) {
   const cta = content["hero.cta_primary"] ?? "Commander";
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
-      <div className="container-x flex h-16 items-center justify-between gap-3">
+      <div className="container-x flex h-16 items-center justify-between gap-2 sm:gap-3">
         <Link href="/" className="flex shrink-0 items-center rounded-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40" aria-label="WANYM SOLUTION, accueil">
-          <Logo className="h-8 w-auto sm:h-9" />
+          <Logo className="h-6 w-auto min-[360px]:h-8 sm:h-9" />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
@@ -34,7 +34,7 @@ export function Header({ content }: { content: SiteContent }) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <a href={tel} className="hidden items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-brand-800 hover:bg-slate-100 md:inline-flex">
             <span className="grid h-8 w-8 place-items-center rounded-full bg-primary-50 text-primary-700"><Icon name="phone" className="h-4 w-4" /></span>
             <span className="leading-tight">
@@ -42,14 +42,14 @@ export function Header({ content }: { content: SiteContent }) {
               <span className="block text-[11px] font-medium text-muted">Exploitation 24h/24</span>
             </span>
           </a>
-          <Link href="/commander" className="btn-primary btn-sm">
+          <Link href="/commander" className="btn-primary btn-sm px-3 min-[360px]:px-4">
             <span className="sm:hidden">Commander</span>
             <span className="hidden sm:inline">{cta}</span>
             <Icon name="arrow" className="hidden h-4 w-4 sm:block" />
           </Link>
 
           <details className="group relative lg:hidden">
-            <summary className="grid h-11 w-11 cursor-pointer list-none place-items-center rounded-lg text-brand-800 hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 [&::-webkit-details-marker]:hidden" aria-label="Ouvrir le menu">
+            <summary className="grid h-10 w-10 min-[360px]:h-11 min-[360px]:w-11 cursor-pointer list-none place-items-center rounded-lg text-brand-800 hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 [&::-webkit-details-marker]:hidden" aria-label="Ouvrir le menu">
               <Icon name="menu" className="h-6 w-6 group-open:hidden" />
               <Icon name="close" className="hidden h-6 w-6 group-open:block" />
             </summary>
