@@ -1,7 +1,6 @@
 import { Resend } from "resend";
 import { env } from "@/lib/env";
 import { formatEuros } from "@/lib/pricing";
-import { SLOT_LABELS } from "@/lib/schemas/order";
 import { STATUS_LABELS, type Order } from "@/lib/types";
 
 let resend: Resend | null = null;
@@ -31,11 +30,14 @@ function layout(title: string, body: string) {
 }
 
 function orderTable(o: Order) {
-  const slot = o.wanted_slot ? SLOT_LABELS[o.wanted_slot as keyof typeof SLOT_LABELS] ?? o.wanted_slot : null;
-  const opts = Object.entries(o.options ?? {})
-    .filter(([, v]) => v)
-    .map(([k]) => ({ handling: "manutention / hayon", floor: "étage", fragile: "fragile" })[k] ?? k)
-    .join(", ");
+  const slot = o.wanted_slot ?? null;
+  const ox = (o.options ?? {}) as Record<string, unknown>;
+  const prix = ox.namy_prix as { options?: { libelle: string }[]; mode?: { libelle: string } | null } | null | undefined;
+  const opts = [
+    prix?.mode?.libelle,
+    ...(prix?.options ?? []).map((x) => x.libelle),
+    ox.etage ? `étage ${ox.etage}${ox.acces_escalier ? " sans ascenseur" : ""}` : null,
+  ].filter(Boolean).join(", ");
   return `<table style="border-collapse:collapse;font-size:14px;width:100%">
     ${row("Référence", o.reference)}
     ${row("Statut", STATUS_LABELS[o.status])}
@@ -45,12 +47,13 @@ function orderTable(o: Order) {
     ${row("Contact arrivée", o.delivery_contact)}
     ${row("Date souhaitée", o.wanted_date ? `${o.wanted_date}${slot ? " · " + slot : ""}` : null)}
     ${row("Marchandise", o.goods_type)}
-    ${row("Quantité", o.quantity ? `${o.quantity} ${o.quantity_unit ?? ""}` : null)}
-    ${row("Dimensions", o.dimensions)}
-    ${row("Poids", o.weight_kg != null ? `${o.weight_kg} kg` : null)}
+    ${row("Colis", o.quantity ? `${o.quantity} ${o.quantity_unit ?? ""}${ox.poids_max_colis_kg ? ` · le plus lourd ${ox.poids_max_colis_kg} kg` : ""}${ox.nb_colis_lourds ? ` · ${ox.nb_colis_lourds} > 70 kg` : ""}` : null)}
+    ${row("Plus grande longueur", o.dimensions)}
+    ${row("Poids total", o.weight_kg != null ? `${o.weight_kg} kg` : null)}
+    ${row("Course NAMY", o.namy_ref ? `n° ${o.namy_ref}` : null)}
     ${row("Options", opts || null)}
     ${row("Prix", o.price_cents != null ? `${formatEuros(o.price_cents)} HT · ${formatEuros(o.total_cents)} TTC` : "Sur devis")}
-    ${row("Paiement", { not_required: "Non requis (devis)", pending: "En attente", paid: "Payé", failed: "Échoué", refunded: "Remboursé" }[o.payment_status])}
+    ${row("Paiement", { not_required: "Non requis (devis)", pending: "En attente", authorized: "Empreinte posée (débit à la prise en charge)", paid: "Payé", failed: "Échoué", refunded: "Remboursé / relâché" }[o.payment_status])}
     ${row("Société", o.company)}
     ${row("Contact", `${o.contact_name} · ${o.email} · ${o.phone}`)}
     ${row("Commentaire", o.notes)}
@@ -74,7 +77,10 @@ async function send(to: string | string[], subject: string, html: string, replyT
 /** Internal notification: a new order / request is in. */
 export function sendInternalNotification(o: Order) {
   if (!env.ordersNotifyEmail) return Promise.resolve({ skipped: true as const });
-  const kind = o.pricing_mode === "instant" ? (o.payment_status === "paid" ? "Commande payée" : "Commande en attente de paiement") : "Demande de devis";
+  const kind =
+    o.pricing_mode === "instant"
+      ? o.payment_status === "paid" ? "Commande payée" : o.payment_status === "authorized" ? "Commande avec empreinte bancaire" : "Commande en attente de paiement"
+      : "Demande de devis";
   const body = `${orderTable(o)}
     <p style="margin-top:16px"><a href="${esc(env.siteUrl)}/api/orders/${o.id}" style="color:#0b1f3a">Voir dans l'API</a>${o.gclid ? " · Trafic Google Ads" : ""}</p>`;
   return send(env.ordersNotifyEmail, `[${o.reference}] ${kind} — ${o.contact_name}${o.company ? " (" + o.company + ")" : ""}`, layout(kind, body), o.email);
@@ -97,4 +103,12 @@ export function sendCustomerUpdate(o: Order, subject: string, message: string) {
   const body = `<p style="white-space:pre-wrap">${esc(message)}</p>
     <p style="margin-top:16px;font-size:14px;color:#64748b">Commande ${esc(o.reference)} · statut : ${STATUS_LABELS[o.status]}${o.invoice_url ? ` · <a href="${esc(o.invoice_url)}">Facture ${esc(o.invoice_number ?? "")}</a>` : ""}</p>`;
   return send(o.email, `${o.reference} — ${subject}`, layout(subject, body), env.ordersNotifyEmail || undefined);
+}
+
+/** Alert to the ops mailbox (dispute, failed payment…): short, with the order table. */
+export function sendOpsAlert(o: Order, subject: string, message: string) {
+  if (!env.ordersNotifyEmail) return Promise.resolve({ skipped: true as const });
+  const body = `<p style="white-space:pre-wrap">${esc(message)}</p>${orderTable(o)}
+    <p style="margin-top:16px"><a href="${esc(env.siteUrl)}/api/orders/${o.id}" style="color:#0b1f3a">Voir dans l'API</a></p>`;
+  return send(env.ordersNotifyEmail, `[${o.reference}] ${subject}`, layout(subject, body));
 }

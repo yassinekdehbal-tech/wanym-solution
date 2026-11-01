@@ -70,7 +70,7 @@ export function TrackForm() {
           </p>
           {result.total_cents != null && (
             <p className="text-sm text-slate-600">
-              Montant : {formatEuros(result.total_cents)} TTC · {({ paid: "payé", pending: "paiement en attente", not_required: "sur devis", failed: "paiement non abouti", refunded: "remboursé" } as Record<string, string>)[result.payment_status]}
+              Montant : {formatEuros(result.total_cents)} TTC · {({ paid: "payé", authorized: "empreinte bancaire enregistrée", pending: "paiement en attente", not_required: "sur devis", failed: "paiement non abouti", refunded: "remboursé / relâché" } as Record<string, string>)[result.payment_status]}
             </p>
           )}
           {result.invoice_number && (

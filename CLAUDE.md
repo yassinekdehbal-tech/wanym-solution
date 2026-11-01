@@ -8,7 +8,7 @@ Un premier site statique (HTML/CSS) existe dans le dépôt `yassinekdehbal-tech/
 
 ## Objectifs
 1. Présenter l'entreprise et ses services (crédibilité B2B).
-2. Convertir : trafic Google Ads → hero « départ > arrivée » → `/commander` (4 étapes) → prix immédiat + paiement Stripe (express IDF) ou devis sous 24h → commande enregistrée, mails, transmission automatique à NAMY.
+2. Convertir : trafic Google Ads → hero « départ > arrivée » → `/commander` (4 étapes, mêmes champs que le formulaire vendeur NAMY) → prix calculé par **le moteur NAMY** sur la grille du compte « WANYM SOLUTION — Site web » + paiement Stripe, ou devis sous 24h hors barème → course créée dans NAMY, dispatchable immédiatement.
 3. Contenu, services et tarifs modifiables après lancement **par API, sans redéploiement** (`docs/API.md`).
 4. API de suivi des commandes, SAV (journal d'événements, messages client) et facturation, consommée par NAMY.
 5. Dépôt indépendant de NAMY et FISSA STOCK ; seul le projet Supabase « Agent Secretaire » est partagé.
@@ -18,7 +18,9 @@ Un premier site statique (HTML/CSS) existe dans le dépôt `yassinekdehbal-tech/
 - Supabase (Postgres) : contenu éditable + commandes. Client serveur uniquement (`@supabase/supabase-js`), jamais la clé service côté client.
 - Resend pour les mails transactionnels (notification interne + accusé client + mises à jour SAV).
 - Stripe Checkout pour le paiement des courses à prix immédiat ; webhook `/api/webhooks/stripe`.
-- NAMY : webhook sortant `NAMY_WEBHOOK_URL` à chaque commande actionnable (`src/lib/namy.ts`), et `PATCH /api/orders/[id]` en retour.
+- NAMY (dépôt `yassinekdehbal-tech/NAM-Y`, Supabase `gwbvfohizdxwhmcoqvgh`) : **aucun barème côté site**. `src/lib/namy.ts` appelle `POST {NAMY_WEBHOOK_URL}` (Edge `creer-commande-publique`, en-tête `x-wanym-site-key`) avec `action` = `contexte` (modes, options, jours), `creneaux` (date), `devis` (prix du moteur NAMY sur la grille « SITE WANYM » du compte client « WANYM SOLUTION — Site web ») et `commande` (crée la **course** `expeditions` statut `accepte`, canal `site`, idempotent sur `WS-…`) dès que la commande est payée ou confirmée par l'exploitation (`syncOrderToNamy`). NAMY renvoie chaque statut sur `POST /api/webhooks/namy`. Les saisies NAMY (mode, options, étage, colis max…) sont stockées dans `orders.options` (jsonb). Contrat : `docs/API.md`.
+- Stripe : **débit immédiat** à la commande (la course est dispatchable dès sa création). Remboursement depuis Stripe si annulation.
+- **Répartition des e-mails client** : NAMY envoie confirmation, suivi et message de fin pour toute commande qu'il reçoit ; le site n'envoie au client que l'accusé de réception d'une demande de devis, et les messages/factures déclenchés par l'API (`notify_customer: true`). L'exploitation reçoit un e-mail du site à chaque commande ou devis.
 - Cache Components (`cacheComponents: true`) : toutes les lectures Supabase passent par `"use cache"` + `cacheTag` dans `src/lib/supabase/content.ts` ; les routes d'écriture appellent `revalidateTag(tag, "max")`. Ne pas lire `headers()`/`cookies()` dans une fonction cachée.
 - Déploiement Vercel, branche `main` = production. Preview sur chaque PR.
 - Google Tag (gtag.js) chargé via `next/script`, événement `conversion` déclenché à la soumission réussie du formulaire.
@@ -72,15 +74,15 @@ create table orders (
   gclid text
 );
 ```
-Migration `20261101000000_orders_pipeline.sql` : `orders` étendue (`reference` WS-AAAA-NNNNN, `service_slug`, `options`, `distance_km`, `pricing_mode`, `price_cents` HT / `total_cents` TTC, `payment_status`, `stripe_*`, `namy_ref`, `invoice_*`, `utm`), statuts `new|quoted|confirmed|in_progress|delivered|cancelled|sav`, table `order_events` (journal : payment, status, note, sav, invoice, namy, email ; `public` = visible client) et table `pricing_rules` (règle de prix par service, `instant_booking` = prix immédiat + Stripe).
+Migrations `20261101000000_orders_pipeline.sql` (additive, appliquée) et `20261101000001_status_lifecycle.sql` (contraintes `status` / `payment_status`, à passer dans le SQL editor) : `orders` étendue (`reference` WS-AAAA-NNNNN, `service_slug`, `options`, `distance_km`, `pricing_mode`, `price_cents` HT / `total_cents` TTC, `payment_status` (`not_required|pending|authorized|paid|failed|refunded`), `stripe_*`, `namy_ref`, `invoice_*`, `utm`), statuts `new|quoted|confirmed|in_progress|delivered|cancelled|sav`, table `order_events` (journal : payment, status, note, sav, invoice, namy, email ; `public` = visible client) et table `pricing_rules` (**obsolète** : le prix vient de NAMY ; à supprimer via `20261101000001_status_lifecycle.sql`). Les prestations vendues en ligne sont listées dans la clé de contenu `order.namy_services`.
 RLS activé sur toutes les tables. Lecture publique de `services` (published = true), `site_content` et `pricing_rules` (active). Écriture uniquement via les routes API avec la clé service. Types TypeScript dans `src/lib/types.ts`.
 
 ## API
 Référence complète : `docs/API.md`. Toutes les routes d'écriture exigent `Authorization: Bearer ${CONTENT_API_KEY}` (`src/lib/api.ts`).
 - Contenu : `GET /api/content`, `PUT /api/content` (bulk), `GET|PUT|DELETE /api/content/[key]`.
 - Services : `GET|POST /api/services`, `GET|PUT|DELETE /api/services/[slug]`.
-- Tarifs : `GET /api/pricing`, `PUT /api/pricing/[slug]`, `POST /api/quote` (public).
-- Commandes : `POST /api/orders` (public, rate-limité, honeypot), `GET /api/orders` (filtres status, payment_status, since, q, unsynced, uninvoiced), `GET|PATCH /api/orders/[id]` (id ou référence), `GET|POST /api/orders/[id]/events`, `POST /api/track` (public), `POST /api/webhooks/stripe`.
+- Tarifs NAMY : `GET /api/namy/contexte`, `GET /api/namy/creneaux?date=`, `POST /api/quote` (public, prix calculé par NAMY).
+- Commandes : `POST /api/orders` (public, rate-limité, honeypot), `GET /api/orders` (filtres status, payment_status, since, q, unsynced, uninvoiced), `GET|PATCH /api/orders/[id]` (id ou référence), `GET|POST /api/orders/[id]/events`, `POST /api/track` (public), `POST /api/webhooks/stripe`, `POST /api/webhooks/namy` (NAMY → site).
 Après chaque écriture : `revalidateTag(TAGS.x, "max")`, pas de rebuild.
 
 ## Variables d'environnement
@@ -110,5 +112,5 @@ Modèle complet dans `.env.example`.
 - Ne jamais committer de clé. `.env.local` est ignoré.
 
 ## État et reste à faire
-Fait : layout, accueil, services, tunnel `/commander`, Stripe, mails, NAMY (webhook sortant), API contenu/services/tarifs/commandes/SAV, suivi client, pages légales, sitemap, JSON-LD.
-Reste : renseigner les variables sur Vercel (Resend, Stripe, NAMY, Google Ads, clé API), vérifier le domaine d'envoi sur Resend, brancher l'endpoint réel de NAMY (format d'entrée à confirmer côté NAMY), compléter `legal.siren/rcs/tva/director` via l'API, affiner les tarifs `pricing_rules`, autocomplétion d'adresse (Google Places) si besoin.
+Fait : layout, accueil, services, tunnel `/commander` aligné sur le formulaire NAMY (prix, créneaux, options servis par NAMY), Stripe, mails, création de la course dans NAMY + retour des statuts, API contenu/services/commandes/SAV, suivi client, pages légales, sitemap, JSON-LD.
+Reste : renseigner les variables sur Vercel (Resend, Stripe, NAMY, Google Ads, clé API), vérifier le domaine d'envoi sur Resend, fusionner NAM-Y#533 et appliquer sa migration (compte + grille « SITE WANYM »), poser les secrets NAMY, compléter `legal.siren/rcs/tva/director` via l'API, affiner les tarifs `pricing_rules`, autocomplétion d'adresse (Google Places) si besoin.

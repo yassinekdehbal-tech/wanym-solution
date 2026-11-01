@@ -20,7 +20,7 @@ curl -X PUT https://wanymsolution.com/api/content/hero.title \
 ```
 
 Clés notables : `hero.*`, `badges` (séparées par `|`), `services.title/lead`, `included.items` (`|`),
-`pricing.*`, `about.*`, `cta.*`, `contact.*`, `legal.*`, `faq` (JSON `[{"q","a"}]`), `order.*`, `track.*`, `cgv.body` (markdown).
+`pricing.*`, `about.*`, `cta.*`, `contact.*`, `legal.*`, `faq` (JSON `[{"q","a"}]`), `order.*` (dont `order.namy_services`), `track.*`, `cgv.body` (markdown).
 La page se met à jour en arrière-plan dès l'appel (revalidation par tag).
 
 ## Services
@@ -35,39 +35,49 @@ La page se met à jour en arrière-plan dès l'appel (revalidation par tag).
 
 Icônes disponibles : `store`, `zap`, `truck`, `box`, `clock`, `shield`, `euro`, `pin`.
 
-## Tarifs
+## Tarifs et créneaux (moteur NAMY)
+
+Le site ne porte aucun barème : le prix est calculé par **NAMY** avec la grille assignée au compte client **« WANYM SOLUTION — Site web »** (grille « SITE WANYM », modifiable dans l'écran Grilles de NAMY). Les modes de livraison, options, jours et créneaux viennent du même compte.
 
 | Méthode | Route | Accès | Description |
 |---|---|---|---|
-| GET | `/pricing` | public | Règles de prix actives |
-| PUT | `/pricing/{service_slug}` | protégé | Upsert d'une règle |
-| POST | `/quote` | public | Estimation sans enregistrement (utilisée par le formulaire) |
+| GET | `/api/namy/contexte` | public | Modes de livraison, options au choix, jours de service, fermetures, seuils de devis |
+| GET | `/api/namy/creneaux?date=YYYY-MM-DD` | public | Créneaux proposés pour une date (ou la raison du blocage) |
+| POST | `/api/quote` | public | Prix calculé par NAMY pour les saisies du formulaire (rien n'est enregistré) |
 
-Règle : `{ label, instant_booking, base_cents, per_km_cents, per_unit_cents, min_cents, max_km, max_units, vat_rate, surcharges: { handling, floor, urgent_pct }, active }`.
-Prix HT = base + km × per_km + (quantité − 1) × per_unit + options, minimum `min_cents`, arrondi à l'euro ; TTC = HT × (1 + TVA).
-`instant_booking: true` → prix affiché et paiement Stripe. Sinon, ou si la distance est inconnue / trop grande → mode devis.
-Distance : Google Distance Matrix si `GOOGLE_MAPS_API_KEY` est renseignée, sinon estimation par zones à partir des codes postaux (IDF uniquement).
+Entrée de `/api/quote` (mêmes champs que le formulaire vendeur NAMY) : `pickup_address`, `delivery_address`, `wanted_date`, `creneau?`, `mode_id?`, `nb_colis`, `poids_total_kg`, `poids_max_colis_kg?`, `nb_colis_lourds`, `longueur_max_cm`, `etage`, `acces_escalier`, `options[]`, `service_slug?`.
+Réponse : `mode: "instant"` avec `price_cents` (HT), `total_cents` (TTC), `prix` (détail itémisé NAMY : base, suppléments, options, majorations), `creneaux` ; ou `mode: "quote"` avec `reason` (`service_on_quote`, `hors_grille`, `capacite_depassee`, `date_indisponible`, `adresse_introuvable`, `namy_non_configure`).
+
+La clé de contenu `order.namy_services` (slugs séparés par `|`) liste les prestations vendues en ligne au prix NAMY ; les autres partent en devis.
 
 ## Commandes
 
 | Méthode | Route | Accès | Description |
 |---|---|---|---|
-| POST | `/orders` | public (rate-limit, honeypot) | Crée la commande. Réponse `{ id, reference, mode, checkout_url? }` |
+| POST | `/orders` | public (rate-limit, honeypot) | Crée la commande (prix recalculé par NAMY). Réponse `{ id, reference, mode, checkout_url? }` |
 | GET | `/orders` | protégé | Liste. Filtres : `status`, `payment_status` (listes CSV), `since`, `until`, `q`, `unsynced=1`, `uninvoiced=1`, `limit`, `offset` |
 | GET | `/orders/{id\|reference}` | protégé | Commande + journal d'événements |
 | PATCH | `/orders/{id\|reference}` | protégé | Mise à jour exploitation (voir ci-dessous) |
 | GET | `/orders/{id}/events` | protégé | Journal complet |
 | POST | `/orders/{id}/events` | protégé | Ajoute une note / un échange SAV / une facture |
 | POST | `/track` | public | Suivi client `{ reference, email }` → vue limitée |
-| POST | `/webhooks/stripe` | Stripe | Confirmation de paiement, expiration, remboursement |
+| POST | `/orders/{id}/invoice` | clé API | Facture Stripe (Invoicing) pour une commande payée sur facture : créée, finalisée, envoyée |
+| POST | `/webhooks/stripe` | Stripe | Paiement, échec différé, expiration, facture payée/impayée, remboursement, litige |
 
-### Cycle de vie
+### Cycle de vie et répartition des rôles
 
-`status` : `new` → `quoted` → `confirmed` → `in_progress` → `delivered` ; `cancelled` ; `sav`.
+`status` : `new` → `confirmed` → `in_progress` → `delivered` ; `quoted` ; `cancelled` ; `sav`.
 `payment_status` : `not_required` (devis) · `pending` · `paid` · `failed` · `refunded`.
 
-- Express avec prix immédiat : création (`new`/`pending`) → Stripe Checkout → webhook `checkout.session.completed` → `confirmed`/`paid` → e-mails + transmission NAMY.
-- Devis : création (`new`/`not_required`) → e-mails + transmission NAMY immédiats → l'exploitation passe en `quoted` avec `price_cents`, puis `confirmed`.
+| Événement | Qui prévient le client | Qui prévient l'exploitation | NAMY |
+|---|---|---|---|
+| Demande de devis (`new`, `not_required`) | le site : accusé de réception « devis sous 24h » | le site : e-mail | non |
+| Paiement Stripe réussi (`confirmed`, `paid`) | **NAMY** (confirmation, veille, jour J, fin) | le site : e-mail | **course créée aussitôt** (statut `accepte`, dispatchable) |
+| Devis confirmé par l'exploitation (`PATCH status=confirmed`) | **NAMY** | — | **course créée** (ou `devis_attente` si hors grille) |
+| Facture, message ponctuel | le site, via `PATCH` ou `POST …/events` avec `notify_customer: true` | — | — |
+| Changement de statut dans NAMY (`planifie`, `retire`, `livre`…) | NAMY | — | `POST /webhooks/namy` → suivi du site |
+
+Le site ne double jamais les e-mails de NAMY : aucune confirmation client n'est envoyée pour une commande payée ou confirmée.
 
 ### PATCH /orders/{id}
 
@@ -103,20 +113,48 @@ curl -X POST https://wanymsolution.com/api/orders/WS-2026-00012/events \
 
 ## Intégration NAMY
 
-À chaque commande actionnable (payée, ou devis reçu), le site envoie `POST NAMY_WEBHOOK_URL` avec
-`Authorization: Bearer NAMY_API_KEY`, en-têtes `x-wanym-event: order.created`, `x-wanym-order: <référence>`, et le corps :
+NAMY est le TMS de WANYM SOLUTION. Le site est l'un de ses canaux : chaque commande devient une **course du compte client « WANYM SOLUTION — Site web »**, au prix de la grille de ce compte, dispatchable comme celles d'un magasin.
 
-```json
-{ "event": "order.created", "source": "wanymsolution.com", "order": { …toutes les colonnes de la commande… } }
-```
+### Site → NAMY (`src/lib/namy.ts`)
 
-Si NAMY répond `{ "reference": "…" }` (ou `id`/`ref`), la valeur est stockée dans `namy_ref`. Les échecs sont journalisés (`type: namy`) et
-`GET /orders?unsynced=1` permet à NAMY de rattraper les commandes non transmises. NAMY peut aussi tout piloter en retour via `PATCH /orders/{id}`.
+Toutes les requêtes vont sur `NAMY_WEBHOOK_URL` (Edge Function `creer-commande-publique`) avec l'en-tête `x-wanym-site-key: {NAMY_API_KEY}` et un corps `{ "action": … }` :
+
+| `action` | Quand | Réponse |
+|---|---|---|
+| `contexte` | chargement du formulaire | modes, options, jours, seuils |
+| `creneaux` | changement de date | `{ date_bloquee, creneaux }` |
+| `devis` | récapitulatif | `{ prix: {…}, creneaux, geo }` — prix calculé par le moteur NAMY |
+| `commande` | paiement reçu, ou devis confirmé par l'exploitation | `{ expedition_id, statut }` — course créée, idempotent sur la référence `WS-…` |
+
+Le payload `commande` reprend les saisies (adresses, date, créneau, mode, colis, poids, longueur, étage, options, contacts, paiement). NAMY **recalcule le prix** ; `expedition_id` est stocké dans `namy_ref`. Échec → événement `namy`, et `GET /api/orders?unsynced=1` liste ce qui reste à transmettre.
+
+### NAMY → site (`POST /api/webhooks/namy`, Bearer = la clé partagée (`NAMY_API_KEY`, ou `NAMY_INBOUND_KEY` si distincte))
+
+Déclenché par le trigger NAMY à chaque changement de statut d'une course du site :
+
+| `event` | Champs | Effet sur le site |
+|---|---|---|
+| `expedition.statut` | `statut`, `expedition_id`, `motif`, `date_livraison`, `creneau`, `prix_ht`, `prix_ttc` | `planifie`→`confirmed`, `retire`→`in_progress`, `livre`→`delivered`, `echec_*`/`retourne`→`sav`, `annule`→`cancelled` |
+
+Chaque appel ajoute un événement visible par le client sur `/suivi`. Rejouer un événement ne change rien.
+
+### Paiement
+
+Le client est **débité à la commande** (Stripe Checkout). Une annulation après paiement se rembourse depuis Stripe ; l'événement `charge.refunded` met la commande à jour.
 
 ## Stripe
 
-Endpoint webhook à déclarer : `https://wanymsolution.com/api/webhooks/stripe`, événements `checkout.session.completed`,
-`checkout.session.async_payment_succeeded`, `checkout.session.expired`, `charge.refunded`. Renseigner `STRIPE_WEBHOOK_SECRET`.
+Endpoint webhook à déclarer : `https://www.wanymsolution.com/api/webhooks/stripe`, événements `checkout.session.completed`,
+`checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`, `invoice.paid`,
+`invoice.payment_failed`, `charge.refunded`, `charge.dispute.created`. Clé API : une **clé restreinte** (`rk_`) suffit, voir `docs/stripe.md`.
+
+### POST /orders/{id}/invoice — Stripe Invoicing
+
+Pour une commande **payée sur facture** (devis confirmé, compte pro) : crée le client Stripe (par e-mail), une facture à l'HT de la commande (`price_cents`), la finalise et l'envoie (page de paiement hébergée + PDF). Corps optionnel : `{ "days_until_due": 30, "memo": "…", "send": true, "author": "…" }`. Refusée si la commande est déjà payée (Checkout a émis sa facture) ou déjà facturée. `invoice.paid` passe ensuite la commande en `paid` / `confirmed` et crée la course dans NAMY.
+
+### Stripe Tax
+
+Par défaut le site encaisse le TTC calculé par NAMY (TVA 20 %). Avec `STRIPE_AUTOMATIC_TAX=1`, Checkout et les factures envoient l'HT (`tax_behavior: exclusive`) et Stripe calcule la TVA d'après l'adresse et le numéro de TVA collecté (`tax_id_collection`) ; le webhook enregistre les montants finaux. **Préalable obligatoire** : adresse du siège et enregistrement FR actifs dans Stripe → Tax, sinon Stripe n'encaisse aucune taxe sans erreur. Détail : `docs/stripe.md`. Renseigner `STRIPE_WEBHOOK_SECRET`.
 Sans `STRIPE_SECRET_KEY`, le site fonctionne en mode devis uniquement (le prix reste calculé et stocké).
 
 ## Google Ads

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { badRequest, isAuthorized, notFound, readJson, serverError, unauthorized } from "@/lib/api";
 import { sendCustomerUpdate } from "@/lib/email";
-import { getOrder, getOrderEvents, logEvent, updateOrder } from "@/lib/orders";
+import { getOrder, getOrderEvents, logEvent, syncOrderToNamy, updateOrder } from "@/lib/orders";
 import { orderPatchSchema } from "@/lib/schemas/order";
 import { STATUS_LABELS, type Order } from "@/lib/types";
 
@@ -37,7 +37,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
     if (fields.status === "quoted" && order.status === "new" && fields.price_cents != null && fields.total_cents == null) {
       patch.total_cents = Math.round(fields.price_cents * (1 + order.vat_rate / 100));
     }
-    const updated = Object.keys(patch).length ? await updateOrder(order.id, patch) : order;
+    let updated = Object.keys(patch).length ? await updateOrder(order.id, patch) : order;
+    // A quote confirmed by ops becomes a real order: hand it to NAMY like a paid one.
+    if (fields.status === "confirmed" && order.status !== "confirmed") updated = await syncOrderToNamy(updated);
 
     if (fields.status && fields.status !== order.status) {
       await logEvent(order.id, "status", `Statut : ${STATUS_LABELS[fields.status]}`, { author, public: true, data: { from: order.status, to: fields.status } });

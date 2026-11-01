@@ -28,7 +28,6 @@ export async function PUT(req: Request, { params }: Ctx) {
     if (error) throw error;
     if (!data) return notFound();
     revalidateTag(TAGS.services, "max");
-    revalidateTag(TAGS.pricing, "max");
     return NextResponse.json(data);
   } catch (e) {
     return serverError(e, "services.update");
@@ -45,7 +44,6 @@ export async function DELETE(req: Request, { params }: Ctx) {
     if (error) throw error;
     if (!data) return notFound();
     revalidateTag(TAGS.services, "max");
-    revalidateTag(TAGS.pricing, "max");
     return NextResponse.json({ deleted: slug });
   } catch (e) {
     return serverError(e, "services.delete");

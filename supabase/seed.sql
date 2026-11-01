@@ -104,16 +104,6 @@ on conflict (slug) do update set
   icon = excluded.icon,
   sort_order = excluded.sort_order;
 
--- Pricing rules (editable via PUT /api/pricing/[slug])
-insert into public.pricing_rules (service_slug, label, instant_booking, base_cents, per_km_cents, per_unit_cents, min_cents, max_km, max_units, surcharges) values
-  ('livraison-express-a-la-demande', 'Course express Île-de-France', true, 2500, 120, 500, 3500, 120, 10, '{"handling": 1500, "floor": 2000, "urgent_pct": 25}'),
-  ('livraison-professionnels-externalisee', 'Livraison externalisée (devis)', false, 0, 0, 0, 0, null, null, '{}'),
-  ('transport-dedie-sur-mesure', 'Transport dédié (devis)', false, 0, 0, 0, 0, null, null, '{}')
-on conflict (service_slug) do update set
-  label = excluded.label, instant_booking = excluded.instant_booking, base_cents = excluded.base_cents,
-  per_km_cents = excluded.per_km_cents, per_unit_cents = excluded.per_unit_cents, min_cents = excluded.min_cents,
-  max_km = excluded.max_km, max_units = excluded.max_units, surcharges = excluded.surcharges;
-
 -- Additional editable copy for the order funnel, tracking and legal pages
 insert into public.site_content (key, value) values
   ('hero.route_title', 'Où devons-nous livrer ?'),
@@ -121,10 +111,11 @@ insert into public.site_content (key, value) values
   ('hero.route_to', 'Adresse d''arrivée'),
   ('hero.route_button', 'Obtenir un prix'),
   ('order.title', 'Commander un transport'),
-  ('order.lead', 'Décrivez votre transport en 4 étapes. Prix immédiat et paiement en ligne pour l''express en Île-de-France, chiffrage sous 24h pour le reste.'),
+  ('order.namy_services', 'livraison-express-a-la-demande'),
+  ('order.lead', 'Décrivez votre transport en 4 étapes. Le prix est calculé en direct par notre exploitation (grille WANYM SOLUTION) et se règle en ligne ; hors barème, nous vous envoyons un devis sous 24h.'),
   ('order.quote_notice', 'Ce transport fait l''objet d''un chiffrage personnalisé : nous vous envoyons un devis sous 24h, sans engagement.'),
   ('order.success_title', 'Merci, votre demande est bien enregistrée.'),
-  ('order.success_body', 'Vous recevez un e-mail de confirmation avec votre numéro de commande. Notre exploitation vous rappelle si un détail manque.'),
+  ('order.success_body', 'Votre commande est transmise à notre exploitation. Vous recevez un e-mail de confirmation, puis un rappel la veille et le jour de la livraison avec un lien de suivi.'),
   ('order.cancelled_body', 'Le paiement n''a pas été finalisé. Votre demande est conservée : vous pouvez réessayer ou nous appeler pour régler autrement.'),
   ('track.title', 'Suivre ma commande'),
   ('track.lead', 'Saisissez votre numéro de commande (WS-…) et l''e-mail utilisé lors de la commande.'),

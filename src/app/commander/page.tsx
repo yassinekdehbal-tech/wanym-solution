@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { OrderForm } from "@/components/OrderForm";
-import { getContent, getPricingRules, getServices } from "@/lib/supabase/content";
+import { getContent, getServices, splitList } from "@/lib/supabase/content";
 
 export const metadata: Metadata = { title: "Commander un transport", description: "Commandez un transport en quelques minutes : prix immédiat et paiement en ligne pour l'express en Île-de-France, devis sous 24h pour le reste." };
 
 export default async function OrderPage() {
-  const [c, services, rules] = await Promise.all([getContent(), getServices(), getPricingRules()]);
+  const [c, services] = await Promise.all([getContent(), getServices()]);
+  const namySlugs = splitList(c["order.namy_services"]);
   return (
     <main className="bg-slate-50">
       <div className="container-x max-w-4xl py-10 sm:py-14">
@@ -14,7 +15,7 @@ export default async function OrderPage() {
         <p className="mt-3 text-slate-600">{c["order.lead"]}</p>
         <div className="mt-8">
           <Suspense fallback={<div className="card h-96 animate-pulse" />}>
-            <OrderForm services={services} rules={rules} copy={{ quoteNotice: c["order.quote_notice"] ?? "", cancelledBody: c["order.cancelled_body"] ?? "" }} />
+            <OrderForm services={services} namySlugs={namySlugs} copy={{ quoteNotice: c["order.quote_notice"] ?? "", cancelledBody: c["order.cancelled_body"] ?? "" }} />
           </Suspense>
         </div>
       </div>

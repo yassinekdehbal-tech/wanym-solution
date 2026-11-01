@@ -28,7 +28,7 @@ async function Summary({ searchParams }: Props) {
           <div className="flex justify-between gap-4"><dt className="text-slate-500">Trajet</dt><dd className="text-right">{order.pickup_address} → {order.delivery_address}</dd></div>
           {order.wanted_date && <div className="flex justify-between gap-4"><dt className="text-slate-500">Date</dt><dd>{order.wanted_date}</dd></div>}
           {order.total_cents != null && (
-            <div className="flex justify-between gap-4"><dt className="text-slate-500">Montant</dt><dd>{formatEuros(order.total_cents)} TTC{order.payment_status === "paid" ? " · payé" : order.payment_status === "pending" ? " · paiement en cours de confirmation" : ""}</dd></div>
+            <div className="flex justify-between gap-4"><dt className="text-slate-500">Montant</dt><dd>{formatEuros(order.total_cents)} TTC{order.payment_status === "paid" ? " · payé" : order.payment_status === "authorized" ? " · empreinte bancaire enregistrée, débit à la prise en charge" : order.payment_status === "pending" ? " · paiement en cours de confirmation" : ""}</dd></div>
           )}
         </dl>
       )}

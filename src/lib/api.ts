@@ -3,9 +3,11 @@ import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
 import type { ZodError } from "zod";
 
-/** Bearer / x-api-key check for every write or private route. */
-export function isAuthorized(req: Request): boolean {
-  const expected = env.contentApiKey;
+/**
+ * Bearer / x-api-key check for every write or private route.
+ * `expected` defaults to CONTENT_API_KEY; a route may pass its own key (NAMY inbound webhook).
+ */
+export function isAuthorized(req: Request, expected: string = env.contentApiKey): boolean {
   if (!expected) return false;
   const header = req.headers.get("authorization") ?? "";
   const provided = header.toLowerCase().startsWith("bearer ")

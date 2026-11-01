@@ -3,10 +3,11 @@ import { Faq, type FaqItem } from "@/components/Faq";
 import { Icon } from "@/components/Icon";
 import { RouteSearch } from "@/components/RouteSearch";
 import { ServiceCard } from "@/components/ServiceCard";
-import { getContent, getPricingRules, getServices, parseJson, splitList } from "@/lib/supabase/content";
+import { getContent, getServices, parseJson, splitList } from "@/lib/supabase/content";
 
 export default async function Home() {
-  const [c, services, rules] = await Promise.all([getContent(), getServices(), getPricingRules()]);
+  const [c, services] = await Promise.all([getContent(), getServices()]);
+  const namySlugs = splitList(c["order.namy_services"]);
   const badges = splitList(c["badges"]);
   const included = splitList(c["included.items"]);
   const faq = parseJson<FaqItem[]>(c["faq"], []);
@@ -48,7 +49,7 @@ export default async function Home() {
         <p className="mt-3 max-w-2xl text-slate-600">{c["services.lead"]}</p>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {services.map((s) => (
-            <ServiceCard key={s.slug} service={s} instant={rules.some((r) => r.service_slug === s.slug && r.instant_booking)} />
+            <ServiceCard key={s.slug} service={s} instant={namySlugs.includes(s.slug)} />
           ))}
         </div>
       </section>

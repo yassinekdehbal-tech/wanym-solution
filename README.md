@@ -33,6 +33,12 @@ Projet Supabase « Agent Secretaire » (`ksdzzcqcrtluamdkddzf`), partagé avec u
 
 ## Déploiement
 
-Push sur `main` → Vercel déploie en production. Les variables d'environnement se configurent dans Vercel → Settings → Environment Variables.
+Push sur `main` → Vercel déploie en production. Les variables d'environnement se configurent dans Vercel → Settings → Environment Variables, ou en une commande avec la CLI Vercel :
+
+```bash
+./scripts/vercel-env.sh
+```
+
+Le script écrit les valeurs publiques, génère `CONTENT_API_KEY` et demande les secrets un par un (saisie masquée).
 
 DNS (OVH → Zone DNS) : `A @ → 76.76.21.21`, `CNAME www → cname.vercel-dns.com`. Ne pas toucher aux MX (Google Workspace).
