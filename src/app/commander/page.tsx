@@ -14,7 +14,7 @@ export default async function OrderPage() {
   const advisor = {
     catalogue: parseJson<CatalogueItem[]>(c["order.catalogue_objets"], CATALOGUE_OBJETS).filter((i) => i && i.id && i.nom),
     capacites: parseJson<VehiculeCapacite[]>(c["order.vehicules_capacites"], VEHICULES_CAPACITES),
-    exemples: parseJson<Record<string, string>>(c["order.exemples_cartes"], { "1": "un lave-linge et 6 cartons", "2": "un canapé 2 places, un matelas et 10 cartons", "4": "un canapé 3 places, une table, 6 chaises et 15 cartons", "8": "un studio complet" }),
+    exemples: parseJson<Record<string, string>>(c["order.exemples_cartes"], { "1": "un lave-linge et 6 cartons", "2": "un canapé 2 places et 10 cartons", "4": "un canapé 3 places, une table, 6 chaises et 15 cartons", "8": "un studio complet" }),
   };
   return (
     <main className="bg-slate-50">
