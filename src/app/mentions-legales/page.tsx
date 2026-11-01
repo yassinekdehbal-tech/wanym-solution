@@ -18,17 +18,18 @@ export default async function LegalPage() {
     ["Hébergeur", c["legal.host"]],
   ];
   return (
-    <main className="container-x max-w-3xl py-12 sm:py-16">
-      <h1 className="text-3xl font-extrabold text-brand-800">Mentions légales</h1>
-      <dl className="mt-8 divide-y divide-slate-200 rounded-2xl border border-slate-200">
+    <main className="container-x max-w-3xl py-10 sm:py-16">
+      <p className="eyebrow">Informations légales</p>
+      <h1 className="h1 mt-2 text-brand-800">Mentions légales</h1>
+      <dl className="mt-8 divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
         {rows.map(([k, v]) => (
           <div key={k} className="grid gap-1 p-4 sm:grid-cols-[220px_1fr]">
-            <dt className="text-sm font-semibold text-slate-500">{k}</dt>
-            <dd className="text-slate-900">{v || "—"}</dd>
+            <dt className="text-sm font-semibold text-muted">{k}</dt>
+            <dd className="text-brand-900">{v || "—"}</dd>
           </div>
         ))}
       </dl>
-      <section className="prose prose-slate mt-10 max-w-none">
+      <section className="prose prose-slate mt-10 max-w-none prose-headings:font-display prose-headings:text-brand-800">
         <h2>Données personnelles</h2>
         <p>
           Les informations saisies dans le formulaire de commande (coordonnées, adresses, description de la marchandise) sont nécessaires à l&apos;exécution de la prestation de transport et à la relation client. Elles sont conservées pendant la durée légale de conservation des documents commerciaux et ne sont transmises qu&apos;aux prestataires nécessaires à l&apos;exécution : hébergement (Vercel), base de données (Supabase, Union européenne), e-mails transactionnels (Resend), paiement (Stripe) et notre outil d&apos;exploitation.
