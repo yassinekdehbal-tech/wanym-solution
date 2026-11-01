@@ -124,6 +124,8 @@ insert into public.site_content (key, value) values
   ('order.exemples_cartes', '{"1":"un lave-linge et 6 cartons","2":"un canapé 2 places et 10 cartons","4":"un canapé 3 places, une table, 6 chaises et 15 cartons","8":"un studio complet"}'),
   ('order.lead', 'Trajet, taille du véhicule, options, date : le prix s''affiche en direct, calculé par notre exploitation, et se règle en ligne. Hors barème, devis sous 24 h.'),
   ('order.quote_notice', 'Ce transport fait l''objet d''un chiffrage personnalisé : nous vous envoyons un devis sous 24h, sans engagement.'),
+  ('order.quote_received_title', 'Demande de devis reçue'),
+  ('order.quote_received_body', 'Notre exploitation chiffre votre transport et vous répond sous 24 h par e-mail, sans engagement.'),
   ('order.success_title', 'Merci, votre demande est bien enregistrée.'),
   ('order.success_body', 'Votre commande est transmise à notre exploitation. Vous recevez un e-mail de confirmation, puis un rappel la veille et le jour de la livraison avec un lien de suivi.'),
   ('order.cancelled_body', 'Le paiement n''a pas été finalisé. Votre demande est conservée : vous pouvez réessayer ou nous appeler pour régler autrement.'),

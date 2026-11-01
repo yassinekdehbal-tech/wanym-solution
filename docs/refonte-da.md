@@ -84,4 +84,27 @@
 
 ## 7. Journal des lots
 
-_(complété à chaque lot : modifications, tests exécutés, limites)_
+### Lot 1 — Fondations (01/11/2026)
+- `globals.css` : tokens `brand` / `primary` (vert, 600-700 AA sur texte blanc) / `accent` (orange, avertissements) / `danger` / `surface` / `muted`, `font-display`, classes `btn-*` (min 48 px, focus, disabled, `aria-busy`), `field` (min 48 px, `aria-invalid`), `card`, `chip-*`, `alert-*`, `h1/h2/lead/eyebrow/price-xl`, `prefers-reduced-motion`.
+- `layout.tsx` : Inter + Manrope (`next/font`, swap), fond surface. `Header` (menu `<details>` mobile, téléphone 24h/24, CTA vert), `Footer`, `StickyCta` masqué sur `/commander`, `Logo` provisoire, 20 icônes.
+- Tests : tsc, lint, build ; captures 390/1440 sans défilement horizontal.
+- Limites : logo et photos officiels à fournir (§6).
+
+### Lot 2 — Accueil (01/11/2026)
+- `Hero` (widget visible sans défilement à 390 px, panneau illustré desktop), `Reassurance`, `VehicleCards` (prix NAMY via `getVehiculesVitrine`, cache minutes, masquées si NAMY muet), `HowItWorks`, `ProSection`, `References` (masquée si vide), `FinalCta` avec widget ; `?vehicule=` lu par le formulaire ; `track("voir_prix_click")`.
+- Contenu : 12 clés posées en base et seedées (hero, réassurance, véhicules, étapes, pro, références vide).
+- Limites : visuels des véhicules = silhouettes SVG ; avis absents tant que non validés.
+
+### Lot 3 — Configurateur (01/11/2026)
+- `Section` : bloc actif (anneau vert), blocs terminés avec récapitulatif repliable « Modifier / Replier ». `pricingKey` → devis « frais » ; bouton payer et barre verrouillés pendant un recalcul, montant périmé grisé/barré, jamais « ferme ».
+- `PriceBar` (indisponible / calcul / calculé / recalcul / devis / erreur, action contextuelle, détail dépliable, masquée pendant la saisie d'un champ texte) et `PriceDetail` partagé.
+- Erreurs avec icône + `role=alert`, `aria-invalid`/`aria-describedby` ; `AddressInput` : états « recherche » et « aucun résultat ».
+- Événements : `commander_vue`, `camion_selectionne`, `prix_confirme`, `paiement_debut`, `devis_envoye` (+ assistant). Conversion Ads = commande payée (`/merci`).
+- Les payloads `POST /api/quote` / `POST /api/orders`, les schémas, Stripe et NAMY sont inchangés.
+
+### Lot 4 — Pages secondaires (01/11/2026)
+- `/commander/merci` deux variantes, `/suivi` avec `Timeline` + messages d'exploitation + états vides, `/services/[slug]` éditorial (aside collante, encadrés), `/services`, `/contact` (téléphone en carte principale), mentions légales, CGV, 404.
+
+### Lot 5 — Qualité (01/11/2026)
+- Balayage Playwright 320 → 1440 sur `/` et `/commander` (défilement horizontal, erreurs JS), tunnel mobile sur la preview Vercel avec NAMY (prix 1 m² Drancy → Paris 4e, recalcul « à la porte », détail, bouton payer, récapitulatifs), `npm test` (18 cas).
+- Non régression métier : devis NAMY et paiement Stripe inchangés ; test de paiement sandbox à rejouer après fusion (identique au 01/11 matin).
