@@ -112,7 +112,7 @@ insert into public.site_content (key, value) values
   ('hero.route_button', 'Obtenir un prix'),
   ('order.title', 'Commander un transport'),
   ('order.namy_services', 'livraison-express-a-la-demande'),
-  ('order.exemples_cartes', '{"1":"un lave-linge et 6 cartons","2":"un canapé 2 places, un matelas et 10 cartons","4":"un canapé 3 places, une table, 6 chaises et 15 cartons","8":"un studio complet"}'),
+  ('order.exemples_cartes', '{"1":"un lave-linge et 6 cartons","2":"un canapé 2 places et 10 cartons","4":"un canapé 3 places, une table, 6 chaises et 15 cartons","8":"un studio complet"}'),
   ('order.lead', 'Décrivez votre transport en 4 étapes. Le prix est calculé en direct par notre exploitation (grille WANYM SOLUTION) et se règle en ligne ; hors barème, nous vous envoyons un devis sous 24h.'),
   ('order.quote_notice', 'Ce transport fait l''objet d''un chiffrage personnalisé : nous vous envoyons un devis sous 24h, sans engagement.'),
   ('order.success_title', 'Merci, votre demande est bien enregistrée.'),

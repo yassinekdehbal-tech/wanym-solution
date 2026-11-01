@@ -76,6 +76,6 @@ Aucune modification de l'ordre des blocs, du paiement, du devis ni du contrat NA
 | Objets à ajouter / retirer | — | exploitation + DA (pictos) |
 | Règle « réfrigérateur » : debout obligatoire ou couché toléré | debout | exploitation |
 | Marge de sécurité | 10 % | exploitation |
-| Exemples affichés sur les cartes | 1 m² : lave-linge + 6 cartons · 2 m² : canapé 2 places + matelas + 10 cartons · 4 m² : canapé 3 places + table + 6 chaises + 15 cartons · 8 m² : un studio complet | exploitation |
+| Exemples affichés sur les cartes | 1 m² : lave-linge + 6 cartons · 2 m² : canapé 2 places + 10 cartons (le matelas debout fait passer le moteur à 4 m², vérifié le 01/11) · 4 m² : canapé 3 places + table + 6 chaises + 15 cartons · 8 m² : un studio complet | exploitation |
 
 Tant que ces valeurs ne sont pas validées, l'assistant restera en statut « à vérifier » plus souvent qu'il ne le devrait : c'est voulu, il vaut mieux une recommandation prudente qu'une promesse fausse.
