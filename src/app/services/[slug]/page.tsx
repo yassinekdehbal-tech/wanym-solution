@@ -31,7 +31,7 @@ export default async function ServicePage({ params }: Props) {
         <div className="container-x py-12 sm:py-16">
           <Link href="/services" className="text-sm text-slate-300 hover:text-white">← Tous les services</Link>
           <div className="mt-4 flex items-center gap-4">
-            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/10 text-accent-500"><Icon name={service.icon ?? "box"} className="h-7 w-7" /></span>
+            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/10 text-primary-500"><Icon name={service.icon ?? "box"} className="h-7 w-7" /></span>
             <h1 className="text-3xl font-extrabold sm:text-4xl">{service.title}</h1>
           </div>
           <p className="mt-5 max-w-2xl text-lg text-slate-200">{service.summary}</p>

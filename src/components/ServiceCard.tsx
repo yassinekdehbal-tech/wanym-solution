@@ -9,7 +9,7 @@ export function ServiceCard({ service, instant }: { service: Service; instant?: 
         <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand-50 text-brand-800">
           <Icon name={service.icon ?? "box"} />
         </span>
-        {instant && <span className="rounded-full bg-accent-500/15 px-3 py-1 text-xs font-semibold text-accent-600">Prix immédiat</span>}
+        {instant && <span className="rounded-full bg-primary-500/15 px-3 py-1 text-xs font-semibold text-primary-600">Prix immédiat</span>}
       </div>
       <h3 className="text-lg font-bold text-brand-800">{service.title}</h3>
       <p className="text-sm leading-relaxed text-slate-600">{service.summary}</p>

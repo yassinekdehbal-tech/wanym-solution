@@ -62,7 +62,7 @@ export default async function Home() {
             <ul className="mt-6 space-y-3">
               {included.map((item) => (
                 <li key={item} className="flex items-start gap-3 text-slate-700">
-                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-500 text-brand-900"><Icon name="check" className="h-4 w-4" /></span>
+                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary-500 text-brand-900"><Icon name="check" className="h-4 w-4" /></span>
                   {item}
                 </li>
               ))}

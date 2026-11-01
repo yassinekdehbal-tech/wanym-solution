@@ -87,7 +87,7 @@ export function TrackForm() {
           <ol className="relative space-y-4 border-l-2 border-slate-200 pl-5">
             {result.events.map((e, i) => (
               <li key={i} className="text-sm">
-                <span className="absolute -left-[7px] mt-1 h-3 w-3 rounded-full bg-accent-500" />
+                <span className="absolute -left-[7px] mt-1 h-3 w-3 rounded-full bg-primary-500" />
                 <p className="font-medium text-slate-900">{e.message}</p>
                 <p className="text-xs text-slate-500">{new Date(e.at).toLocaleString("fr-FR")}</p>
               </li>

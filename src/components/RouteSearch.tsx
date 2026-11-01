@@ -30,7 +30,7 @@ export function RouteSearch({ labels }: { labels: { title: string; from: string;
         <Icon name="arrow" className="hidden h-5 w-5 text-slate-400 sm:block" />
         <label className="sr-only" htmlFor="route-to">{labels.to}</label>
         <div className="relative">
-          <Icon name="pin" className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-accent-600" />
+          <Icon name="pin" className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-primary-600" />
           <input id="route-to" className="field pl-10" placeholder={labels.to} value={to} onChange={(e) => setTo(e.target.value)} autoComplete="street-address" />
         </div>
         <button type="submit" className="btn-primary">

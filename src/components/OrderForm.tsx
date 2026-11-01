@@ -448,7 +448,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                         <span className="mt-2 text-2xl font-extrabold text-brand-800">{veh.surface_m2 != null ? `${veh.surface_m2} m²` : veh.nom}</span>
                         <span className="text-xs font-medium uppercase tracking-wide text-slate-500">{veh.nom}{veh.volume ? ` · ${veh.volume}` : ""}</span>
                         {veh.prix_base_ht != null && (
-                          <span className="mt-2 rounded-full bg-accent-500/15 px-3 py-1 text-sm font-semibold text-accent-700">
+                          <span className="mt-2 rounded-full bg-primary-500/15 px-3 py-1 text-sm font-semibold text-primary-700">
                             dès {formatEuros(Math.round(veh.prix_base_ht * TVA * 100))} <span className="font-normal text-slate-500">TTC</span>
                           </span>
                         )}
@@ -739,7 +739,7 @@ function Section({ n, title, done, children }: { n: number; title: string; done:
   return (
     <section className="card scroll-mt-24">
       <h2 className="mb-4 flex items-center gap-3 text-lg font-bold text-brand-800">
-        <span className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold ${done ? "bg-accent-500 text-white" : "bg-brand-800 text-white"}`}>{done ? <Icon name="check" className="h-4 w-4" /> : n}</span>
+        <span className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold ${done ? "bg-primary-500 text-white" : "bg-brand-800 text-white"}`}>{done ? <Icon name="check" className="h-4 w-4" /> : n}</span>
         {title}
       </h2>
       {children}

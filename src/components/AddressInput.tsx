@@ -71,7 +71,7 @@ export function AddressInput({
 
   return (
     <div className="relative">
-      <Icon name="pin" className={`pointer-events-none absolute left-3 top-[1.1rem] h-5 w-5 ${accent ? "text-accent-600" : "text-slate-400"}`} />
+      <Icon name="pin" className={`pointer-events-none absolute left-3 top-[1.1rem] h-5 w-5 ${accent ? "text-primary-600" : "text-slate-400"}`} />
       <input
         id={inputId}
         className="field pl-10"

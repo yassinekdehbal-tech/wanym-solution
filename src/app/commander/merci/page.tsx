@@ -41,7 +41,7 @@ export default async function ThankYouPage(props: Props) {
   const c = await getContent();
   return (
     <main className="container-x max-w-2xl py-16 text-center sm:py-24">
-      <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-accent-500 text-brand-900"><Icon name="check" className="h-8 w-8" /></span>
+      <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary-500 text-brand-900"><Icon name="check" className="h-8 w-8" /></span>
       <h1 className="mt-6 text-3xl font-extrabold text-brand-800">{c["order.success_title"]}</h1>
       <p className="mt-3 text-slate-600">{c["order.success_body"]}</p>
       <Suspense fallback={null}>
