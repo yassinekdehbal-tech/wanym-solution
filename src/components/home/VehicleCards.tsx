@@ -21,17 +21,17 @@ export function VehicleCard({ veh, index, exemple, href }: { veh: Veh; index: nu
       <p className="mt-3 font-display text-2xl font-extrabold text-brand-800">{veh.surface_m2 != null ? `${veh.surface_m2} m²` : veh.nom}</p>
       <p className="text-sm font-medium text-muted">{veh.nom}{veh.volume ? ` · ${veh.volume}` : ""}</p>
       {exemple && <p className="mt-2 text-sm text-slate-600">ex. {exemple}</p>}
-      <div className="mt-auto flex items-end justify-between gap-2 pt-4">
+      <div className="mt-auto flex flex-wrap items-end justify-between gap-2 pt-4">
         {veh.prix_base_ht != null ? (
           <span>
             <span className="block text-xs text-muted">dès</span>
-            <span className="font-display text-xl font-extrabold text-brand-800">{formatEuros(Math.round(veh.prix_base_ht * TVA * 100))}</span>
+            <span className="font-display text-lg font-extrabold text-brand-800 sm:text-xl">{formatEuros(Math.round(veh.prix_base_ht * TVA * 100))}</span>
             <span className="ml-1 text-xs font-semibold text-muted">TTC</span>
           </span>
         ) : (
           <span className="text-sm text-muted">Prix calculé en ligne</span>
         )}
-        <span className="grid h-10 w-10 place-items-center rounded-full bg-primary-600 text-white transition group-hover:bg-primary-700"><Icon name="arrow" className="h-5 w-5" /></span>
+        <span className="hidden h-10 w-10 shrink-0 place-items-center rounded-full bg-primary-600 text-white transition group-hover:bg-primary-700 sm:grid"><Icon name="arrow" className="h-5 w-5" /></span>
       </div>
     </Link>
   );
