@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import { env } from "@/lib/env";
 import type { Order } from "@/lib/types";
 
@@ -119,6 +120,16 @@ export async function getNamyContexte(): Promise<NamyContexte | NamyError> {
   const r = await namyCall<NamyContexte & { ok: true }>("contexte", {});
   if (r.ok) contexteCache = { at: Date.now(), value: r };
   return r;
+}
+
+/** Les 4 tailles pour la vitrine (accueil) : lues en cache court, jamais de prix en dur ; vide si NAMY ne répond pas. */
+export async function getVehiculesVitrine(): Promise<NamyContexte["vehicules"]> {
+  "use cache";
+  cacheLife("minutes");
+  if (!namyConfigured()) return [];
+  const ctx = await getNamyContexte();
+  if ("ok" in ctx && ctx.ok === false) return [];
+  return [...((ctx as NamyContexte).vehicules ?? [])].sort((a, b) => (a.ordre ?? 0) - (b.ordre ?? 0));
 }
 
 export async function getNamyCreneaux(date: string): Promise<{ ok: true; date_bloquee: string | null; creneaux: { value: string; label: string }[] } | NamyError> {

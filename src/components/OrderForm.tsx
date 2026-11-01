@@ -189,6 +189,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
       pickup_address: params.get("from") ?? draft?.pickup_address ?? cur.pickup_address,
       delivery_address: params.get("to") ?? draft?.delivery_address ?? cur.delivery_address,
       service_slug: params.get("service") ?? draft?.service_slug ?? cur.service_slug,
+      vehicule_id: params.get("vehicule") ?? draft?.vehicule_id ?? cur.vehicule_id,
       wanted_date: draft?.wanted_date && draft.wanted_date >= todayIso() ? draft.wanted_date : todayIso(),
       accept_terms: false,
     }));
