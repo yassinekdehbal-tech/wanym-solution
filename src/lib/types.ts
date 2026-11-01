@@ -12,22 +12,6 @@ export type Service = {
 
 export type SiteContent = Record<string, string>;
 
-export type PricingRule = {
-  service_slug: string;
-  label: string;
-  instant_booking: boolean;
-  base_cents: number;
-  per_km_cents: number;
-  per_unit_cents: number;
-  min_cents: number;
-  max_km: number | null;
-  max_units: number | null;
-  vat_rate: number;
-  surcharges: { handling?: number; floor?: number; urgent_pct?: number };
-  active: boolean;
-  updated_at: string;
-};
-
 export const ORDER_STATUSES = [
   "new",
   "quoted",

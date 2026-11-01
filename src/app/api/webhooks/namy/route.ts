@@ -5,19 +5,21 @@ import { STATUS_LABELS, type Order, type OrderStatus } from "@/lib/types";
 import { z } from "zod";
 
 /**
- * POST /api/webhooks/namy — NAMY → site. Fired by NAMY's database triggers
- * (fn_wanym_site_notify) on every state change of an order the site handed over.
+ * POST /api/webhooks/namy — NAMY → site. Fired by NAMY's trigger
+ * (trg_wanym_site_expedition_statut) on every status change of a course the
+ * site created (event `expedition.statut`).
  * Auth: Bearer CONTENT_API_KEY (stored in NAMY's vault as wanym_site_api_key).
  * Idempotent: replaying an event changes nothing.
  */
 const schema = z.object({
   reference: z.string().trim().toUpperCase().regex(/^WS-\d{4}-\d{5}$/),
-  event: z.enum(["commande.convertie", "commande.refusee", "expedition.statut"]),
+  event: z.string().max(60),
   expedition_id: z.union([z.number(), z.string()]).nullable().optional(),
   commande_publique_id: z.string().nullable().optional(),
   statut: z.string().nullable().optional(),
   motif: z.string().nullable().optional(),
-  paiement_statut: z.string().nullable().optional(),
+  prix_ht: z.number().nullable().optional(),
+  prix_ttc: z.number().nullable().optional(),
   date_livraison: z.string().nullable().optional(),
   creneau: z.string().nullable().optional(),
 });
@@ -59,19 +61,8 @@ export async function POST(req: Request) {
   let message: string | null = null;
   let type: "status" | "note" | "namy" = "status";
 
-  if (ev.event === "commande.convertie") {
-    if (ev.expedition_id != null) patch.namy_ref = String(ev.expedition_id);
-    if (!order.namy_synced_at) patch.namy_synced_at = new Date().toISOString();
-    if (!["in_progress", "delivered", "cancelled", "sav"].includes(order.status)) patch.status = "confirmed";
-    if (ev.paiement_statut === "capture" && order.payment_status !== "paid") {
-      patch.payment_status = "paid";
-      patch.paid_at = new Date().toISOString();
-    }
-    message = "Commande acceptée par l'exploitation" + (ev.expedition_id != null ? ` (expédition NAMY n° ${ev.expedition_id})` : "");
-  } else if (ev.event === "commande.refusee") {
-    if (order.status !== "delivered") patch.status = "cancelled";
-    if (order.payment_status === "authorized") patch.payment_status = "refunded";
-    message = `Commande refusée par l'exploitation${ev.motif ? " : " + ev.motif : ""}`;
+  if (ev.event !== "expedition.statut") {
+    return NextResponse.json({ ok: true, ignored: ev.event });
   } else {
     const statut = ev.statut ?? "";
     const next = EXPEDITION_TO_SITE[statut];
@@ -81,7 +72,7 @@ export async function POST(req: Request) {
     if (next && next !== order.status) patch.status = next;
     else if (!next) type = "note";
     message = (EXPEDITION_LABEL[statut] ?? `Statut NAMY : ${statut}`) + (ev.motif ? ` — ${ev.motif}` : "");
-    if (statut === "annule" && order.payment_status === "authorized") patch.payment_status = "refunded";
+    if (statut === "annule" && order.payment_status === "paid") message += " — remboursement à traiter";
   }
 
   const changed = Object.keys(patch).length > 0;

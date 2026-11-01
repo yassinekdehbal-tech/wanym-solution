@@ -1,8 +1,8 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { supabasePublic } from "@/lib/supabase/client";
-import type { PricingRule, Service, SiteContent } from "@/lib/types";
+import type { Service, SiteContent } from "@/lib/types";
 
-export const TAGS = { content: "site-content", services: "services", pricing: "pricing" } as const;
+export const TAGS = { content: "site-content", services: "services" } as const;
 
 /** All editable copy as a key/value map. Cached until PUT /api/content revalidates it. */
 export async function getContent(): Promise<SiteContent> {
@@ -50,20 +50,6 @@ export async function getService(slug: string): Promise<Service | null> {
     .eq("published", true)
     .maybeSingle();
   return (data as Service | null) ?? null;
-}
-
-export async function getPricingRules(): Promise<PricingRule[]> {
-  "use cache";
-  cacheTag(TAGS.pricing);
-  cacheLife("max");
-  const db = supabasePublic();
-  if (!db) return [];
-  const { data, error } = await db.from("pricing_rules").select("*").eq("active", true);
-  if (error) {
-    console.error("[pricing] fetch failed:", error.message);
-    return [];
-  }
-  return (data ?? []) as PricingRule[];
 }
 
 /** Helpers for list-like content stored as "a|b|c". */
