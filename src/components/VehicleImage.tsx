@@ -6,7 +6,7 @@ const RENDUS: Record<number, { src: string; w: number; h: number }> = {
   1: { src: "/images/camions/camion-1m2.webp", w: 900, h: 553 },
   2: { src: "/images/camions/camion-2m2.webp", w: 900, h: 506 },
   4: { src: "/images/camions/camion-4m2.webp", w: 900, h: 579 },
-  8: { src: "/images/camions/camion-8m2.webp", w: 900, h: 588 },
+  8: { src: "/images/camions/camion-8m2.webp", w: 771, h: 520 },
 };
 export const CHARGES: Record<number, { src: string; w: number; h: number }> = {
   1: { src: "/images/charges/charge-1m2.webp", w: 800, h: 531 },
