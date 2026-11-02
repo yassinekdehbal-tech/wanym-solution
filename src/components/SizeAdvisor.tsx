@@ -1,11 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { TruckIcon } from "@/components/TruckIcon";
+import { VehicleImage } from "@/components/VehicleImage";
 import { recommander, resumeInventaire, type AdvisorResult, type CatalogueItem, type InventaireLigne, type VehiculeCapacite, type VehiculeOption } from "@/lib/vehicle-advisor";
 
 export type Inventaire = Record<string, number>;
+
+/** Pictos livrés le 02/11/2026 (`public/images/objets/<id>.webp`) ; un objet hors liste garde son icône. */
+const OBJETS_IMAGES = new Set(["carton", "carton_livres", "valise", "lave_linge", "refrigerateur", "petit_electro", "canape_2", "canape_3", "matelas", "lit_demonte", "table", "chaise", "commode", "meuble_tv", "armoire_demontee", "tv", "velo", "plante", "autre"]);
 
 /**
  * « Je ne sais pas quelle taille choisir » — the user ticks what travels, the
@@ -64,7 +68,11 @@ export function SizeAdvisor({
           return (
             <li key={item.id} className={`flex items-center justify-between gap-2 rounded-xl border p-2 ${q > 0 ? "border-brand-800 bg-brand-50" : "border-slate-200"}`}>
               <span className="flex min-w-0 items-center gap-2 text-sm">
-                <Icon name={item.icone ?? "box"} className="h-5 w-5 shrink-0 text-brand-600" />
+                {OBJETS_IMAGES.has(item.id) ? (
+                  <Image src={`/images/objets/${item.id}.webp`} alt="" width={48} height={48} sizes="48px" className="h-10 w-10 shrink-0 object-contain" />
+                ) : (
+                  <Icon name={item.icone ?? "box"} className="h-5 w-5 shrink-0 text-brand-600" />
+                )}
                 <span className="truncate font-medium text-slate-800">{item.nom}</span>
               </span>
               <span className="flex shrink-0 items-center">
@@ -92,7 +100,7 @@ export function SizeAdvisor({
         )}
         {(result.statut === "suggere" || result.statut === "a_verifier") && result.vehicule && (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <TruckIcon size={(Math.min(4, Math.max(1, result.vehicule.ordre ?? 1)) as 1 | 2 | 3 | 4)} className="h-14 w-32 shrink-0 text-brand-800" />
+            <span className="flex h-16 w-32 shrink-0 items-center justify-center"><VehicleImage surfaceM2={result.vehicule.surface_m2} ordre={result.vehicule.ordre} className="max-h-16" sizes="128px" /></span>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold uppercase tracking-wide text-brand-600">{result.statut === "suggere" ? "Nous vous suggérons" : "Taille probable, à vérifier"}</p>
               <p className="text-xl font-extrabold text-brand-800">

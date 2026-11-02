@@ -9,7 +9,7 @@ import { Icon } from "@/components/Icon";
 import { PriceBar, type PriceBarState } from "@/components/PriceBar";
 import { PriceDetail } from "@/components/PriceDetail";
 import { SizeAdvisor, type Inventaire } from "@/components/SizeAdvisor";
-import { TruckIcon } from "@/components/TruckIcon";
+import { VehicleImage } from "@/components/VehicleImage";
 import { track } from "@/lib/analytics";
 import type { NamyContexte, NamyPrix } from "@/lib/namy";
 import type { CatalogueItem, VehiculeCapacite } from "@/lib/vehicle-advisor";
@@ -492,7 +492,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                       <label key={veh.id} className={`relative flex cursor-pointer flex-col items-center rounded-2xl border-2 p-3 text-center transition focus-within:ring-4 focus-within:ring-primary-500/30 sm:p-4 ${active ? "border-primary-600 bg-primary-50 shadow-md" : "border-slate-200 bg-white hover:border-slate-300"}`}>
                         <input type="radio" name="vehicule_id" className="sr-only" value={veh.id} checked={active} onChange={() => { set("vehicule_id", veh.id); track("camion_selectionne", { vehicule_id: veh.id, source: "cartes" }); }} />
                         {active && <span className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-primary-600 text-white"><Icon name="check" className="h-3.5 w-3.5" /></span>}
-                        <TruckIcon size={size} className="h-16 w-full" color={active ? "#0b1f3a" : "#475569"} />
+                        <span className="flex h-20 w-full items-center justify-center"><VehicleImage surfaceM2={veh.surface_m2} ordre={size} className="max-h-20" sizes="(min-width: 1024px) 200px, 40vw" /></span>
                         <span className="mt-2 font-display text-2xl font-extrabold text-brand-800">{veh.surface_m2 != null ? `${veh.surface_m2} m²` : veh.nom}</span>
                         <span className="text-xs font-medium uppercase tracking-wide text-slate-500">{veh.nom}{veh.volume ? ` · ${veh.volume}` : ""}</span>
                         {veh.prix_base_ht != null && (
@@ -724,7 +724,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                       </p>
                       <p className="text-sm text-slate-600">soit {formatEuros(quote?.price_cents ?? 0)} HT · {prix.distance_km} km</p>
                     </div>
-                    {vehiculeChoisi && <TruckIcon size={(Math.min(4, Math.max(1, vehiculeChoisi.ordre ?? 1)) as 1 | 2 | 3 | 4)} className="h-12 w-28 text-brand-800" />}
+                    {vehiculeChoisi && <span className="flex h-16 w-32 items-center justify-end"><VehicleImage surfaceM2={vehiculeChoisi.surface_m2} ordre={vehiculeChoisi.ordre} className="max-h-16" sizes="128px" /></span>}
                   </div>
                   <PriceDetail prix={prix} className="mt-4" />
                   <p className="mt-3 flex items-center gap-2 text-sm text-slate-600">

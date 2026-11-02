@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
-import { TruckIcon } from "@/components/TruckIcon";
+import { ChargeImage, VehicleImage } from "@/components/VehicleImage";
 import type { NamyContexte } from "@/lib/namy";
 import { formatEuros } from "@/lib/pricing";
 
@@ -15,12 +15,17 @@ export function VehicleCard({ veh, index, exemple, href }: { veh: Veh; index: nu
   const size = Math.min(4, Math.max(1, veh.ordre ?? index + 1)) as 1 | 2 | 3 | 4;
   return (
     <Link href={href} className="card-interactive group flex flex-col p-4 sm:p-5" aria-label={`${veh.nom}, ${veh.surface_m2 ?? ""} m², commander`}>
-      <div className="flex h-24 items-end justify-center rounded-xl bg-surface px-3 pb-2 transition group-hover:bg-primary-50">
-        <TruckIcon size={size} className="h-16 w-full max-w-[9rem]" color="#0b1f3a" />
+      <div className="flex h-28 items-center justify-center rounded-xl bg-surface px-3 transition group-hover:bg-primary-50 sm:h-32">
+        <VehicleImage surfaceM2={veh.surface_m2} ordre={veh.ordre ?? size} className="max-h-24 sm:max-h-28" />
       </div>
       <p className="mt-3 font-display text-2xl font-extrabold text-brand-800">{veh.surface_m2 != null ? `${veh.surface_m2} m²` : veh.nom}</p>
       <p className="text-sm font-medium text-muted">{veh.nom}{veh.volume ? ` · ${veh.volume}` : ""}</p>
-      {exemple && <p className="mt-2 text-sm text-slate-600">ex. {exemple}</p>}
+      {exemple && (
+        <div className="mt-2 flex items-center gap-2">
+          <span className="flex h-12 w-16 shrink-0 items-center justify-center"><ChargeImage surfaceM2={veh.surface_m2} className="max-h-12" /></span>
+          <p className="text-sm text-slate-600">ex. {exemple}</p>
+        </div>
+      )}
       <div className="mt-auto flex flex-wrap items-end justify-between gap-2 pt-4">
         {veh.prix_base_ht != null ? (
           <span>
