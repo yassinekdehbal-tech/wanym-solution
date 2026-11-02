@@ -62,18 +62,18 @@ export function SizeAdvisor({
         <input className="field mt-3" placeholder="Rechercher un objet (canapé, carton, vélo…)" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Rechercher un objet" />
       )}
 
-      <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((item) => {
           const q = inventaire[item.id] ?? 0;
           return (
-            <li key={item.id} className={`flex items-center justify-between gap-2 rounded-xl border p-2 ${q > 0 ? "border-brand-800 bg-brand-50" : "border-slate-200"}`}>
-              <span className="flex min-w-0 items-center gap-2 text-sm">
+            <li key={item.id} className={`flex items-center justify-between gap-2 rounded-xl border p-2 transition ${q > 0 ? "border-primary-600 bg-primary-50" : "border-slate-200"}`}>
+              <span className="flex min-w-0 flex-1 items-center gap-2 text-sm">
                 {OBJETS_IMAGES.has(item.id) ? (
                   <Image src={`/images/objets/${item.id}.webp`} alt="" width={48} height={48} sizes="48px" className="h-10 w-10 shrink-0 object-contain" />
                 ) : (
                   <Icon name={item.icone ?? "box"} className="h-5 w-5 shrink-0 text-brand-600" />
                 )}
-                <span className="truncate font-medium text-slate-800">{item.nom}</span>
+                <span className="min-w-0 font-medium leading-tight text-slate-800">{item.nom}</span>
               </span>
               <span className="flex shrink-0 items-center">
                 <button type="button" className="h-11 w-11 rounded-lg text-xl font-bold text-brand-800 hover:bg-white disabled:opacity-30" onClick={() => setQty(item.id, q - 1)} disabled={q === 0} aria-label={`Retirer ${item.nom}`}>−</button>
