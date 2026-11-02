@@ -25,6 +25,8 @@ export type NamyContexte = {
   commande_jour_j: boolean;
   heure_limite_jour_j: string;
   fermetures: { date: string; raison: string }[];
+  /** Majorations permanentes applicables au compte (dimanche, soirée…) : affichées par le site, appliquées par NAMY. */
+  majorations?: { creneau_cible: string; jour_semaine: number | null; delta_pct: number; libelle_court: string | null }[];
   mode_devis: boolean;
 };
 

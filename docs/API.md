@@ -20,7 +20,7 @@ curl -X PUT https://wanymsolution.com/api/content/hero.title \
 ```
 
 Clés notables : `hero.*`, `badges` (séparées par `|`), `services.title/lead`, `included.items` (`|`),
-`pricing.*`, `about.*`, `cta.*`, `contact.*`, `legal.*`, `faq` (JSON `[{"q","a"}]`), `order.*` (dont `order.namy_services`, `order.quote_received_title/body`), `track.*`, `cgv.body` (markdown). Accueil refondu (01/11/2026) : `reassurance.items` (`icone:Titre:Sous-titre|…`, icônes de `src/components/Icon.tsx`), `vehicles.title`, `vehicles.lead`, `how.title`, `how.steps` (JSON `[{"t","d","icon"}]`), `pro.title`, `pro.body`, `pro.items` (`|`), `references.items` (JSON `[{"name","text","role"}]`, section masquée si vide — n'y mettre que des avis validés).
+`pricing.*`, `about.*`, `cta.*`, `contact.*`, `legal.*`, `faq` (JSON `[{"q","a"}]`), `order.*` (dont `order.namy_services`, `order.quote_received_title/body`, `order.temps_inclus_min`, `order.temps_lead`, `order.depassement_notice`, `order.cancellation_terms`, `order.supplements_terms`), `vehicles.inclus` (`|`, « inclus dans chaque forfait »), `track.*`, `cgv.body` (markdown). Accueil refondu (01/11/2026) : `reassurance.items` (`icone:Titre:Sous-titre|…`, icônes de `src/components/Icon.tsx`), `vehicles.title`, `vehicles.lead`, `how.title`, `how.steps` (JSON `[{"t","d","icon"}]`), `pro.title`, `pro.body`, `pro.items` (`|`), `references.items` (JSON `[{"name","text","role"}]`, section masquée si vide — n'y mettre que des avis validés).
 La page se met à jour en arrière-plan dès l'appel (revalidation par tag).
 
 ## Services
@@ -173,3 +173,8 @@ Sans `STRIPE_SECRET_KEY`, le site fonctionne en mode devis uniquement (le prix r
 
 `gclid` et `utm_*` sont capturés à l'arrivée sur le site (premier clic, 90 jours) et enregistrés sur la commande (`gclid`, `utm`, `source`).
 La conversion est envoyée sur `/commander/merci` avec `transaction_id = référence` et `value = montant TTC`.
+
+
+### Suppléments après la course
+
+`POST /api/orders/[id]/charge` `{amount_cents, label, notify_customer?}` (Bearer `CONTENT_API_KEY`) débite un supplément TTC sur la carte conservée à la commande (Checkout `setup_future_usage: off_session`), facture Stripe en repli, journal public + e-mail au client. NAMY peut déclencher la même chose par `POST /api/webhooks/namy` avec `event: "expedition.supplement"`, `montant_ttc`, `libelle`.

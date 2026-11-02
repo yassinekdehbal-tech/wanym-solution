@@ -37,7 +37,9 @@ export async function createCheckoutSession(order: Order): Promise<Stripe.Checko
     customer_creation: "always", // a Customer for the invoice, the receipt and later Invoicing
     client_reference_id: order.id,
     metadata,
-    payment_intent_data: { description: `Transport ${order.reference}`, metadata },
+    // The card is kept (with the customer's consent, CGV § suppléments) to charge measured extras after the course:
+    // on-site time beyond what was booked, undeclared floor, failed pickup. See chargeSupplement().
+    payment_intent_data: { description: `Transport ${order.reference}`, metadata, setup_future_usage: "off_session" },
     line_items: [
       {
         quantity: 1,
@@ -119,6 +121,64 @@ export async function createStripeInvoice(order: Order, opts: { daysUntilDue?: n
   let final = await s.invoices.finalizeInvoice(invoice.id, { auto_advance: false });
   if (opts.send !== false) final = await s.invoices.sendInvoice(final.id);
   return { id: final.id, number: final.number, hosted_invoice_url: final.hosted_invoice_url ?? null, invoice_pdf: final.invoice_pdf ?? null, status: final.status };
+}
+
+export type SupplementResult =
+  | { ok: true; mode: "charge"; payment_intent: string; amount_cents: number }
+  | { ok: true; mode: "invoice"; invoice: StripeInvoiceResult; amount_cents: number }
+  | { ok: false; reason: string };
+
+/**
+ * Charge a measured supplement (TTC cents) on the card saved at checkout, off-session. If the bank asks for
+ * authentication or the card is gone, fall back to a Stripe invoice the customer pays online.
+ * Never used for the original price: the course was paid up-front and NAMY's correction is the source of the amount.
+ */
+export async function chargeSupplement(order: Order, amountCents: number, label: string): Promise<SupplementResult> {
+  const s = getStripe();
+  if (!s) return { ok: false, reason: "stripe_non_configure" };
+  if (!Number.isInteger(amountCents) || amountCents <= 0) return { ok: false, reason: "montant_invalide" };
+  const metadata = { order_id: order.id, reference: order.reference, supplement: "1", label: label.slice(0, 200) };
+  if (order.stripe_payment_intent) {
+    try {
+      const pi = await s.paymentIntents.retrieve(order.stripe_payment_intent);
+      const customer = typeof pi.customer === "string" ? pi.customer : pi.customer?.id;
+      const paymentMethod = typeof pi.payment_method === "string" ? pi.payment_method : pi.payment_method?.id;
+      if (customer && paymentMethod) {
+        const intent = await s.paymentIntents.create({
+          amount: amountCents,
+          currency: order.currency.toLowerCase(),
+          customer,
+          payment_method: paymentMethod,
+          off_session: true,
+          confirm: true,
+          description: `Supplément ${order.reference} — ${label}`.slice(0, 1000),
+          metadata,
+        });
+        if (intent.status === "succeeded") return { ok: true, mode: "charge", payment_intent: intent.id, amount_cents: amountCents };
+      }
+    } catch (e) {
+      // authentication_required, card_declined, missing customer… → invoice below
+      if (!(e instanceof Error) || !/authentication_required|card_declined|payment_method|customer|off_session/i.test(e.message)) throw e;
+    }
+  }
+  const customer = await upsertCustomer(s, order);
+  const invoice = await s.invoices.create({
+    customer: customer.id,
+    collection_method: "send_invoice",
+    days_until_due: env.stripeInvoiceDaysDue,
+    description: `Supplément ${order.reference} — ${label}`,
+    metadata,
+    pending_invoice_items_behavior: "exclude",
+  });
+  await s.invoiceItems.create({
+    customer: customer.id,
+    invoice: invoice.id,
+    currency: order.currency.toLowerCase(),
+    description: label,
+    pricing: { price_data: { currency: order.currency.toLowerCase(), unit_amount: amountCents, product_data: { name: `Supplément ${order.reference}` } } },
+  } as Stripe.InvoiceItemCreateParams);
+  const final = await s.invoices.sendInvoice((await s.invoices.finalizeInvoice(invoice.id, { auto_advance: false })).id);
+  return { ok: true, mode: "invoice", invoice: { id: final.id, number: final.number, hosted_invoice_url: final.hosted_invoice_url ?? null, invoice_pdf: final.invoice_pdf ?? null, status: final.status }, amount_cents: amountCents };
 }
 
 /** Full refund of a paid order (ops action after a cancellation); `charge.refunded` updates the order. */

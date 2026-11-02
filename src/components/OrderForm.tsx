@@ -43,6 +43,8 @@ type Values = {
   options: string[]; // other manual options (ids)
   inventaire: Inventaire; // size advisor: catalogue item id → quantity
   autre_texte: string;
+  temps_pack: string; // NAMY option id of the booked on-site time pack ("" = included time only)
+  aide_client: boolean; // heavy item declared without a helper: the customer will carry with the driver
   // legacy weight-grid fields (shown only when NAMY serves no vehicle)
   nb_colis: string;
   poids_total_kg: string;
@@ -106,6 +108,8 @@ const initial = (service: string): Values => ({
   options: [],
   inventaire: {},
   autre_texte: "",
+  temps_pack: "",
+  aide_client: false,
   nb_colis: "1",
   poids_total_kg: "",
   longueur_max_cm: "",
@@ -133,7 +137,9 @@ const QUOTE_REASONS: Record<string, string> = {
 
 export type AdvisorConfig = { catalogue: CatalogueItem[]; capacites: VehiculeCapacite[]; exemples: Record<string, string> };
 
-export function OrderForm({ services, namySlugs, copy, advisor }: { services: Service[]; namySlugs: string[]; copy: { quoteNotice: string; cancelledBody: string }; advisor: AdvisorConfig }) {
+export type OrderCopy = { quoteNotice: string; cancelledBody: string; tempsInclusMin: number; tempsLead: string; depassementNotice: string; cancellationTerms: string; supplementsTerms: string; inclus: string[] };
+
+export function OrderForm({ services, namySlugs, copy, advisor }: { services: Service[]; namySlugs: string[]; copy: OrderCopy; advisor: AdvisorConfig }) {
   const router = useRouter();
   const params = useSearchParams();
   const defaultService = useMemo(() => services.find((s) => namySlugs.includes(s.slug))?.slug ?? services[0]?.slug ?? "", [services, namySlugs]);
@@ -233,8 +239,23 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
   const vehicules = useMemo(() => (ctx?.vehicules ?? []).slice().sort((a, b) => (a.ordre ?? 0) - (b.ordre ?? 0)), [ctx]);
   const zoneMode = vehicules.length > 0;
   const optionByCode = (code: string) => ctx?.options.find((o) => o.code === code) ?? null;
-  const codedIds = useMemo(() => new Set((ctx?.options ?? []).filter((o) => o.code && ["porte_depart", "porte_arrivee", "equipier"].includes(o.code)).map((o) => o.id)), [ctx]);
+  const codedIds = useMemo(() => new Set((ctx?.options ?? []).filter((o) => o.code && (["porte_depart", "porte_arrivee", "equipier"].includes(o.code) || o.code.startsWith("temps_"))).map((o) => o.id)), [ctx]);
   const otherOptions = (ctx?.options ?? []).filter((o) => !codedIds.has(o.id));
+  /** On-site time packs (NAMY options temps_*), cheapest first; the included time is the first, free, choice. */
+  const tempsPacks = useMemo(() => (ctx?.options ?? []).filter((o) => o.code?.startsWith("temps_")).sort((a, b) => (a.prix ?? 0) - (b.prix ?? 0)), [ctx]);
+  /** Heavy or long items declared in the advisor: an helper is recommended (never imposed, decision of 02/11/2026). */
+  const heavyItems = useMemo(
+    () => advisor.catalogue.filter((c) => (v.inventaire[c.id] ?? 0) > 0 && ((c.poids_kg ?? 0) > 30 || (c.longueur_cm ?? 0) > 150)).map((c) => c.nom),
+    [advisor.catalogue, v.inventaire],
+  );
+  /** Surcharge rules (Sunday, evening…) for a date: NAMY applies them, the form only shows them. */
+  const majosFor = (date: string, creneau?: string) => {
+    const d = new Date(date + "T12:00:00");
+    if (Number.isNaN(d.getTime())) return [] as NonNullable<NamyContexte["majorations"]>;
+    const dow = d.getDay() === 0 ? 7 : d.getDay();
+    const norm = (s: string) => s.replace(/\s+/g, "").toLowerCase().replace(/h/g, ":");
+    return (ctx?.majorations ?? []).filter((m) => (m.jour_semaine == null || m.jour_semaine === dow) && (!creneau || norm(m.creneau_cible) === norm(creneau)));
+  };
   const regleEtage = ctx?.regles?.find((r) => r.champ === "nb_etages") ?? null;
   const modeFor = (porteArrivee: boolean) => ctx?.modes.find((m) => m.code === (porteArrivee ? "piece_choix" : "pied_camion"))?.id ?? ctx?.modes[0]?.id ?? "";
 
@@ -251,9 +272,11 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
     add("porte_depart", v.porte_depart);
     add("porte_arrivee", v.porte_arrivee);
     add("equipier", v.equipier);
+    for (const p of tempsPacks) ids.delete(p.id);
+    if (v.temps_pack) ids.add(v.temps_pack);
     return [...ids];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v.options, v.porte_depart, v.porte_arrivee, v.equipier, ctx]);
+  }, [v.options, v.porte_depart, v.porte_arrivee, v.equipier, v.temps_pack, ctx]);
 
   /** NAMY has one floor field: the highest floor reached without a lift, on either end with door service. */
   const floors = () => {
@@ -290,6 +313,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
       options: selectedOptionIds(),
       inventaire: Object.fromEntries(Object.entries(v.inventaire).filter(([, q]) => q > 0)),
       inventaire_autre: (v.inventaire.autre ?? 0) > 0 ? v.autre_texte : "",
+      aide_client: v.aide_client && !v.equipier && heavyItems.length > 0,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [v, ctx, zoneMode, selectedOptionIds]);
@@ -306,7 +330,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
   const showPrix = showContact;
 
   // Everything that moves the price, in one key: the quote is "fresh" only when it was computed for this key.
-  const pricingKey = JSON.stringify([v.pickup_address, v.delivery_address, v.vehicule_id, v.porte_depart, v.porte_arrivee, v.etage_depart, v.etage_arrivee, v.ascenseur_depart, v.ascenseur_arrivee, v.equipier, v.options, v.wanted_date, v.creneau, v.poids_total_kg, v.longueur_max_cm, v.nb_colis, v.service_slug]);
+  const pricingKey = JSON.stringify([v.pickup_address, v.delivery_address, v.vehicule_id, v.porte_depart, v.porte_arrivee, v.etage_depart, v.etage_arrivee, v.ascenseur_depart, v.ascenseur_arrivee, v.equipier, v.options, v.temps_pack, v.wanted_date, v.creneau, v.poids_total_kg, v.longueur_max_cm, v.nb_colis, v.service_slug]);
 
   // ── Live price from NAMY as soon as the pricing inputs are there (debounced) ──
   useEffect(() => {
@@ -508,6 +532,13 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                   })}
                 </div>
                 {err("vehicule_id")}
+                {copy.inclus.length > 0 && (
+                  <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600" aria-label="Inclus dans chaque forfait">
+                    {copy.inclus.map((it) => (
+                      <li key={it} className="inline-flex items-center gap-1"><Icon name="check" className="h-3.5 w-3.5 text-primary-600" /> {it}</li>
+                    ))}
+                  </ul>
+                )}
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
                   <p>Au-delà des {vehicules[0]?.rayon_km ?? 20} km inclus, {prix?.zone?.prix_km_ht ? formatEuros(Math.round(prix.zone.prix_km_ht * TVA * 100)) : "2,40 €"} TTC par km supplémentaire.</p>
                   {advisor.catalogue.length > 0 && !advisorOpen && (
@@ -602,6 +633,33 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                 </span>
               </label>
             )}
+            {heavyItems.length > 0 && !v.equipier && (
+              <div className="alert-warn mt-3" role="status">
+                <p className="flex items-start gap-2 font-semibold"><Icon name="alert" className="mt-0.5 h-4 w-4 shrink-0" /> Objet lourd ou encombrant déclaré ({heavyItems.join(", ")}) : un équipier est recommandé.</p>
+                <label className="mt-2 flex cursor-pointer items-start gap-2 text-sm font-normal text-accent-700">
+                  <input type="checkbox" className="mt-0.5 h-5 w-5 accent-primary-600" checked={v.aide_client} onChange={(e) => set("aide_client", e.target.checked)} />
+                  <span>Sans équipier, je serai présent pour porter avec le chauffeur (objets de plus de 30 kg ou 1,50 m).</span>
+                </label>
+              </div>
+            )}
+
+            {/* Temps sur place : le forfait inclut N minutes ; au-delà, packs prépayés (moins chers que le dépassement) */}
+            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3" id="f-temps_pack">
+              <p className="label flex items-center gap-2"><Icon name="clock" className="h-4 w-4 text-primary-700" /> Temps sur place</p>
+              <p className="text-sm text-slate-600">{copy.tempsLead}</p>
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4" role="radiogroup" aria-label="Temps sur place">
+                {[{ id: "", nom: `${copy.tempsInclusMin} min`, prix: null as number | null, sub: "inclus" }, ...tempsPacks.map((o) => ({ id: o.id, nom: o.nom.replace(/ sur place$/i, ""), prix: o.prix, sub: o.prix != null ? `+${formatEuros(Math.round(o.prix * TVA * 100))} TTC` : "" }))].map((o) => {
+                  const on = v.temps_pack === o.id;
+                  return (
+                    <button key={o.id || "inclus"} type="button" role="radio" aria-checked={on} onClick={() => set("temps_pack", o.id)} className={`min-h-12 rounded-xl border-2 px-2 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 ${on ? "border-primary-600 bg-primary-600 text-white" : "border-slate-300 text-slate-700 hover:border-slate-400"}`}>
+                      {o.nom}
+                      <span className="block text-xs font-normal opacity-80">{o.sub}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-2 text-xs text-slate-500">{copy.depassementNotice}</p>
+            </div>
             {otherOptions.length > 0 && (
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 {otherOptions.map((o) => {
@@ -654,14 +712,21 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
                 {err("wanted_date")}
                 {!errors.wanted_date && dateBloquee && <p className="alert-warn mt-2 flex items-start gap-2" role="status"><Icon name="alert" className="mt-0.5 h-4 w-4 shrink-0" /> {dateBloquee} : choisissez une autre date.</p>}
                 {ctx && <p className="mt-1 text-xs text-slate-500">Jours de livraison : {ctx.jours_service.join(", ")}{ctx.commande_jour_j ? ` · le jour même jusqu'à ${ctx.heure_limite_jour_j}` : ""}.</p>}
+                {(() => {
+                  const libs = [...new Set(majosFor(v.wanted_date).filter((m) => (ctx?.majorations ?? []).filter((x) => x.libelle_court === m.libelle_court).length >= (creneaux.length || 1)).map((m) => m.libelle_court ?? `+${m.delta_pct} %`))];
+                  return libs.length ? <p className="chip-warn mt-2">{libs.join(" · ")}</p> : null;
+                })()}
               </div>
               <div id="f-creneau">
                 <label className="label" htmlFor="creneau">Créneau *</label>
                 <select id="creneau" {...inv("creneau")} className="field" value={v.creneau} onChange={(e) => set("creneau", e.target.value)} disabled={!creneaux.length}>
                   {!creneaux.length && <option value="">{dateBloquee ?? "Aucun créneau pour cette date"}</option>}
-                  {creneaux.map((c) => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
+                  {creneaux.map((c) => {
+                    const m = majosFor(v.wanted_date, c.value);
+                    return (
+                      <option key={c.value} value={c.value}>{c.label}{m.length ? ` · ${m.map((x) => x.libelle_court ?? `+${x.delta_pct} %`).join(", ")}` : ""}</option>
+                    );
+                  })}
                 </select>
                 {err("creneau")}
               </div>
@@ -741,6 +806,12 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
               )}
             </div>
 
+            {(copy.cancellationTerms || copy.supplementsTerms) && (
+              <dl className="mt-4 grid gap-3 rounded-xl bg-surface p-4 text-sm sm:grid-cols-2">
+                {copy.cancellationTerms && <div><dt className="font-semibold text-brand-800">Annulation</dt><dd className="mt-1 text-slate-600">{copy.cancellationTerms}</dd></div>}
+                {copy.supplementsTerms && <div><dt className="font-semibold text-brand-800">Après la course</dt><dd className="mt-1 text-slate-600">{copy.supplementsTerms}</dd></div>}
+              </dl>
+            )}
             <label id="f-accept_terms" className="mt-4 flex items-start gap-3 text-sm text-slate-700">
               <input type="checkbox" className="mt-0.5 h-5 w-5 accent-primary-600" checked={v.accept_terms} {...inv("accept_terms")} onChange={(e) => set("accept_terms", e.target.checked)} />
               <span>
