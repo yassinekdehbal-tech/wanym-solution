@@ -42,7 +42,7 @@ export function VehicleCard({ veh, index, exemple, href }: { veh: Veh; index: nu
   );
 }
 
-export function VehicleCards({ vehicules, exemples, title, lead, rayonKm }: { vehicules: Veh[]; exemples: Record<string, string>; title: string; lead?: string; rayonKm?: number | null }) {
+export function VehicleCards({ vehicules, exemples, title, lead, rayonKm, inclus = [] }: { vehicules: Veh[]; exemples: Record<string, string>; title: string; lead?: string; rayonKm?: number | null; inclus?: string[] }) {
   if (!vehicules.length) return null;
   return (
     <section className="section container-x" id="camions">
@@ -52,8 +52,15 @@ export function VehicleCards({ vehicules, exemples, title, lead, rayonKm }: { ve
           <h2 className="h2 mt-2">{title}</h2>
           {lead && <p className="lead mt-3 max-w-2xl">{lead}</p>}
         </div>
-        <p className="text-sm text-muted">Chauffeur et {rayonKm ?? 20} km inclus · au-delà, le kilomètre est affiché avant paiement.</p>
+        <p className="text-sm text-muted">Au-delà des {rayonKm ?? 20} km inclus, le kilomètre est affiché avant paiement.</p>
       </div>
+      {inclus.length > 0 && (
+        <ul className="mt-5 flex flex-wrap gap-2" aria-label="Inclus dans chaque forfait">
+          {inclus.map((it) => (
+            <li key={it} className="chip-primary text-sm font-medium"><Icon name="check" className="h-3.5 w-3.5" /> {it}</li>
+          ))}
+        </ul>
+      )}
       <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
         {vehicules.map((veh, i) => (
           <VehicleCard key={veh.id} veh={veh} index={i} exemple={veh.surface_m2 != null ? exemples[String(veh.surface_m2)] : undefined} href={`/commander?vehicule=${encodeURIComponent(veh.id)}`} />

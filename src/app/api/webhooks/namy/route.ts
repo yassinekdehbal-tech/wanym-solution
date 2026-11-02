@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { badRequest, isAuthorized, notFound, readJson, unauthorized } from "@/lib/api";
 import { env } from "@/lib/env";
 import { getOrder, getOrderEvents, logEvent, updateOrder } from "@/lib/orders";
+import { applySupplement } from "@/lib/supplements";
 import { STATUS_LABELS, type Order, type OrderStatus } from "@/lib/types";
 import { z } from "zod";
 
@@ -23,6 +24,9 @@ const schema = z.object({
   prix_ttc: z.number().nullable().optional(),
   date_livraison: z.string().nullable().optional(),
   creneau: z.string().nullable().optional(),
+  /** `expedition.supplement` : montant TTC constaté par l'exploitation (temps sur place, étage, échec) et son libellé. */
+  montant_ttc: z.number().positive().nullable().optional(),
+  libelle: z.string().max(200).nullable().optional(),
 });
 
 /** NAMY expedition status → site status (null = no change on the site). */
@@ -62,6 +66,11 @@ export async function POST(req: Request) {
   let message: string | null = null;
   let type: "status" | "note" | "namy" = "status";
 
+  if (ev.event === "expedition.supplement") {
+    if (!ev.montant_ttc) return badRequest("montant_ttc requis");
+    const r = await applySupplement(order, Math.round(ev.montant_ttc * 100), ev.libelle ?? "Supplément constaté par l'exploitation", { source: "namy" });
+    return NextResponse.json(r, { status: r.ok ? 200 : 409 });
+  }
   if (ev.event !== "expedition.statut") {
     return NextResponse.json({ ok: true, ignored: ev.event });
   } else {

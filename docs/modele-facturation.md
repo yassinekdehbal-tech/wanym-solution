@@ -104,3 +104,15 @@ Les montants (packs, dépassement, nuit, dimanche, express) se règlent dans NAM
 3. Équipier obligatoire au-delà de **30 kg / 1,5 m** par objet : oui / non.
 4. Annulation : **gratuite > 24 h, 50 % < 24 h, 100 % chauffeur parti** (ou 6 h ouvrées comme Supervan).
 5. Nuit et dimanche : activer les majorations (montants à fixer plus tard).
+
+## 6. Journal de câblage (02/11/2026)
+
+Décisions : 30 min incluses · dépassement sur empreinte · équipier recommandé (le client peut porter) · annulation 24 h / 50 % / 100 % · majorations nuit et dimanche activées.
+
+| Lot | Fait |
+|---|---|
+| A | NAMY : options `temps_30` (10 € HT) / `temps_60` (20) / `temps_120` (45) sur la grille « SITE WANYM », **prix provisoires**. Site : bloc « Temps sur place » (30 min incluses + packs exclusifs), liste « inclus » sur les cartes, textes `order.temps_*`. |
+| B | NAMY : dimanche ouvert (08-12, 14-18) et soirée 18-21 h (lun → sam) avec règles +50 % ciblées sur le compte site (**pourcentages provisoires**, Tarification dynamique) ; `contexte` expose `majorations`. Site : badge sur la date et libellé sur les créneaux ; la ligne de majoration figure déjà dans le détail du prix. Nuit profonde (après 21 h) non ouverte : à décider avec l'exploitation. |
+| C | Site : recommandation d'équipier dès qu'un objet déclaré dépasse 30 kg ou 1,50 m, case « je porterai avec le chauffeur » (`aide_client`, transmis à NAMY dans les notes). |
+| D | Site : Checkout avec `setup_future_usage: off_session` ; `POST /api/orders/[id]/charge` et événement NAMY `expedition.supplement` → débit hors session, repli facture Stripe, journal public, e-mail client (`src/lib/supplements.ts`). Reste côté NAMY : émettre l'événement depuis la correction de prix (aujourd'hui l'exploitation appelle l'API du site). |
+| E | NAMY : `annulation_client_autorisee`, gratuite 24 h, 50 % ensuite jusqu'au retrait. Site : bloc « Annulation / Après la course » avant le paiement, CGV § 3, 3 bis et 5 réécrits. |

@@ -36,6 +36,8 @@ export const quoteInputSchema = z.object({
   /** Size advisor inventory (catalogue item id → quantity), kept on the order and summarised for the dispatch. */
   inventaire: z.record(z.string().max(40), z.coerce.number().int().min(0).max(99)).optional(),
   inventaire_autre: optionalText(160),
+  /** Objet lourd déclaré sans équipier : le client s'engage à aider le chauffeur au portage. */
+  aide_client: z.coerce.boolean().default(false),
 });
 
 export const orderInputSchema = quoteInputSchema.extend({

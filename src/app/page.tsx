@@ -19,7 +19,7 @@ export default async function Home() {
     <main>
       <Hero c={c} />
       <Reassurance items={splitList(c["reassurance.items"])} />
-      <VehicleCards vehicules={vehicules} exemples={parseJson<Record<string, string>>(c["order.exemples_cartes"], {})} title={c["vehicles.title"] ?? "Quelle place vous faut-il ?"} lead={c["vehicles.lead"]} rayonKm={vehicules[0]?.rayon_km} />
+      <VehicleCards vehicules={vehicules} exemples={parseJson<Record<string, string>>(c["order.exemples_cartes"], {})} title={c["vehicles.title"] ?? "Quelle place vous faut-il ?"} lead={c["vehicles.lead"]} rayonKm={vehicules[0]?.rayon_km} inclus={splitList(c["vehicles.inclus"])} />
       <HowItWorks title={c["how.title"] ?? "Réservez en trois minutes"} steps={parseJson<Step[]>(c["how.steps"], [])} />
 
       <section className="section container-x" id="services">

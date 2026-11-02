@@ -30,7 +30,16 @@ export default async function OrderPage() {
         </ul>
         <div className="mt-6 sm:mt-8">
           <Suspense fallback={<div className="card h-96 animate-pulse" />}>
-            <OrderForm services={services} namySlugs={namySlugs} copy={{ quoteNotice: c["order.quote_notice"] ?? "", cancelledBody: c["order.cancelled_body"] ?? "" }} advisor={advisor} />
+            <OrderForm services={services} namySlugs={namySlugs} copy={{
+                quoteNotice: c["order.quote_notice"] ?? "",
+                cancelledBody: c["order.cancelled_body"] ?? "",
+                tempsInclusMin: Number(c["order.temps_inclus_min"]) || 30,
+                tempsLead: c["order.temps_lead"] ?? "",
+                depassementNotice: c["order.depassement_notice"] ?? "",
+                cancellationTerms: c["order.cancellation_terms"] ?? "",
+                supplementsTerms: c["order.supplements_terms"] ?? "",
+                inclus: splitList(c["vehicles.inclus"]),
+              }} advisor={advisor} />
           </Suspense>
         </div>
       </div>
