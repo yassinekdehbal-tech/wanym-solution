@@ -1,18 +1,18 @@
 import Image from "next/image";
 import { TruckIcon } from "@/components/TruckIcon";
 
-/** Les rendus des 4 utilitaires livrés le 02/11/2026, indexés par m² ; repli sur la silhouette vectorielle. */
+/** Les rendus des 4 utilitaires (livraison du 02/11/2026, 900 px), indexés par m² ; repli sur la silhouette vectorielle. */
 const RENDUS: Record<number, { src: string; w: number; h: number }> = {
-  1: { src: "/images/camions/camion-1m2.webp", w: 303, h: 193 },
-  2: { src: "/images/camions/camion-2m2.webp", w: 341, h: 199 },
-  4: { src: "/images/camions/camion-4m2.webp", w: 379, h: 240 },
-  8: { src: "/images/camions/camion-8m2.webp", w: 423, h: 265 },
+  1: { src: "/images/camions/camion-1m2.webp", w: 900, h: 553 },
+  2: { src: "/images/camions/camion-2m2.webp", w: 900, h: 506 },
+  4: { src: "/images/camions/camion-4m2.webp", w: 900, h: 579 },
+  8: { src: "/images/camions/camion-8m2.webp", w: 900, h: 588 },
 };
 export const CHARGES: Record<number, { src: string; w: number; h: number }> = {
-  1: { src: "/images/charges/charge-1m2.webp", w: 279, h: 190 },
-  2: { src: "/images/charges/charge-2m2.webp", w: 336, h: 140 },
-  4: { src: "/images/charges/charge-4m2.webp", w: 395, h: 200 },
-  8: { src: "/images/charges/charge-8m2.webp", w: 430, h: 210 },
+  1: { src: "/images/charges/charge-1m2.webp", w: 800, h: 531 },
+  2: { src: "/images/charges/charge-2m2.webp", w: 800, h: 466 },
+  4: { src: "/images/charges/charge-4m2.webp", w: 800, h: 446 },
+  8: { src: "/images/charges/charge-8m2.webp", w: 800, h: 435 },
 };
 
 export function VehicleImage({ surfaceM2, ordre, className = "", sizes = "(min-width: 1024px) 260px, 45vw", priority = false }: { surfaceM2: number | null | undefined; ordre?: number | null; className?: string; sizes?: string; priority?: boolean }) {
