@@ -1,7 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import { RouteSearch } from "@/components/RouteSearch";
 import { Icon } from "@/components/Icon";
-import { TruckIcon } from "@/components/TruckIcon";
 import type { SiteContent } from "@/lib/types";
 
 /**
@@ -32,18 +32,14 @@ export function Hero({ c }: { c: SiteContent }) {
           </div>
         </div>
 
-        <div className="hidden lg:block" aria-hidden="true">
-          <div className="relative mx-auto aspect-[4/3] w-full max-w-lg overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 to-brand-900 p-8 ring-1 ring-white/10">
-            <div className="absolute inset-x-8 bottom-8 h-px bg-white/15" />
-            <TruckIcon size={3} className="absolute bottom-8 left-8 h-40 w-auto" color="#ffffff" />
-            <div className="absolute right-8 top-8 space-y-2 text-right">
+        <div className="relative hidden lg:block">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-float ring-1 ring-white/10">
+            <Image src="/images/hero/hero-livraison.jpg" alt={c["hero.image_alt"] ?? "Deux livreurs WANYM SOLUTION chargent un canapé emballé dans un utilitaire blanc à bande verte"} fill priority sizes="(min-width: 1024px) 560px, 0px" className="object-cover" />
+            <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-2 bg-gradient-to-t from-brand-900/80 to-transparent p-5 pt-12">
               {[["1 m²", "3 m³"], ["2 m²", "6 m³"], ["4 m²", "12 m³"], ["8 m²", "20 m³"]].map(([m, v]) => (
-                <div key={m} className="rounded-xl bg-white/10 px-3 py-1.5 text-sm font-semibold backdrop-blur">
-                  {m} <span className="font-normal text-slate-300">· {v}</span>
-                </div>
+                <span key={m} className="rounded-lg bg-white/15 px-2.5 py-1 text-sm font-semibold backdrop-blur">{m} <span className="font-normal text-slate-200">· {v}</span></span>
               ))}
             </div>
-            <p className="absolute bottom-10 right-8 max-w-[11rem] text-right text-sm text-slate-300">Un chauffeur, le bon utilitaire, le prix affiché avant de payer.</p>
           </div>
         </div>
       </div>

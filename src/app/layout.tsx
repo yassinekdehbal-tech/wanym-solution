@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(env.siteUrl),
     title: { default: `${title} — ${c["site.tagline"] ?? "Transport et livraison dernier kilomètre"}`, template: `%s · ${title}` },
     description: c["site.description"],
-    openGraph: { type: "website", locale: "fr_FR", siteName: title },
+    openGraph: { type: "website", locale: "fr_FR", siteName: title, images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }] },
     robots: { index: true, follow: true },
   };
 }
