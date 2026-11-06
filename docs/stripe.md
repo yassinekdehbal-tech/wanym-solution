@@ -2,6 +2,8 @@
 
 Contexte : WANYM SOLUTION vend des livraisons ponctuelles à des particuliers et des professionnels en Île-de-France. Le prix vient du moteur NAMY ; Stripe encaisse, facture et peut calculer la TVA. Revue faite le 01/11/2026 contre le skill officiel `stripe-best-practices` (API `2026-10-28.endive`, SDK Node 23).
 
+**État au 06/11/2026 : en production.** Les étapes 1 à 3 de la section 3 sont faites sur le compte live « SOLUTION WANYM » : clé restreinte « wanymsolution.com (Vercel) » et webhook live (8 événements, `we_1UYpKUKBiQW2X4fI4EvphtQo`) posés sur Vercel en Production, site redéployé. Non fait : étape 4 (réglages Facturation du Dashboard), étape 5 (Stripe Tax, volontairement désactivé) et le premier paiement réel de bout en bout. La preview Vercel n'a pas de clé Stripe (mode devis).
+
 ## 1. Ce qui est en place et conforme
 
 | Règle Stripe | Site |
