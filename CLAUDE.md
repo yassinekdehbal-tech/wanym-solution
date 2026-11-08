@@ -82,7 +82,7 @@ Référence complète : `docs/API.md`. Toutes les routes d'écriture exigent `Au
 - Contenu : `GET /api/content`, `PUT /api/content` (bulk), `GET|PUT|DELETE /api/content/[key]`.
 - Services : `GET|POST /api/services`, `GET|PUT|DELETE /api/services/[slug]`.
 - Tarifs NAMY : `GET /api/namy/contexte`, `GET /api/namy/creneaux?date=`, `POST /api/quote` (public, prix calculé par NAMY).
-- Commandes : `POST /api/orders` (public, rate-limité, honeypot), `GET /api/orders` (filtres status, payment_status, since, q, unsynced, uninvoiced), `GET|PATCH /api/orders/[id]` (id ou référence), `GET|POST /api/orders/[id]/events`, `POST /api/track` (public), `POST /api/webhooks/stripe`, `POST /api/webhooks/namy` (NAMY → site).
+- Commandes : `POST /api/orders` (public, rate-limité, honeypot), `GET /api/orders` (filtres status, payment_status, since, q, unsynced, uninvoiced), `GET|PATCH /api/orders/[id]` (id ou référence), `GET|POST /api/orders/[id]/events`, `POST /api/orders/[id]/sync` (renvoi à NAMY), `POST /api/track` (public), `POST /api/webhooks/stripe`, `POST /api/webhooks/namy` (NAMY → site).
 Après chaque écriture : `revalidateTag(TAGS.x, "max")`, pas de rebuild.
 
 ## Variables d'environnement
