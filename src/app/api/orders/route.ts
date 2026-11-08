@@ -30,7 +30,17 @@ export async function POST(req: Request) {
     const { order } = await createOrder(parsed.data, ip);
 
     if (order.pricing_mode === "instant") {
-      const session = await createCheckoutSession(order);
+      // A Stripe refusal (account not ready, payment methods not activated, outage) must not lose the
+      // order: WS-2026-00006 (08/11/2026) sat in "new / pending" with no session and nobody notified.
+      // The order then follows the quote path: ops are e-mailed, the customer gets the "demande reçue" page.
+      let session: Awaited<ReturnType<typeof createCheckoutSession>> = null;
+      try {
+        session = await createCheckoutSession(order);
+      } catch (e) {
+        const detail = e instanceof Error ? e.message : String(e);
+        console.error("[orders.create] Stripe Checkout refused, falling back to quote", { reference: order.reference, detail });
+        await logEvent(order.id, "payment", `Paiement en ligne refusé par Stripe, commande à confirmer par l'exploitation : ${detail.slice(0, 300)}`, { data: { stripe_error: detail } });
+      }
       if (session?.url) {
         await updateOrder(order.id, { stripe_session_id: session.id });
         await logEvent(order.id, "payment", "Session de paiement Stripe créée", { data: { session: session.id } });
@@ -39,7 +49,7 @@ export async function POST(req: Request) {
           { status: 201 },
         );
       }
-      // Stripe not configured: keep NAMY's price, treat as a quote to confirm by phone
+      // Stripe not configured or refused: keep NAMY's price, treat as a quote to confirm by phone
       const fallback = await updateOrder(order.id, { payment_status: "not_required" });
       await logEvent(order.id, "note", "Prix calculé, confirmation par notre exploitation (paiement en ligne indisponible)", { public: true });
       after(() => dispatchOrder(fallback));

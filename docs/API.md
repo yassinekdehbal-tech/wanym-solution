@@ -65,7 +65,7 @@ La commande garde l'inventaire déclaré dans `orders.options.inventaire` (`{id:
 
 | Méthode | Route | Accès | Description |
 |---|---|---|---|
-| POST | `/orders` | public (rate-limit, honeypot) | Crée la commande (prix recalculé par NAMY). Réponse `{ id, reference, mode, checkout_url? }` |
+| POST | `/orders` | public (rate-limit, honeypot) | Crée la commande (prix recalculé par NAMY). Réponse `{ id, reference, mode, checkout_url? }`. Si Stripe est absent **ou refuse la session**, la commande part en `mode: "quote"` (`payment_status: not_required`, événement `payment` avec l'erreur, exploitation prévenue) au lieu d'une erreur |
 | GET | `/orders` | protégé | Liste. Filtres : `status`, `payment_status` (listes CSV), `since`, `until`, `q`, `unsynced=1`, `uninvoiced=1`, `limit`, `offset` |
 | GET | `/orders/{id\|reference}` | protégé | Commande + journal d'événements |
 | PATCH | `/orders/{id\|reference}` | protégé | Mise à jour exploitation (voir ci-dessous) |
