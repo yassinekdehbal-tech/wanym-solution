@@ -1,11 +1,12 @@
 -- Seed: editable copy of wanymsolution.com (08/11/2026 — one visitor = one customer, a delivery ordered in a few clicks; three pillars: on-demand, outsourced delivery, NAMY).
--- Operating company: WANYM SOLUTION, SARL, SIREN 944 244 771, Enghien-les-Bains (legal.*); operations in Drancy (contact.*).
+-- Operating company: WANYM SOLUTION, SARL, SIREN 944 244 771, Enghien-les-Bains (legal.* and contact.*).
 -- Re-runnable: upserts on key / slug. Live values are edited through the content API (docs/API.md); keep this file in sync.
 
 insert into public.site_content (key, value) values
   ('site.name', 'WANYM SOLUTION'),
   ('site.tagline', 'Livraison et transport en Île-de-France, commandés en quelques clics'),
-  ('site.description', 'WANYM SOLUTION, transporteur à Drancy depuis 2016 : livraison à la demande au prix affiché (commande en ligne, chauffeur dédié, Île-de-France), livraison externalisée pour les enseignes et les entreprises, et NAMY, notre plateforme de gestion de transport qui suit chaque course.'),
+  ('site.description', 'WANYM SOLUTION, transporteur en Île-de-France depuis 2016 : livraison à la demande au prix affiché (commande en ligne, chauffeur dédié), livraison externalisée pour les enseignes et les entreprises, et NAMY, notre plateforme de gestion de transport qui suit chaque course.'),
+  ('hero.badge', 'Transporteur en Île-de-France depuis 2016'),
   ('hero.title', 'Un camion et un chauffeur, au prix affiché, en quelques clics.'),
   ('hero.subtitle', 'Canapé, lave-linge, cartons, plantes, matériaux… Entrez vos deux adresses, choisissez la taille du camion, payez en ligne : votre livraison est réservée. Au départ de l''Île-de-France, pour les particuliers et les professionnels.'),
   ('hero.cta_primary', 'Commander une livraison'),
@@ -27,8 +28,8 @@ insert into public.site_content (key, value) values
   ('pro.body', 'Enseignes, ateliers, e-commerçants, entrepôts : WANYM SOLUTION livre vos clients et vos sites. En course ponctuelle commandée en ligne au prix affiché, ou en livraison externalisée sur devis. Chaque course est pilotée dans NAMY, notre plateforme de gestion de transport : suivi en temps réel, preuve de livraison, tchat avec le destinataire.'),
   ('pro.items', 'Course ponctuelle : prix immédiat, paiement en ligne, facture par e-mail|Flux réguliers : devis sous 24 h, sans engagement de durée ni de volume|Suivi en temps réel et preuve de livraison dans NAMY|Chauffeurs formés à la manutention|Exploitation joignable 24h/24'),
   ('about.title', 'WANYM, trois métiers, une même équipe'),
-  ('about.body', 'WANYM SOLUTION porte l''activité de l''équipe de FISSA LIV, transporteur installé à Drancy depuis 2016. En dix ans, cette équipe est passée de la course urgente locale à trois métiers : la livraison à la demande, dont le prix est calculé par zone et affiché en ligne ; la livraison externalisée, qui prend en charge le dernier kilomètre des enseignes et des entreprises ; et NAMY, la plateforme de gestion de transport que nous avons développée pour piloter, suivre et prouver chaque course, et que nous ouvrons aux enseignes et aux transporteurs.'),
-  ('about.figures', 'Exploitation à Drancy (93), aux portes de Paris · équipe en activité depuis 2016 · flotte jusqu''à 3,5 tonnes · WANYM SOLUTION, SARL, siège à Enghien-les-Bains (95).'),
+  ('about.body', 'WANYM SOLUTION porte l''activité de l''équipe de FISSA LIV, transporteur en Île-de-France depuis 2016. En dix ans, cette équipe est passée de la course urgente locale à trois métiers : la livraison à la demande, dont le prix est calculé par zone et affiché en ligne ; la livraison externalisée, qui prend en charge le dernier kilomètre des enseignes et des entreprises ; et NAMY, la plateforme de gestion de transport que nous avons développée pour piloter, suivre et prouver chaque course, et que nous ouvrons aux enseignes et aux transporteurs.'),
+  ('about.figures', 'Équipe en activité depuis 2016 · flotte jusqu''à 3,5 tonnes · toute l''Île-de-France au départ d''Enghien-les-Bains (95) · WANYM SOLUTION, SARL au capital de 20 000 €.'),
   ('references.items', '[]'),
   ('group.title', 'Trois métiers, une seule exigence : la livraison tenue'),
   ('group.lead', 'Du particulier qui commande en ligne à l''enseigne qui externalise ses flux, chaque course passe par les mêmes chauffeurs et la même plateforme.'),
@@ -41,7 +42,7 @@ insert into public.site_content (key, value) values
   ('contact.phone', '07 67 16 60 15'),
   ('contact.phone_e164', '+33767166015'),
   ('contact.email', 'contact@wanymsolution.com'),
-  ('contact.address', '125 rue Diderot, 93700 Drancy'),
+  ('contact.address', '121 B avenue de la Division Leclerc, 95880 Enghien-les-Bains'),
   ('contact.hours', 'Exploitation joignable 24h/24'),
   ('order.title', 'Commander une livraison'),
   ('order.lead', 'Trajet, taille du camion, options, date : le prix s''affiche en direct et se règle en ligne, sans créer de compte. Hors barème, devis sous 24 h.'),
@@ -72,7 +73,7 @@ insert into public.site_content (key, value) values
   ('legal.host', 'Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA'),
   ('cgv.body', $md$## 1. Objet
 
-Les présentes conditions générales de vente (CGV) régissent les prestations de transport et de commission de transport proposées sur le site wanymsolution.com par WANYM SOLUTION, SARL au capital de 20 000 € immatriculée au RCS de Pontoise sous le numéro 944 244 771 (TVA FR63 944 244 771), dont le siège est situé 121 B avenue de la Division Leclerc, 95880 Enghien-les-Bains, exploitation au 125 rue Diderot, 93700 Drancy.
+Les présentes conditions générales de vente (CGV) régissent les prestations de transport et de commission de transport proposées sur le site wanymsolution.com par WANYM SOLUTION, SARL au capital de 20 000 € immatriculée au RCS de Pontoise sous le numéro 944 244 771 (TVA FR63 944 244 771), dont le siège est situé 121 B avenue de la Division Leclerc, 95880 Enghien-les-Bains.
 
 ## 2. Commande
 

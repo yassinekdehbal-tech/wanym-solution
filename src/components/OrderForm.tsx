@@ -491,7 +491,7 @@ export function OrderForm({ services, namySlugs, copy, advisor }: { services: Se
             </div>
             <div id="f-delivery_address">
               <label className="label" htmlFor="delivery_address">Adresse d&apos;arrivée *</label>
-              <AddressInput id="delivery_address" value={v.delivery_address} onChange={(x) => set("delivery_address", x)} placeholder="125 rue Diderot, 93700 Drancy" required accent invalid={!!errors.delivery_address} describedBy={errors.delivery_address ? "err-delivery_address" : undefined} />
+              <AddressInput id="delivery_address" value={v.delivery_address} onChange={(x) => set("delivery_address", x)} placeholder="121 B avenue de la Division Leclerc, 95880 Enghien-les-Bains" required accent invalid={!!errors.delivery_address} describedBy={errors.delivery_address ? "err-delivery_address" : undefined} />
               {err("delivery_address")}
             </div>
           </div>

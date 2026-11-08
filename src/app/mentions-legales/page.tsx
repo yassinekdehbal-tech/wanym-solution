@@ -14,7 +14,6 @@ export default async function LegalPage() {
     ["TVA intracommunautaire", c["legal.tva"]],
     ["Activité (NAF)", c["legal.naf"]],
     ["Siège social", c["legal.address"] ?? c["contact.address"]],
-    ["Exploitation", c["contact.address"]],
     ["Téléphone", c["contact.phone"]],
     ["E-mail", c["contact.email"]],
     ["Directeur de la publication", c["legal.director"]],

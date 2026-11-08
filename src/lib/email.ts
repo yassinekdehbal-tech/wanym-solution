@@ -25,7 +25,7 @@ function layout(title: string, body: string) {
     <div style="background:#0b1f3a;padding:18px 24px;border-radius:12px 12px 0 0"><img src="${env.siteUrl}/images/logo/wanym-logo-email.png" width="180" height="45" alt="WANYM SOLUTION" style="display:block;width:180px;height:45px"></div>
     <div style="background:#fff;padding:24px;border-radius:0 0 12px 12px;border:1px solid #e2e8f0;border-top:0">
       <h1 style="font-size:20px;margin:0 0 16px">${title}</h1>${body}
-      <p style="margin:24px 0 0;color:#64748b;font-size:13px">WANYM SOLUTION · 125 rue Diderot, 93700 Drancy · Exploitation 24h/24 : 07 67 16 60 15 · ${esc(env.siteUrl)}</p>
+      <p style="margin:24px 0 0;color:#64748b;font-size:13px">WANYM SOLUTION · 121 B avenue de la Division Leclerc, 95880 Enghien-les-Bains · Exploitation 24h/24 : 07 67 16 60 15 · ${esc(env.siteUrl)}</p>
     </div></div></body></html>`;
 }
 
