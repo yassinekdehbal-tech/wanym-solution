@@ -27,6 +27,39 @@ export function HowItWorks({ title, steps }: { title: string; steps: Step[] }) {
   );
 }
 
+export type Pillar = { icon?: string; title: string; text: string; href?: string; cta?: string };
+
+/** Les trois métiers du groupe (`group.items`, JSON) : livraison à la demande, livraison externalisée, plateforme NAMY. */
+export function GroupPillars({ c, items }: { c: SiteContent; items: Pillar[] }) {
+  if (!items.length) return null;
+  return (
+    <section className="section container-x" id="groupe">
+      <p className="eyebrow">Le groupe WANYM</p>
+      <h2 className="h2 mt-2">{c["group.title"]}</h2>
+      {c["group.lead"] && <p className="lead mt-3 max-w-2xl">{c["group.lead"]}</p>}
+      <ul className="mt-8 grid gap-5 md:grid-cols-3">
+        {items.map((it) => {
+          const external = it.href?.startsWith("http");
+          return (
+            <li key={it.title} className="card flex flex-col gap-4">
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary-50 text-primary-700"><Icon name={it.icon ?? "box"} /></span>
+              <h3 className="font-display text-lg font-bold text-brand-800">{it.title}</h3>
+              <p className="text-sm leading-relaxed text-slate-600">{it.text}</p>
+              {it.href && (
+                external ? (
+                  <a href={it.href} target="_blank" rel="noopener" className="mt-auto inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-brand-600 hover:gap-2">{it.cta ?? "En savoir plus"} <Icon name="arrow" className="h-4 w-4" /></a>
+                ) : (
+                  <Link href={it.href} className="mt-auto inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-brand-600 hover:gap-2">{it.cta ?? "En savoir plus"} <Icon name="arrow" className="h-4 w-4" /></Link>
+                )
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
 export function ProSection({ c, items }: { c: SiteContent; items: string[] }) {
   return (
     <section className="section container-x" id="professionnels">

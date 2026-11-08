@@ -1,7 +1,7 @@
 import { Faq, type FaqItem } from "@/components/Faq";
 import { Hero } from "@/components/home/Hero";
 import { Reassurance } from "@/components/home/Reassurance";
-import { FinalCta, HowItWorks, ProSection, References, type Reference, type Step } from "@/components/home/Sections";
+import { FinalCta, GroupPillars, HowItWorks, ProSection, References, type Pillar, type Reference, type Step } from "@/components/home/Sections";
 import { VehicleCards } from "@/components/home/VehicleCards";
 import { ServiceCard } from "@/components/ServiceCard";
 import { getVehiculesVitrine } from "@/lib/namy";
@@ -34,6 +34,7 @@ export default async function Home() {
       </section>
 
       <ProSection c={c} items={splitList(c["pro.items"])} />
+      <GroupPillars c={c} items={parseJson<Pillar[]>(c["group.items"], []).filter((p) => p && p.title && p.text)} />
       <References c={c} refs={parseJson<Reference[]>(c["references.items"], []).filter((r) => r && r.name && r.text)} />
 
       {faq.length > 0 && (
