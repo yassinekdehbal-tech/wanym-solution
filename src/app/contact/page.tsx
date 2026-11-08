@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { getContent } from "@/lib/supabase/content";
 
-export const metadata: Metadata = { title: "Contact", description: "Contactez l'exploitation WANYM SOLUTION, joignable 24h/24 : téléphone, e-mail, adresse à Drancy (93)." };
+export const metadata: Metadata = { title: "Contact", description: "Contactez l'exploitation WANYM SOLUTION, joignable 24h/24 : téléphone, e-mail, adresse à Enghien-les-Bains (95)." };
 
 export default async function ContactPage() {
   const c = await getContent();
@@ -36,7 +36,7 @@ export default async function ContactPage() {
           <span>
             <span className="block text-sm font-semibold uppercase tracking-wide text-muted">Adresse</span>
             <span className="block font-semibold text-brand-800">{c["contact.address"]}</span>
-            <span className="block text-sm text-muted">Aux portes de Paris</span>
+            <span className="block text-sm text-muted">Val-d&apos;Oise, aux portes de Paris</span>
           </span>
         </a>
       </div>

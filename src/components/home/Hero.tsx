@@ -17,7 +17,7 @@ export function Hero({ c }: { c: SiteContent }) {
       <div className="container-x relative grid gap-6 py-8 sm:py-12 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12 lg:py-20">
         <div>
           <p className="chip bg-white/10 text-white ring-1 ring-white/15">
-            <Icon name="pin" className="h-3.5 w-3.5 text-primary-400" /> Depuis 2016 à Drancy (93)
+            <Icon name="pin" className="h-3.5 w-3.5 text-primary-400" /> {c["hero.badge"] ?? "Transporteur en Île-de-France depuis 2016"}
           </p>
           <h1 className="h1 mt-4 text-white">{c["hero.title"]}</h1>
           <p className="lead mt-4 max-w-xl text-slate-200">{c["hero.subtitle"]}</p>

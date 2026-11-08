@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     telephone: content["contact.phone_e164"],
     email: content["contact.email"],
     description: content["site.description"],
-    address: { "@type": "PostalAddress", streetAddress: "125 rue Diderot", postalCode: "93700", addressLocality: "Drancy", addressCountry: "FR" },
+    address: { "@type": "PostalAddress", streetAddress: "121 B avenue de la Division Leclerc", postalCode: "95880", addressLocality: "Enghien-les-Bains", addressCountry: "FR" },
     areaServed: ["Île-de-France", "France", "Europe"],
     openingHours: "Mo-Su 00:00-23:59",
     vatID: content["legal.tva"]?.replace(/\s/g, ""),
