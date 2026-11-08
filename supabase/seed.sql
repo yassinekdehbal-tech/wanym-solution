@@ -61,7 +61,7 @@ insert into public.site_content (key, value) values
   ('track.title', 'Suivre ma commande'),
   ('track.lead', 'Saisissez votre numéro de commande (WS-…) et l''e-mail utilisé lors de la commande.'),
   ('legal.company', 'WANYM SOLUTION'),
-  ('legal.form', 'SARL'),
+  ('legal.form', 'SARL au capital de 20 000 €'),
   ('legal.siren', '944 244 771'),
   ('legal.rcs', 'RCS Pontoise 944 244 771'),
   ('legal.tva', 'FR63 944 244 771'),
@@ -72,7 +72,7 @@ insert into public.site_content (key, value) values
   ('legal.host', 'Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA'),
   ('cgv.body', $md$## 1. Objet
 
-Les présentes conditions générales de vente (CGV) régissent les prestations de transport et de commission de transport proposées sur le site wanymsolution.com par WANYM SOLUTION, SARL immatriculée au RCS de Pontoise sous le numéro 944 244 771 (TVA FR63 944 244 771), dont le siège est situé 121 B avenue de la Division Leclerc, 95880 Enghien-les-Bains, exploitation au 125 rue Diderot, 93700 Drancy.
+Les présentes conditions générales de vente (CGV) régissent les prestations de transport et de commission de transport proposées sur le site wanymsolution.com par WANYM SOLUTION, SARL au capital de 20 000 € immatriculée au RCS de Pontoise sous le numéro 944 244 771 (TVA FR63 944 244 771), dont le siège est situé 121 B avenue de la Division Leclerc, 95880 Enghien-les-Bains, exploitation au 125 rue Diderot, 93700 Drancy.
 
 ## 2. Commande
 
