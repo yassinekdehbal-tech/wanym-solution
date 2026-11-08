@@ -1,6 +1,5 @@
 import { cacheLife } from "next/cache";
 import { env } from "@/lib/env";
-import type { Order } from "@/lib/types";
 
 /**
  * NAMY = the WANYM SOLUTION TMS. The site is one of its order channels: every
@@ -146,37 +145,3 @@ export async function namyCommande(input: NamySiteInput): Promise<{ ok: true; ex
   return namyCall("commande", input as unknown as Record<string, unknown>, 25_000);
 }
 
-/** Site order row → NAMY payload (the site stores NAMY-specific fields in orders.options). */
-export function orderToNamyInput(order: Order): NamySiteInput {
-  const o = (order.options ?? {}) as Record<string, unknown>;
-  const num = (v: unknown) => (v == null || v === "" || Number.isNaN(Number(v)) ? undefined : Number(v));
-  return {
-    reference: order.reference,
-    pickup: { adresse: order.pickup_address, contact_nom: order.pickup_contact, telephone: (o.pickup_phone as string) ?? order.phone },
-    delivery: {
-      adresse: order.delivery_address,
-      contact_nom: order.delivery_contact,
-      telephone: (o.delivery_phone as string) ?? order.phone,
-      email: (o.delivery_email as string) ?? order.email,
-      instructions: (o.delivery_instructions as string) ?? null,
-    },
-    date: order.wanted_date ?? "",
-    creneau: order.wanted_slot,
-    mode_id: (o.mode_id as string) ?? null,
-    nb_colis: num(order.quantity) ?? 1,
-    poids_total_kg: num(order.weight_kg) ?? 0,
-    poids_max_colis_kg: num(o.poids_max_colis_kg) ?? null,
-    nb_colis_lourds: num(o.nb_colis_lourds) ?? 0,
-    longueur_max_cm: num(o.longueur_max_cm) ?? 0,
-    etage: num(o.etage) ?? 0,
-    acces_escalier: Boolean(o.acces_escalier),
-    options: Array.isArray(o.option_ids) ? (o.option_ids as string[]) : [],
-    marchandise: order.goods_type,
-    notes: order.notes,
-    company: order.company,
-    contact_name: order.contact_name,
-    email: order.email,
-    phone: order.phone,
-    payment: { status: order.payment_status, stripe_payment_intent: order.stripe_payment_intent, total_cents: order.total_cents },
-  };
-}

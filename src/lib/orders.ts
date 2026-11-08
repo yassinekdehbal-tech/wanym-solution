@@ -1,7 +1,7 @@
-import { CATALOGUE_OBJETS } from "@/lib/catalogue-objets";
 import { createHash } from "node:crypto";
 import { sendCustomerConfirmation, sendInternalNotification } from "@/lib/email";
-import { namyCommande, namyConfigured, namyDevis, orderToNamyInput, type NamyDevis, type NamyError, type NamySiteInput } from "@/lib/namy";
+import { namyCommande, namyConfigured, namyDevis, type NamyDevis, type NamyError, type NamySiteInput } from "@/lib/namy";
+import { AIDE_CLIENT_NOTE, inventaireResume, orderToNamyInput } from "@/lib/namy-input";
 import { eurosToCents } from "@/lib/pricing";
 import type { OrderInput, QuoteInput } from "@/lib/schemas/order";
 import { supabaseAdmin } from "@/lib/supabase/client";
@@ -82,7 +82,7 @@ export function inputToNamy(input: QuoteInput | OrderInput, reference?: string):
     acces_escalier: input.acces_escalier,
     options: input.options,
     marchandise: n(i.goods_type) as string | null,
-    notes: n([i.notes, inventaireResume(input), i.aide_client ? "Le client aidera le chauffeur au portage (objet lourd déclaré sans équipier)." : null].filter(Boolean).join("\n")) as string | null,
+    notes: n([i.notes, inventaireResume(input), i.aide_client ? AIDE_CLIENT_NOTE : null].filter(Boolean).join("\n")) as string | null,
     company: n(i.company) as string | null,
     contact_name: n(i.contact_name) as string | null,
     email: n(i.email) as string | null,
@@ -90,15 +90,6 @@ export function inputToNamy(input: QuoteInput | OrderInput, reference?: string):
   };
 }
 
-/** Human summary of the size-advisor inventory ("Inventaire déclaré : 3 carton standard, 1 lave-linge, autre : piano droit"), for the dispatch notes. */
-export function inventaireResume(input: Pick<OrderInput, "inventaire" | "inventaire_autre">): string | null {
-  const parts = Object.entries(input.inventaire ?? {})
-    .filter(([, q]) => q > 0)
-    .map(([id, q]) => `${q} ${(CATALOGUE_OBJETS.find((c) => c.id === id)?.nom ?? id).toLowerCase()}`);
-  const autre = input.inventaire_autre?.trim();
-  if (autre) parts.push(`autre : ${autre}`);
-  return parts.length ? `Inventaire déclaré : ${parts.join(", ")}` : null;
-}
 
 export type SiteQuote =
   | { mode: "instant"; devis: NamyDevis; price_cents: number; total_cents: number; distance_km: number }
