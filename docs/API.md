@@ -71,6 +71,7 @@ La commande garde l'inventaire déclaré dans `orders.options.inventaire` (`{id:
 | PATCH | `/orders/{id\|reference}` | protégé | Mise à jour exploitation (voir ci-dessous) |
 | GET | `/orders/{id}/events` | protégé | Journal complet |
 | POST | `/orders/{id}/events` | protégé | Ajoute une note / un échange SAV / une facture |
+| POST | `/orders/{id}/sync` | protégé | Renvoie à NAMY une commande confirmée ou payée restée sans `namy_ref` (idempotent sur la référence ; 409 si la commande n'est ni confirmée ni payée, 502 si NAMY refuse encore, détail dans le journal) |
 | POST | `/track` | public | Suivi client `{ reference, email }` → vue limitée |
 | POST | `/orders/{id}/invoice` | clé API | Facture Stripe (Invoicing) pour une commande payée sur facture : créée, finalisée, envoyée |
 | POST | `/webhooks/stripe` | Stripe | Paiement, échec différé, expiration, facture payée/impayée, remboursement, litige |
@@ -137,7 +138,7 @@ Toutes les requêtes vont sur `NAMY_WEBHOOK_URL` (Edge Function `creer-commande-
 | `devis` | récapitulatif | `{ prix: {…}, creneaux, geo }` — prix calculé par le moteur NAMY |
 | `commande` | paiement reçu, ou devis confirmé par l'exploitation | `{ expedition_id, statut }` — course créée, idempotent sur la référence `WS-…` |
 
-Le payload `commande` reprend les saisies (adresses, date, créneau, mode, colis, poids, longueur, étage, options, contacts, paiement). NAMY **recalcule le prix** ; `expedition_id` est stocké dans `namy_ref`. Échec → événement `namy`, et `GET /api/orders?unsynced=1` liste ce qui reste à transmettre.
+Le payload `commande` reprend les saisies (adresses, date, créneau, mode, colis, poids, longueur, étage, options, contacts, paiement). NAMY **recalcule le prix** ; `expedition_id` est stocké dans `namy_ref`. Échec → événement `namy`, `GET /api/orders?unsynced=1` liste ce qui reste à transmettre et `POST /api/orders/{id}/sync` retente sans toucher au statut.
 
 ### NAMY → site (`POST /api/webhooks/namy`, Bearer = la clé partagée (`NAMY_API_KEY`, ou `NAMY_INBOUND_KEY` si distincte))
 
