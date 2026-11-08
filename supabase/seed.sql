@@ -1,144 +1,68 @@
--- Seed: content carried over from the July 2026 static site (yassinekdehbal-tech/wanym-solution)
--- Re-runnable: upserts on key / slug.
+-- Seed: editable copy of wanymsolution.com (08/11/2026 — one visitor = one customer, a delivery ordered in a few clicks).
+-- Re-runnable: upserts on key / slug. Live values are edited through the content API (docs/API.md); keep this file in sync.
 
 insert into public.site_content (key, value) values
   ('site.name', 'WANYM SOLUTION'),
-  ('site.tagline', 'La livraison du dernier kilomètre, en solution globale et sans engagement'),
-  ('site.description', 'Externalisez vos livraisons du dernier kilomètre sans engagement : pros, express et transport dédié au départ de l''Île-de-France. Devis gratuit sous 24h.'),
-  ('hero.title', 'Un camion et un chauffeur, au prix annoncé, quand vous en avez besoin.'),
-  ('hero.subtitle', 'Meubles, électroménager, jardin, matériaux… Pour les particuliers et les professionnels, au départ de l''Île-de-France. Prix calculé en ligne, chauffeur dédié, paiement sécurisé.'),
-  ('hero.cta_primary', 'Commander un transport'),
+  ('site.tagline', 'Livraison et transport en Île-de-France, commandés en quelques clics'),
+  ('site.description', 'Un utilitaire et un chauffeur pour livrer vos meubles, électroménager, cartons ou marchandises en Île-de-France. Prix affiché avant paiement, règlement en ligne, chauffeur dédié : commandez une livraison en quelques clics, sans créer de compte.'),
+  ('hero.title', 'Un camion et un chauffeur, au prix affiché, en quelques clics.'),
+  ('hero.subtitle', 'Canapé, lave-linge, cartons, plantes, matériaux… Entrez vos deux adresses, choisissez la taille du camion, payez en ligne : votre livraison est réservée. Au départ de l''Île-de-France, pour les particuliers et les professionnels.'),
+  ('hero.cta_primary', 'Commander une livraison'),
   ('hero.cta_secondary', 'Appeler l''exploitation'),
-  ('badges', 'Sans engagement|Exploitation 24h/24|Équipe en activité depuis 2016|IDF · France · Europe'),
-  ('services.title', 'Une seule solution, trois façons de livrer'),
-  ('services.lead', 'Un interlocuteur unique pour tout votre dernier kilomètre : le régulier, l''urgent et le sur-mesure.'),
-  ('included.title', 'Ce qui est toujours inclus'),
-  ('included.items', 'Devis gratuit sous 24h, sans engagement de durée ni de volume.|Preuve de livraison sur chaque course.|Exploitation joignable 24h/24.|Chauffeurs formés à la manutention et à la relation client.'),
-  ('pricing.title', 'Des tarifs au réel, sans engagement'),
-  ('pricing.lead', 'Pas de forfait opaque, pas de durée minimale : vous payez les livraisons effectuées, au prix annoncé avant le départ.'),
-  ('pricing.how', 'Votre tarif dépend de quatre facteurs simples : la zone (IDF, France, Europe), le format (du pli à la palette, volumineux ou non), la fréquence (course ponctuelle, tournée récurrente, chauffeur dédié) et le niveau de service (créneaux, étage, reprise…).'),
-  ('about.title', 'WANYM SOLUTION — dix ans de dernier kilomètre'),
-  ('about.body', 'WANYM SOLUTION est née en 2026 de l''évolution de FISSA LIV, société de transport créée en 2016 à Drancy. En dix ans, notre équipe est passée de la course urgente locale à un métier complet : la livraison externalisée pour les enseignes, l''express à la demande et le transport dédié, au départ de l''Île-de-France vers toute la France et l''Europe.'),
+  ('hero.route_title', 'Votre prix en 30 secondes'),
+  ('hero.route_from', 'Adresse de départ'),
+  ('hero.route_to', 'Adresse d''arrivée'),
+  ('hero.route_button', 'Voir le prix'),
+  ('hero.image_alt', 'Deux livreurs WANYM SOLUTION chargent un canapé emballé dans un utilitaire'),
+  ('reassurance.items', 'euro:Prix ferme:affiché avant paiement|clock:Jour même:possible avant 12h|calendar:7 jours sur 7:dimanche et soirée en option|route:Suivi:par e-mail et en ligne|handshake:Sans engagement:ni compte à créer|lock:Paiement:sécurisé par Stripe'),
+  ('vehicles.title', 'Quelle place vous faut-il ?'),
+  ('vehicles.lead', 'Choisissez la surface au sol, nous envoyons l''utilitaire et le chauffeur. Remise à la porte, étage, équipier et temps sur place en option : le prix se met à jour en direct.'),
+  ('vehicles.inclus', 'Chauffeur qui aide au chargement|20 km inclus|30 min sur place|Remise au trottoir'),
+  ('how.title', 'Commandez en quelques clics'),
+  ('how.steps', '[{"t": "Vos deux adresses", "d": "Départ, arrivée : la distance est calculée aussitôt.", "icon": "route"}, {"t": "La taille du camion", "d": "Quatre utilitaires, de 1 à 8 m² au sol. Un assistant vous aide si vous hésitez.", "icon": "box"}, {"t": "Date et options", "d": "Créneau, porte ou trottoir, équipier, temps sur place : le prix se met à jour en direct.", "icon": "calendar"}, {"t": "Payé, réservé", "d": "Vous payez le prix affiché, sans créer de compte. La course part immédiatement à notre exploitation et vous recevez la confirmation par e-mail.", "icon": "lock"}]'),
+  ('services.title', 'Trois façons de livrer, un même prix clair'),
+  ('services.lead', 'Une livraison aujourd''hui pour un particulier, des flux réguliers pour une enseigne : choisissez la formule, le reste est simple.'),
+  ('pro.title', 'Professionnels : un partenaire transport pour vos flux réguliers'),
+  ('pro.body', 'Enseignes, ateliers, e-commerçants, entrepôts : WANYM SOLUTION livre vos clients et vos sites. En course ponctuelle commandée en ligne au prix affiché, ou en tournée récurrente sur devis, avec une exploitation joignable 24h/24.'),
+  ('pro.items', 'Course ponctuelle : prix immédiat, paiement en ligne, facture par e-mail|Flux réguliers : devis sous 24 h, sans engagement de durée ni de volume|Preuve de livraison et suivi sur chaque course|Chauffeurs formés à la manutention|Exploitation joignable 24h/24'),
+  ('about.title', 'Depuis 2016 à Drancy, aux portes de Paris'),
+  ('about.body', 'WANYM SOLUTION, c''est l''équipe de FISSA LIV, société de transport créée en 2016 à Drancy et renommée en 2026. En dix ans, nous sommes passés de la course urgente locale à un métier complet : livraison pour les enseignes, transport à la demande et tournées dédiées, au départ de l''Île-de-France vers toute la France et l''Europe. Nos chauffeurs sont formés à la manutention et à la relation client.'),
   ('about.figures', 'Créée en 2016 · SAS au capital de 21 600 € · une équipe de 10 à 19 personnes · flotte jusqu''à 3,5 tonnes · basée à Drancy (93), aux portes de Paris.'),
-  ('cta.final_title', 'Décrivez vos flux, recevez un chiffrage clair sous 24h.'),
-  ('cta.final_button', 'Commander un transport'),
+  ('references.items', '[]'),
+  ('faq', '[{"q": "Comment commander une livraison ?", "a": "Entrez vos adresses de départ et d''arrivée, choisissez la taille du camion, la date et le créneau, puis payez en ligne. Pas de compte à créer : la commande prend quelques minutes et part immédiatement à notre exploitation. Vous recevez une confirmation par e-mail, puis un lien de suivi."}, {"q": "Combien ça coûte ?", "a": "Le prix dépend de la taille du camion, de la distance et des options (remise à la porte, étage, équipier, temps sur place). Il s''affiche avant le paiement et ne bouge plus. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."}, {"q": "Qu''est-ce qui est inclus ?", "a": "Le chauffeur et son aide au chargement et au déchargement, 20 km, 30 minutes cumulées sur place et la remise au trottoir ou en pied d''immeuble. La remise à la porte, l''étage, un équipier et du temps supplémentaire sont des options que vous ajoutez en commandant."}, {"q": "Pouvez-vous livrer aujourd''hui ?", "a": "Oui, 7 jours sur 7 : commandez en ligne avant 12h pour une livraison le jour même, selon disponibilité. Pour une urgence dans l''heure, appelez l''exploitation au 07 67 16 60 15, joignable 24h/24. Le dimanche et la soirée (18h-21h) sont majorés ; la majoration est affichée avant paiement."}, {"q": "Faut-il porter avec le chauffeur ?", "a": "Le chauffeur charge et décharge avec vous. Au-delà de 30 kg ou de 1,50 m (canapé, armoire, lave-linge), nous recommandons un équipier ; sans équipier, vous vous engagez à porter l''objet avec le chauffeur."}, {"q": "Puis-je annuler ?", "a": "Gratuitement jusqu''à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %. Le remboursement est fait sur votre carte."}, {"q": "Quelles zones couvrez-vous ?", "a": "Toutes nos courses partent d''Île-de-France. Nous livrons l''Île-de-France au quotidien ; la France entière et l''Europe sur devis, en course dédiée."}, {"q": "Vous êtes professionnel ?", "a": "Commandez vos courses ponctuelles en ligne au prix affiché, facture par e-mail. Pour des livraisons régulières, une tournée dédiée ou l''externalisation de votre dernier kilomètre, décrivez vos besoins : devis sous 24 h, sans engagement de durée ni de volume."}]'),
+  ('cta.final_title', 'Votre prix en 30 secondes, votre livraison en quelques clics.'),
+  ('cta.final_button', 'Commander une livraison'),
+  ('contact.title', 'Contactez l''exploitation'),
+  ('contact.lead', 'Une question avant de commander, une urgence, une commande en cours : une personne de l''exploitation vous répond 24h/24.'),
   ('contact.phone', '07 67 16 60 15'),
   ('contact.phone_e164', '+33767166015'),
   ('contact.email', 'contact@wanymsolution.com'),
   ('contact.address', '125 rue Diderot, 93700 Drancy'),
   ('contact.hours', 'Exploitation joignable 24h/24'),
-  ('legal.company', 'WANYM SOLUTION'),
-  ('legal.form', 'SAS au capital de 21 600 €'),
-  ('legal.siren', 'À COMPLÉTER'),
-  ('legal.rcs', 'À COMPLÉTER'),
-  ('legal.tva', 'À COMPLÉTER'),
-  ('legal.director', 'À COMPLÉTER'),
-  ('legal.host', 'Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA'),
-  ('faq', '[{"q":"Travaillez-vous vraiment sans engagement ?","a":"Oui. Nos contrats sont sans durée minimale : vous externalisez vos livraisons quand vous en avez besoin, vous arrêtez quand vous voulez. La qualité de service est notre seul argument de fidélisation."},{"q":"Quelles zones couvrez-vous ?","a":"Toutes nos tournées partent d''Île-de-France. Nous livrons l''Île-de-France au quotidien, la France entière et l''Europe (espace Schengen) sur demande ou en tournée dédiée."},{"q":"Quels types de marchandises livrez-vous ?","a":"Colis, produits volumineux (mobilier, électroménager, végétaux…), marchandises de vos clients en magasin ou e-commerce — en véhicules jusqu''à 3,5 tonnes, avec manutention par nos équipes."},{"q":"En combien de temps pouvez-vous intervenir ?","a":"Notre exploitation est joignable 24h/24. En express, un chauffeur peut être chez vous en Île-de-France dans l''heure selon disponibilité."}]')
-on conflict (key) do update set value = excluded.value;
-
-insert into public.services (slug, title, summary, body, icon, sort_order, published) values
-(
-  'livraison-professionnels-externalisee',
-  'Livraison externalisée pour professionnels',
-  'Magasins, jardineries, enseignes, e-commerçants : nous prenons en charge la livraison de vos clients finaux, du retrait en magasin ou entrepôt jusqu''au domicile. Vous vendez, nous livrons.',
-  $md$## Pourquoi externaliser votre dernier kilomètre ?
-
-Le dernier kilomètre est l'étape la plus coûteuse et la plus délicate de la vente : c'est le moment où votre client vous juge. Gérer une flotte en interne, recruter des livreurs, absorber les pics de saison — tout cela pèse sur vos marges et votre organisation. Externaliser sa livraison, c'est transformer un coût fixe en coût variable : vous ne payez que les livraisons réellement effectuées.
-
-## Ce que nous prenons en charge
-
-- **Livraison client final** depuis vos magasins ou entrepôts — en Île-de-France au quotidien, France et Europe sur demande.
-- **Produits volumineux et encombrants** — mobilier, électroménager, végétaux, matériaux : manutention et livraison à l'étage par des équipes formées.
-- **Pics d'activité** — week-ends, fêtes, soldes, saison : nous absorbons vos variations de volume sans que vous ayez à recruter.
-- **Preuve de livraison et suivi** — chaque course est tracée, votre service client sait où en sont ses commandes.
-- **Retours et reprises** — reprise d'ancien matériel ou retour en magasin intégrés à la tournée.
-
-## Le « sans engagement », concrètement
-
-Aucune durée minimale, aucun volume imposé. Vous testez sur une semaine, un magasin ou une catégorie de produits. Si le service est au niveau, vous restez. C'est à nous de le prouver à chaque tournée.$md$,
-  'store', 1, true
-),
-(
-  'livraison-express-a-la-demande',
-  'Livraison express à la demande',
-  'Une course urgente, un colis à livrer le jour même à Paris ou en Île-de-France ? Un chauffeur part dès votre appel. Simple, rapide, tracé.',
-  $md$## La course urgente, sans friction
-
-Vous appelez, un chauffeur part. La course est directe — votre marchandise ne partage pas le véhicule avec dix autres arrêts. Pas d'abonnement, pas d'application obligatoire, pas d'engagement. Le prix est annoncé avant le départ.
-
-## Ce que couvre notre express
-
-- **Course directe Paris et Île-de-France** — prise en charge rapide, livraison en heures, pas en jours.
-- **Livraison jour même (same day)** — pour vos clients e-commerce ou vos urgences B2B.
-- **Du pli à la palette** — véhicules du deux-roues au 20 m³ selon le format.
-- **Départs province et Europe en urgence** — course dédiée longue distance au départ de l'IDF.
-- **Exploitation joignable 24h/24** — l'urgence n'a pas d'horaires de bureau.$md$,
-  'zap', 2, true
-),
-(
-  'transport-dedie-sur-mesure',
-  'Transport dédié & sur-mesure',
-  'Chauffeur dédié, tournées récurrentes, marchandises volumineuses, France et Europe : nous construisons la solution logistique qui colle à votre activité.',
-  $md$## Votre logistique, sans la flotte
-
-Un chauffeur et un véhicule affectés à vos flux, pilotés par notre exploitation. Vous obtenez la fiabilité d'une flotte en propre — mêmes chauffeurs, mêmes horaires, connaissance de vos clients — sans en supporter les coûts fixes.
-
-## Nos formules sur-mesure
-
-- **Chauffeur dédié** — à la journée, à la semaine ou à l'année, sur vos plannings.
-- **Tournées récurrentes** — vos livraisons régulières optimisées et assurées par les mêmes équipes.
-- **Location de véhicule avec chauffeur** — jusqu'à 3,5 t, ponctuelle ou longue durée.
-- **Volumineux & manutention** — mobilier, électroménager, matériaux : livraison à l'étage, reprise, montage simple.
-- **France & Europe Schengen** — courses dédiées longue distance au départ de l'Île-de-France.
-
-## Sur-mesure ne veut pas dire engagement
-
-Même en tournée dédiée : pas de durée minimale. Votre activité est saisonnière ? La tournée l'est aussi.$md$,
-  'truck', 3, true
-)
-on conflict (slug) do update set
-  title = excluded.title,
-  summary = excluded.summary,
-  body = excluded.body,
-  icon = excluded.icon,
-  sort_order = excluded.sort_order;
-
--- Additional editable copy for the order funnel, tracking and legal pages
-insert into public.site_content (key, value) values
-  ('hero.route_title', 'Où devons-nous livrer ?'),
-  ('hero.route_from', 'Adresse de départ'),
-  ('hero.route_to', 'Adresse d''arrivée'),
-  ('hero.route_button', 'Voir le prix'),
-  ('order.title', 'Commander un transport'),
+  ('order.title', 'Commander une livraison'),
+  ('order.lead', 'Trajet, taille du camion, options, date : le prix s''affiche en direct et se règle en ligne, sans créer de compte. Hors barème, devis sous 24 h.'),
   ('order.namy_services', 'livraison-express-a-la-demande'),
-  ('reassurance.items', 'euro:Prix ferme:avant paiement|clock:24h/24:exploitation à votre écoute|calendar:Depuis 2016:à Drancy (93)|route:Suivi:de votre commande|handshake:Sans engagement:ni abonnement|lock:Paiement:sécurisé par Stripe'),
-  ('vehicles.title', 'Quelle place vous faut-il ?'),
-  ('vehicles.lead', 'Choisissez la surface au sol, nous mettons le bon utilitaire et un chauffeur. Remise à la porte, étage et équipier en option.'),
-  ('how.title', 'Réservez en trois minutes'),
-  ('how.steps', '[{"t": "Vos adresses", "d": "Départ, arrivée : la distance est calculée aussitôt.", "icon": "route"}, {"t": "La bonne taille", "d": "Quatre utilitaires, de 1 à 8 m² au sol. Un assistant vous aide si vous hésitez.", "icon": "box"}, {"t": "Date et options", "d": "Créneau, remise au trottoir ou à la porte, équipier : le prix se met à jour en direct.", "icon": "calendar"}, {"t": "Paiement sécurisé", "d": "Vous payez le prix affiché ; la commande part à l''exploitation immédiatement.", "icon": "lock"}]'),
-  ('pro.title', 'Un partenaire transport pour vos flux réguliers'),
-  ('pro.body', 'Livraison externalisée, courses express et transport dédié : WANYM SOLUTION prend en charge le dernier kilomètre de votre enseigne, de votre atelier ou de votre entrepôt, avec une exploitation joignable 24h/24.'),
-  ('pro.items', 'Devis sous 24h, sans engagement de durée ni de volume|Preuve de livraison sur chaque course|Exploitation joignable 24h/24|Chauffeurs formés à la manutention|Facture par e-mail après chaque course'),
-  ('references.items', '[]'),
-  ('vehicles.inclus', 'Chauffeur qui aide au chargement|20 km inclus|30 min sur place|Remise au trottoir'),
+  ('order.exemples_cartes', '{"1": "un lave-linge et 6 cartons", "2": "un canapé 2 places et 10 cartons", "4": "un canapé 3 places, une table, 6 chaises et 15 cartons", "8": "un studio complet"}'),
   ('order.temps_inclus_min', '30'),
   ('order.temps_lead', '30 minutes cumulées sont incluses (chargement + déchargement). Besoin de plus ? Réservez-les maintenant, c''est moins cher qu''un dépassement.'),
   ('order.depassement_notice', 'Au-delà du temps réservé, chaque quart d''heure entamé est facturé au tarif de dépassement des CGV, après la course, sur votre moyen de paiement.'),
   ('order.cancellation_terms', 'Gratuite jusqu''à 24 h avant le début du créneau. Moins de 24 h avant : 50 % du prix. Chauffeur déjà en route ou absence au retrait : 100 %.'),
   ('order.supplements_terms', 'Votre carte est conservée de façon sécurisée par Stripe. Seuls les suppléments constatés sont débités après la course, avec un détail par e-mail : temps sur place au-delà du temps réservé, étage non déclaré, échec de retrait.'),
-  ('order.exemples_cartes', '{"1":"un lave-linge et 6 cartons","2":"un canapé 2 places et 10 cartons","4":"un canapé 3 places, une table, 6 chaises et 15 cartons","8":"un studio complet"}'),
-  ('order.lead', 'Trajet, taille du véhicule, options, date : le prix s''affiche en direct, calculé par notre exploitation, et se règle en ligne. Hors barème, devis sous 24 h.'),
-  ('order.quote_notice', 'Ce transport fait l''objet d''un chiffrage personnalisé : nous vous envoyons un devis sous 24h, sans engagement.'),
+  ('order.quote_notice', 'Ce transport fait l''objet d''un chiffrage personnalisé : nous vous envoyons un devis sous 24 h, sans engagement.'),
   ('order.quote_received_title', 'Demande de devis reçue'),
   ('order.quote_received_body', 'Notre exploitation chiffre votre transport et vous répond sous 24 h par e-mail, sans engagement.'),
-  ('order.success_title', 'Merci, votre demande est bien enregistrée.'),
-  ('order.success_body', 'Votre commande est transmise à notre exploitation. Vous recevez un e-mail de confirmation, puis un rappel la veille et le jour de la livraison avec un lien de suivi.'),
-  ('order.cancelled_body', 'Le paiement n''a pas été finalisé. Votre demande est conservée : vous pouvez réessayer ou nous appeler pour régler autrement.'),
+  ('order.success_title', 'Merci, votre livraison est réservée.'),
+  ('order.success_body', 'Votre commande est transmise à notre exploitation. Vous recevez un e-mail de confirmation, puis un rappel la veille et le jour de la livraison avec votre lien de suivi.'),
+  ('order.cancelled_body', 'Le paiement n''a pas été finalisé. Votre commande est conservée : vous pouvez réessayer ou nous appeler pour régler autrement.'),
   ('track.title', 'Suivre ma commande'),
   ('track.lead', 'Saisissez votre numéro de commande (WS-…) et l''e-mail utilisé lors de la commande.'),
-  ('contact.title', 'Contactez l''exploitation'),
-  ('contact.lead', 'Un flux à organiser, une urgence, une question sur une commande en cours : nous répondons 24h/24.'),
+  ('legal.company', 'WANYM SOLUTION'),
+  ('legal.form', 'SAS au capital de 21 600 €'),
+  ('legal.siren', '823 909 304'),
+  ('legal.rcs', 'RCS Bobigny 823 909 304'),
+  ('legal.tva', 'FR17 823 909 304'),
+  ('legal.director', 'Yassine Dehbal'),
+  ('legal.host', 'Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA'),
   ('cgv.body', $md$## 1. Objet
 
 Les présentes conditions générales de vente (CGV) régissent les prestations de transport et de commission de transport proposées par WANYM SOLUTION sur le site wanymsolution.com.
@@ -149,7 +73,19 @@ Toute commande passée sur le site vaut acceptation des présentes CGV. Pour les
 
 ## 3. Prix et paiement
 
-Les prix sont indiqués en euros hors taxes et toutes taxes comprises. Le paiement en ligne est sécurisé par Stripe. Les prestations sur devis sont facturées selon les conditions du devis accepté.
+Les prix sont indiqués en euros hors taxes et toutes taxes comprises. Le prix affiché avant paiement est ferme pour la prestation décrite à la commande : taille de véhicule, trajet, options, date et créneau. Le paiement en ligne est sécurisé par Stripe et intervient à la commande. Les prestations sur devis sont facturées selon les conditions du devis accepté.
+
+Chaque forfait comprend le chauffeur, son aide au chargement et au déchargement, les kilomètres indiqués à la commande, la remise au trottoir ou en pied d'immeuble et **30 minutes cumulées de temps sur place** (chargement et déchargement). Les livraisons du dimanche, des jours fériés et en soirée font l'objet d'une majoration affichée avant paiement.
+
+## 3 bis. Temps sur place et suppléments
+
+Le client peut réserver du temps sur place supplémentaire à la commande (packs de 30 minutes, 1 heure ou 2 heures), à un tarif inférieur à celui du dépassement. Au-delà du temps inclus et du temps réservé, chaque quart d'heure entamé est facturé au tarif de dépassement en vigueur, indiqué dans le formulaire de commande. Le temps sur place est mesuré par les horodatages de notre outil d'exploitation (arrivée et départ du chauffeur à chaque adresse).
+
+Sont également facturés après la course, sur la base des constats du chauffeur : un étage ou une absence d'ascenseur non déclarés, une remise à la porte non commandée, et l'échec d'enlèvement imputable au client (absence, marchandise non prête, accès impossible), facturé 50 % du prix de la course.
+
+**Moyen de paiement conservé.** En validant la commande, le client autorise WANYM SOLUTION à conserver son moyen de paiement de façon sécurisée chez Stripe et à y débiter les suppléments ci-dessus, dans la limite de 2 000 € par commande. Chaque débit est précédé ou accompagné d'un e-mail détaillant la nature et le montant du supplément. En cas d'échec du débit, une facture payable en ligne est adressée au client.
+
+Un objet de plus de 30 kg ou de plus de 1,50 m déclaré sans équipier doit être porté avec l'aide du client ; à défaut, le chauffeur peut refuser le chargement de cet objet sans que la course soit remboursée.
 
 ## 4. Exécution
 
@@ -157,7 +93,7 @@ WANYM SOLUTION s'engage à exécuter le transport dans le créneau convenu. Les 
 
 ## 5. Annulation
 
-Toute annulation moins de 2 heures avant l'enlèvement d'une course express peut être facturée à hauteur de 50 % du prix. Les annulations de prestations sur devis sont régies par les conditions du devis.
+L'annulation est gratuite jusqu'à 24 heures avant le début du créneau de livraison. Moins de 24 heures avant le début du créneau, 50 % du prix de la course reste dû. Lorsque le chauffeur est déjà en route ou en cas d'absence au retrait, la course est due à 100 %. Le remboursement de la part non due intervient sur le moyen de paiement d'origine. Les annulations de prestations sur devis sont régies par les conditions du devis.
 
 ## 6. Responsabilité
 
@@ -175,3 +111,78 @@ Les données collectées lors de la commande sont utilisées pour l'exécution d
 
 Les présentes CGV sont soumises au droit français. Tout litige relève des tribunaux compétents du ressort du siège de WANYM SOLUTION.$md$)
 on conflict (key) do update set value = excluded.value;
+
+-- Keys no page reads any more (old static-site structure)
+delete from public.site_content where key in ('badges', 'included.title', 'included.items', 'pricing.title', 'pricing.lead', 'pricing.how');
+
+insert into public.services (slug, title, summary, body, icon, sort_order, published) values
+  ('livraison-express-a-la-demande', 'Livraison à la demande, prix immédiat', 'Un canapé, un lave-linge, des cartons, un colis urgent : choisissez la taille du camion, le prix s''affiche, vous payez en ligne. Un chauffeur dédié livre en Île-de-France, le jour même si vous commandez avant 12h.', $md$## Commandez en quelques clics
+
+Vos deux adresses, la taille du camion, la date et le créneau : le prix s'affiche avant le paiement et ne bouge plus. Pas de compte à créer, pas d'abonnement, pas d'engagement. Une fois payée, la course part immédiatement à notre exploitation et vous recevez la confirmation par e-mail, puis un lien de suivi.
+
+## Ce qui est inclus
+
+- **Un chauffeur dédié** — votre marchandise ne partage pas le véhicule avec d'autres livraisons.
+- **L'aide au chargement et au déchargement** par le chauffeur, et 30 minutes cumulées sur place.
+- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.
+- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison.
+
+## Les options, au prix affiché
+
+- **Remise à la porte** au départ ou à l'arrivée, **étage** sans ascenseur.
+- **Équipier** pour les objets lourds ou encombrants (recommandé au-delà de 30 kg ou 1,50 m).
+- **Temps sur place** supplémentaire, réservé à l'avance : moins cher qu'un dépassement.
+- **Dimanche et soirée** (18h-21h), majorés et affichés avant paiement.
+
+## Quatre tailles d'utilitaire
+
+De 1 à 8 m² au sol (3 à 20 m³) : un lave-linge et quelques cartons, un canapé, un salon complet ou un studio. Un assistant vous suggère la taille d'après vos objets ; vous gardez le dernier mot.
+
+## Besoin d'un chauffeur dans l'heure ?
+
+Appelez l'exploitation au 07 67 16 60 15, joignable 24h/24 : nous organisons la course au téléphone, au même prix.$md$, 'zap', 1, true),
+  ('livraison-professionnels-externalisee', 'Livraison externalisée pour professionnels', 'Magasins, jardineries, enseignes, e-commerçants : nous livrons vos clients finaux, du retrait en magasin ou en entrepôt jusqu''au domicile. Vous vendez, nous livrons.', $md$## Pourquoi externaliser votre dernier kilomètre ?
+
+Le dernier kilomètre est l'étape la plus coûteuse et la plus délicate de la vente : c'est le moment où votre client vous juge. Gérer une flotte en interne, recruter des livreurs, absorber les pics de saison pèse sur vos marges et votre organisation. Externaliser, c'est transformer un coût fixe en coût variable : vous ne payez que les livraisons réellement effectuées.
+
+## Ce que nous prenons en charge
+
+- **Livraison client final** depuis vos magasins ou entrepôts — en Île-de-France au quotidien, France et Europe sur demande.
+- **Produits volumineux et encombrants** — mobilier, électroménager, végétaux, matériaux : manutention et livraison à l'étage par des équipes formées.
+- **Pics d'activité** — week-ends, fêtes, soldes, saison : nous absorbons vos variations de volume sans que vous ayez à recruter.
+- **Preuve de livraison et suivi** — chaque course est tracée, votre service client sait où en sont ses commandes.
+- **Retours et reprises** — reprise d'ancien matériel ou retour en magasin intégrés à la tournée.
+
+## Une course ponctuelle ? Commandez en ligne
+
+Pour une livraison isolée, commandez directement sur le site : prix affiché avant paiement, règlement en ligne, facture par e-mail. Pour des flux réguliers, décrivez vos besoins et recevez un devis sous 24 h.
+
+## Le « sans engagement », concrètement
+
+Aucune durée minimale, aucun volume imposé. Vous testez sur une semaine, un magasin ou une catégorie de produits. Si le service est au niveau, vous restez. C'est à nous de le prouver à chaque tournée.$md$, 'store', 2, true),
+  ('transport-dedie-sur-mesure', 'Transport dédié & sur-mesure', 'Chauffeur dédié, tournées récurrentes, marchandises volumineuses, France et Europe : nous construisons la solution logistique qui colle à votre activité.', $md$## Votre logistique, sans la flotte
+
+Un chauffeur et un véhicule affectés à vos flux, pilotés par notre exploitation. Vous obtenez la fiabilité d'une flotte en propre — mêmes chauffeurs, mêmes horaires, connaissance de vos clients — sans en supporter les coûts fixes.
+
+## Nos formules sur-mesure
+
+- **Chauffeur dédié** — à la journée, à la semaine ou à l'année, sur vos plannings.
+- **Tournées récurrentes** — vos livraisons régulières optimisées et assurées par les mêmes équipes.
+- **Mise à disposition de véhicule avec chauffeur** — jusqu'à 3,5 t, ponctuelle ou longue durée.
+- **Volumineux & manutention** — mobilier, électroménager, matériaux : livraison à l'étage, reprise, montage simple.
+- **France & Europe Schengen** — courses dédiées longue distance au départ de l'Île-de-France.
+
+## Comment ça se passe
+
+Décrivez vos flux (volumes, zones, horaires, contraintes) : nous revenons vers vous sous 24 h avec un chiffrage clair. Pour une course isolée en Île-de-France, le plus rapide reste la commande en ligne, au prix affiché.
+
+## Sur-mesure ne veut pas dire engagement
+
+Même en tournée dédiée : pas de durée minimale. Votre activité est saisonnière ? La tournée l'est aussi.$md$, 'truck', 3, true)
+on conflict (slug) do update set
+  title = excluded.title,
+  summary = excluded.summary,
+  body = excluded.body,
+  icon = excluded.icon,
+  sort_order = excluded.sort_order,
+  published = excluded.published;

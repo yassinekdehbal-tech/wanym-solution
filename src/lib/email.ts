@@ -22,7 +22,7 @@ function row(label: string, value: string | null | undefined) {
 function layout(title: string, body: string) {
   return `<!doctype html><html lang="fr"><body style="margin:0;background:#f8fafc;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#0f172a">
   <div style="max-width:600px;margin:0 auto;padding:24px">
-    <div style="background:#0b1f3a;color:#fff;padding:16px 24px;border-radius:12px 12px 0 0;font-weight:700;letter-spacing:.08em">WANYM SOLUTION</div>
+    <div style="background:#0b1f3a;padding:18px 24px;border-radius:12px 12px 0 0"><img src="${env.siteUrl}/images/logo/wanym-logo-email.png" width="180" height="45" alt="WANYM SOLUTION" style="display:block;width:180px;height:45px"></div>
     <div style="background:#fff;padding:24px;border-radius:0 0 12px 12px;border:1px solid #e2e8f0;border-top:0">
       <h1 style="font-size:20px;margin:0 0 16px">${title}</h1>${body}
       <p style="margin:24px 0 0;color:#64748b;font-size:13px">WANYM SOLUTION · 125 rue Diderot, 93700 Drancy · Exploitation 24h/24 : 07 67 16 60 15 · ${esc(env.siteUrl)}</p>

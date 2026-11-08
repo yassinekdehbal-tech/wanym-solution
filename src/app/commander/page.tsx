@@ -6,7 +6,7 @@ import { CATALOGUE_OBJETS, VEHICULES_CAPACITES } from "@/lib/catalogue-objets";
 import { getContent, getServices, parseJson, splitList } from "@/lib/supabase/content";
 import type { CatalogueItem, VehiculeCapacite } from "@/lib/vehicle-advisor";
 
-export const metadata: Metadata = { title: "Commander un transport", description: "Commandez un transport en quelques minutes : prix immédiat et paiement en ligne pour l'express en Île-de-France, devis sous 24h pour le reste." };
+export const metadata: Metadata = { title: "Commander une livraison", description: "Commandez une livraison en quelques clics : prix affiché avant paiement, règlement en ligne, chauffeur dédié en Île-de-France. Hors barème, devis sous 24 h." };
 
 export default async function OrderPage() {
   const [c, services] = await Promise.all([getContent(), getServices()]);
@@ -20,7 +20,7 @@ export default async function OrderPage() {
   return (
     <main>
       <div className="container-x max-w-4xl py-6 sm:py-12">
-        <h1 className="h1 text-brand-800">{c["order.title"] ?? "Commander un transport"}</h1>
+        <h1 className="h1 text-brand-800">{c["order.title"] ?? "Commander une livraison"}</h1>
         <p className="lead mt-2 sm:mt-3">{c["order.lead"]}</p>
         <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs font-medium text-muted sm:text-sm" aria-label="Garanties">
           <li className="inline-flex items-center gap-1"><Icon name="euro" className="h-3.5 w-3.5 text-primary-700" /> Prix ferme avant paiement</li>

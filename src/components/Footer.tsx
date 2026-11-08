@@ -9,11 +9,11 @@ export function Footer({ content }: { content: SiteContent }) {
     <footer className="mt-16 bg-brand-900 text-slate-300 sm:mt-24">
       <div className="container-x grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <Logo className="h-9 w-auto" dark />
+          <Logo className="h-10 w-auto" dark />
           <p className="mt-4 max-w-md text-sm leading-relaxed">{content["site.tagline"]}</p>
           <p className="mt-3 text-sm text-slate-400">{content["about.figures"]}</p>
           <Link href="/commander" className="btn-primary btn-sm mt-6">
-            {content["hero.cta_primary"] ?? "Commander un transport"} <Icon name="arrow" className="h-4 w-4" />
+            {content["hero.cta_primary"] ?? "Commander une livraison"} <Icon name="arrow" className="h-4 w-4" />
           </Link>
         </div>
         <div>
@@ -40,7 +40,7 @@ export function Footer({ content }: { content: SiteContent }) {
           <p className="font-display font-bold text-white">Le site</p>
           <ul className="mt-3 space-y-2.5 text-sm">
             <li><Link href="/services" className="hover:text-white">Nos services</Link></li>
-            <li><Link href="/commander" className="hover:text-white">Commander un transport</Link></li>
+            <li><Link href="/commander" className="hover:text-white">Commander une livraison</Link></li>
             <li><Link href="/suivi" className="hover:text-white">Suivre ma commande</Link></li>
             <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
             <li><Link href="/mentions-legales" className="hover:text-white">Mentions légales</Link></li>

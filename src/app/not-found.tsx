@@ -8,7 +8,7 @@ export default function NotFound() {
       <p className="lead mt-3">Le lien est peut-être erroné ou la page a été déplacée.</p>
       <div className="mt-8 flex justify-center gap-3">
         <Link href="/" className="btn-dark">Accueil</Link>
-        <Link href="/commander" className="btn-primary">Commander un transport</Link>
+        <Link href="/commander" className="btn-primary">Commander une livraison</Link>
       </div>
     </main>
   );
