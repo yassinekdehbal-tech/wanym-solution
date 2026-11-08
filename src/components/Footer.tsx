@@ -49,7 +49,7 @@ export function Footer({ content }: { content: SiteContent }) {
         </div>
       </div>
       <div className="border-t border-white/10 py-5 text-center text-xs text-slate-500">
-        © {year} {content["legal.company"] ?? "WANYM SOLUTION"} · {content["legal.form"]} · Drancy (93) · Paiement sécurisé par Stripe
+        © {year} {content["legal.company"] ?? "WANYM SOLUTION"} · {content["legal.form"]}{content["legal.siren"] ? ` · SIREN ${content["legal.siren"]}` : ""} · Paiement sécurisé par Stripe
       </div>
     </footer>
   );

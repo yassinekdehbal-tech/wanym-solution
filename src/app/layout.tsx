@@ -40,7 +40,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     address: { "@type": "PostalAddress", streetAddress: "125 rue Diderot", postalCode: "93700", addressLocality: "Drancy", addressCountry: "FR" },
     areaServed: ["Île-de-France", "France", "Europe"],
     openingHours: "Mo-Su 00:00-23:59",
-    foundingDate: "2016",
+    vatID: content["legal.tva"]?.replace(/\s/g, ""),
+    taxID: content["legal.siren"]?.replace(/\s/g, ""),
   };
   return (
     <html lang="fr" className={`${inter.variable} ${manrope.variable}`}>
