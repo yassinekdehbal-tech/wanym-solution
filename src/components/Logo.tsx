@@ -1,21 +1,27 @@
+import Image from "next/image";
+
 /**
- * Logotype WANYM SOLUTION : chevrons verts + wordmark. Placeholder vectoriel en
- * attendant le fichier officiel (à remplacer ici, un seul endroit).
+ * Logo officiel WANYM SOLUTION (08/11/2026) : W vert + wordmark + « solution de
+ * transport ». Deux rendus du même fichier source : lettres blanches pour les
+ * fonds sombres (`dark`), lettres bleu nuit pour les fonds clairs. Un seul
+ * endroit à changer si le logo évolue. PNG servis tels quels (`unoptimized`) :
+ * l'optimiseur rend un JPEG sans transparence aux navigateurs sans WebP. Les icônes (`src/app/icon.png`,
+ * `apple-icon.png`) sont dérivées du W.
  */
-export function Logo({ className = "h-8", dark = false }: { className?: string; dark?: boolean }) {
-  const ink = dark ? "#ffffff" : "#0b1f3a";
+const SRC = { light: "/images/logo/wanym-logo-on-light.png", dark: "/images/logo/wanym-logo-on-dark.png" } as const;
+const RATIO = 480 / 120;
+
+export function Logo({ className = "h-8 w-auto", dark = false, priority = false }: { className?: string; dark?: boolean; priority?: boolean }) {
   return (
-    <svg viewBox="0 0 232 48" className={className} role="img" aria-label="WANYM SOLUTION">
-      <g fill="#00a67e">
-        <path d="M2 6h14l12 36H14z" />
-        <path d="M22 6h14l12 36H34z" opacity="0.85" />
-      </g>
-      <text x="56" y="30" fontFamily="var(--font-display), Manrope, Inter, system-ui, sans-serif" fontWeight="800" fontSize="27" letterSpacing="-0.5" fill={ink}>
-        WANYM
-      </text>
-      <text x="57" y="43" fontFamily="var(--font-sans), Inter, system-ui, sans-serif" fontWeight="600" fontSize="10.5" letterSpacing="3.1" fill={dark ? "#9adfc6" : "#00875f"}>
-        SOLUTION
-      </text>
-    </svg>
+    <Image
+      src={dark ? SRC.dark : SRC.light}
+      alt="WANYM SOLUTION, solution de transport"
+      width={480}
+      height={120}
+      priority={priority}
+      unoptimized
+      className={className}
+      style={{ aspectRatio: RATIO }}
+    />
   );
 }

@@ -4,7 +4,7 @@
 /*
  * WANYM design tokens — "Tech Logistics Premium".
  * brand   = bleu nuit (textes forts, en-têtes sombres)
- * primary = vert WANYM (actions, sélections, validations) — 600/700 passent AA avec du texte blanc
+ * primary = vert WANYM, celui du logo (#7ebf37 en 500) — actions, sélections, validations ; 600/700 passent AA avec du texte blanc
  * accent  = orange (avertissements, attention) — jamais pour une action
  * surface = fond gris clair, muted = texte secondaire
  */
@@ -17,14 +17,14 @@
   --color-brand-800: #0b1f3a;
   --color-brand-900: #07142a;
 
-  --color-primary-50: #e6f7f1;
-  --color-primary-100: #c9eee0;
-  --color-primary-200: #9adfc6;
-  --color-primary-400: #1fbf96;
-  --color-primary-500: #00a67e;
-  --color-primary-600: #00875f;
-  --color-primary-700: #046b4d;
-  --color-primary-800: #06523c;
+  --color-primary-50: #f2f8e9;
+  --color-primary-100: #e2f0cd;
+  --color-primary-200: #c5e39f;
+  --color-primary-400: #93cc4f;
+  --color-primary-500: #7ebf37;
+  --color-primary-600: #4a7f1a;
+  --color-primary-700: #3f6e14;
+  --color-primary-800: #2f5410;
 
   --color-accent-50: #fff6e5;
   --color-accent-100: #ffe9c2;

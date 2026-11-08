@@ -18,12 +18,12 @@ const nav = [
 export function Header({ content }: { content: SiteContent }) {
   const phone = content["contact.phone"] ?? "07 67 16 60 15";
   const tel = `tel:${content["contact.phone_e164"] ?? "+33767166015"}`;
-  const cta = content["hero.cta_primary"] ?? "Commander";
+  const cta = content["hero.cta_primary"] ?? "Commander une livraison";
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
       <div className="container-x flex h-16 items-center justify-between gap-2 sm:gap-3">
         <Link href="/" className="flex shrink-0 items-center rounded-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40" aria-label="WANYM SOLUTION, accueil">
-          <Logo className="h-6 w-auto min-[360px]:h-8 sm:h-9" />
+          <Logo className="h-7 w-auto min-[360px]:h-8 sm:h-10" priority />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">

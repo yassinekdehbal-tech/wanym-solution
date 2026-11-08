@@ -69,7 +69,7 @@ export default async function ThankYouPage(props: Props) {
       </Suspense>
       <div className="mt-10 flex flex-wrap justify-center gap-3">
         <Link href="/suivi" className="btn-dark">Suivre ma commande</Link>
-        <Link href="/commander" className="btn-outline">Nouveau transport</Link>
+        <Link href="/commander" className="btn-outline">Nouvelle livraison</Link>
       </div>
       <p className="mt-8 text-sm text-muted">Une question ? <a className="font-semibold text-brand-800" href={`tel:${c["contact.phone_e164"]}`}>{c["contact.phone"]}</a> · {c["contact.email"]}</p>
     </main>

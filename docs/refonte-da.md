@@ -74,7 +74,7 @@
 
 | Besoin | Pourquoi | En attendant |
 |---|---|---|
-| **Logo officiel** (SVG) | en-tête, pied de page, OpenGraph | logotype SVG « chevrons verts + WANYM SOLUTION » dans `Logo.tsx` |
+| **Logo officiel** | en-tête, pied de page, e-mails, icônes | ✅ reçu le 08/11/2026 : `public/images/logo/` (deux rendus, lettres blanches ou bleu nuit), `Logo.tsx` en `next/image`, icônes dérivées du W ; palette `primary` alignée sur son vert #7ebf37 |
 | ~~Photo hero desktop et illustrations des 4 véhicules~~ **Reçus le 02/11/2026** (photo hero, 4 utilitaires, 4 charges, 19 pictos, chevrons) : découpés et détourés depuis la planche fournie, intégrés dans `public/images/` ; `TruckIcon` reste le repli | — | archive haute résolution reçue le 02/11 (camions 900 px, pictos 512 px) ; les quatre visuels régénérés (armoire démontée, colis « autre », plante, camion 20 m³ sous le même angle que les autres) remplacent les vignettes provisoires |
 | **Prix d'appel** : la maquette affiche 49 / 69 / 99 / 149 € TTC, NAMY calcule 48 / 96 / 144 / 288 € TTC (grille 40 / 80 / 120 / 240 € **HT**) | les cartes affichent le prix NAMY ; si les montants de la maquette sont les bons, régler la grille « SITE WANYM » dans NAMY | prix NAMY |
 | Textes « Comment ça marche », « Professionnels », références / avis **validés** | sections de l'accueil | textes neutres seedés, modifiables par l'API ; références masquées tant que la clé est vide |
