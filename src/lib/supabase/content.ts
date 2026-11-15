@@ -1,8 +1,8 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { supabasePublic } from "@/lib/supabase/client";
-import type { Service, SiteContent } from "@/lib/types";
+import type { Page, PageSection, Service, SiteContent } from "@/lib/types";
 
-export const TAGS = { content: "site-content", services: "services" } as const;
+export const TAGS = { content: "site-content", services: "services", pages: "pages" } as const;
 
 /** All editable copy as a key/value map. Cached until PUT /api/content revalidates it. */
 export async function getContent(): Promise<SiteContent> {
@@ -50,6 +50,33 @@ export async function getService(slug: string): Promise<Service | null> {
     .eq("published", true)
     .maybeSingle();
   return (data as Service | null) ?? null;
+}
+
+/** Published SEO pages, all sections or one. */
+export async function getPages(section?: PageSection): Promise<Page[]> {
+  "use cache";
+  cacheTag(TAGS.pages);
+  cacheLife("max");
+  const db = supabasePublic();
+  if (!db) return [];
+  let q = db.from("pages").select("*").eq("published", true).order("sort_order", { ascending: true }).order("title", { ascending: true });
+  if (section) q = q.eq("section", section);
+  const { data, error } = await q;
+  if (error) {
+    console.error("[pages] fetch failed:", error.message);
+    return [];
+  }
+  return (data ?? []) as Page[];
+}
+
+export async function getPage(section: PageSection, slug: string): Promise<Page | null> {
+  "use cache";
+  cacheTag(TAGS.pages);
+  cacheLife("max");
+  const db = supabasePublic();
+  if (!db) return null;
+  const { data } = await db.from("pages").select("*").eq("section", section).eq("slug", slug).eq("published", true).maybeSingle();
+  return (data as Page | null) ?? null;
 }
 
 /** Helpers for list-like content stored as "a|b|c". */

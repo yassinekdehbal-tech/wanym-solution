@@ -12,6 +12,28 @@ export type Service = {
 
 export type SiteContent = Record<string, string>;
 
+export const PAGE_SECTIONS = ["livraison", "transport", "entreprises"] as const;
+export type PageSection = (typeof PAGE_SECTIONS)[number];
+
+/** SEO landing page (table `pages`): one search intent, editable through the API. */
+export type Page = {
+  id: string;
+  slug: string;
+  section: PageSection;
+  title: string;
+  meta_description: string | null;
+  intro: string | null;
+  body: string | null;
+  faq: { q: string; a: string }[];
+  keyword: string | null;
+  order_prefill: { service?: string; vehicule?: string; from?: string; to?: string };
+  related: string[];
+  sort_order: number;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export const ORDER_STATUSES = [
   "new",
   "quoted",

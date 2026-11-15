@@ -40,6 +40,9 @@ export function Footer({ content }: { content: SiteContent }) {
           <p className="font-display font-bold text-white">Le site</p>
           <ul className="mt-3 space-y-2.5 text-sm">
             <li><Link href="/services" className="hover:text-white">Nos services</Link></li>
+            <li><Link href="/livraison" className="hover:text-white">Livraison à la demande</Link></li>
+            <li><Link href="/transport" className="hover:text-white">Transport avec chauffeur</Link></li>
+            <li><Link href="/entreprises" className="hover:text-white">Livraison externalisée</Link></li>
             <li><Link href="/commander" className="hover:text-white">Commander une livraison</Link></li>
             <li><Link href="/suivi" className="hover:text-white">Suivre ma commande</Link></li>
             <li><Link href="/contact" className="hover:text-white">Contact</Link></li>

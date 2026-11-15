@@ -22,6 +22,20 @@ curl -X PUT https://wanymsolution.com/api/content/hero.title \
 Clés notables : `hero.*` (dont `hero.route_*`, `hero.image_alt`), `services.title/lead`, `about.*`, `cta.*`, `contact.*` (téléphone, e-mail, adresse), `legal.*` (société exploitante : `legal.company/form/siren/siret/rcs/tva/naf/address/director/host`), `faq` (JSON `[{"q","a"}]`), `order.*` (dont `order.namy_services`, `order.quote_received_title/body`, `order.temps_inclus_min`, `order.temps_lead`, `order.depassement_notice`, `order.cancellation_terms`, `order.supplements_terms`), `vehicles.inclus` (`|`, « inclus dans chaque forfait »), `track.*`, `cgv.body` (markdown). Les clés `badges`, `included.*` et `pricing.*` de l'ancien site statique ont été supprimées le 08/11/2026 (aucune page ne les lisait). Accueil refondu (01/11/2026) : `reassurance.items` (`icone:Titre:Sous-titre|…`, icônes de `src/components/Icon.tsx`), `vehicles.title`, `vehicles.lead`, `how.title`, `how.steps` (JSON `[{"t","d","icon"}]`), `pro.title`, `pro.body`, `pro.items` (`|`), `references.items` (JSON `[{"name","text","role"}]`, section masquée si vide — n'y mettre que des avis validés). Section « Le groupe WANYM » (08/11/2026) : `group.title`, `group.lead`, `group.items` (JSON `[{"icon","title","text","href","cta"}]`, lien externe accepté — la carte NAMY pointe sur nam-y.com).
 La page se met à jour en arrière-plan dès l'appel (revalidation par tag).
 
+## Pages SEO (15/11/2026)
+
+Pages d'atterrissage par intention de recherche (objet, occasion, zone, cas d'usage B2B), rendues sous `/livraison/{slug}`, `/transport/{slug}` et `/entreprises/{slug}` (hubs `/livraison`, `/transport`, `/entreprises`), listées dans le sitemap, avec fil d'Ariane et FAQ en JSON-LD.
+
+| Méthode | Route | Accès | Description |
+|---|---|---|---|
+| GET | `/pages[?section=]` | public | Pages publiées (avec clé : toutes, brouillons inclus) |
+| POST | `/pages` | protégé | Crée **ou remplace** (upsert sur `section` + `slug`) : `{ slug, section, title, meta_description?, intro?, body? (markdown), faq? [{q,a}], keyword?, order_prefill? {service, vehicule, from, to}, related? [slugs], sort_order?, published? }` |
+| GET | `/pages/{section}/{slug}` | public | Une page |
+| PUT | `/pages/{section}/{slug}` | protégé | Mise à jour partielle |
+| DELETE | `/pages/{section}/{slug}` | protégé | Suppression |
+
+`order_prefill` pré-remplit le widget « Voir le prix » de la page et le lien vers `/commander` (`service`, `vehicule` = id NAMY, `from`, `to`). `related` = slugs des pages sœurs affichées dans « À lire aussi » (par défaut : les autres pages de la section). Source versionnée : `supabase/pages.json`, poussée par `node scripts/push-pages.mjs` (clé dans `CONTENT_API_KEY`) ; `tests/pages-seo.test.ts` vérifie le schéma, les liens internes et les longueurs SEO.
+
 ## Services
 
 | Méthode | Route | Accès | Description |

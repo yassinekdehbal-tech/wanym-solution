@@ -20,3 +20,20 @@ export const serviceInputSchema = z.object({
 export const servicePatchSchema = serviceInputSchema.partial().omit({ slug: true }).extend({
   slug: serviceInputSchema.shape.slug.optional(),
 });
+
+const slugSchema = z.string().trim().min(2).max(100).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug: minuscules, chiffres et tirets");
+export const pageInputSchema = z.object({
+  slug: slugSchema,
+  section: z.enum(["livraison", "transport", "entreprises"]),
+  title: z.string().trim().min(2).max(160),
+  meta_description: z.string().max(320).nullable().optional(),
+  intro: z.string().max(1000).nullable().optional(),
+  body: z.string().max(60000).nullable().optional(),
+  faq: z.array(z.object({ q: z.string().trim().min(2).max(300), a: z.string().trim().min(2).max(2000) })).max(20).default([]),
+  keyword: z.string().max(160).nullable().optional(),
+  order_prefill: z.object({ service: z.string().max(80).optional(), vehicule: z.string().max(60).optional(), from: z.string().max(200).optional(), to: z.string().max(200).optional() }).default({}),
+  related: z.array(z.string().max(120)).max(12).default([]),
+  sort_order: z.number().int().default(0),
+  published: z.boolean().default(true),
+});
+export const pagePatchSchema = pageInputSchema.partial();
