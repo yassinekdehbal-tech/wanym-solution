@@ -10,10 +10,10 @@ import { track } from "@/lib/analytics";
  * Widget « départ → arrivée → Voir le prix » : pousse vers /commander avec les
  * adresses préremplies, même incomplètes (le formulaire les complète).
  */
-export function RouteSearch({ labels, compact = false }: { labels: { title?: string; from: string; to: string; button: string }; compact?: boolean }) {
+export function RouteSearch({ labels, compact = false, initial, extraQuery }: { labels: { title?: string; from: string; to: string; button: string }; compact?: boolean; initial?: { from?: string; to?: string }; extraQuery?: Record<string, string | undefined> }) {
   const router = useRouter();
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [from, setFrom] = useState(initial?.from ?? "");
+  const [to, setTo] = useState(initial?.to ?? "");
   const uid = useId();
   const fromId = `route-from-${uid}`;
   const toId = `route-to-${uid}`;
@@ -23,6 +23,7 @@ export function RouteSearch({ labels, compact = false }: { labels: { title?: str
       onSubmit={(e) => {
         e.preventDefault();
         const q = new URLSearchParams();
+        for (const [k, v] of Object.entries(extraQuery ?? {})) if (v) q.set(k, v);
         if (from.trim()) q.set("from", from.trim());
         if (to.trim()) q.set("to", to.trim());
         track("voir_prix_click", { from_filled: Boolean(from.trim()), to_filled: Boolean(to.trim()) });
