@@ -39,9 +39,12 @@ export default async function LegalPage() {
         <p>
           Conformément au RGPD, vous disposez d&apos;un droit d&apos;accès, de rectification, d&apos;effacement et d&apos;opposition. Pour l&apos;exercer : {c["contact.email"]}.
         </p>
-        <h2>Cookies et mesure d&apos;audience</h2>
+        <h2 id="cookies">Cookies et mesure publicitaire</h2>
         <p>
-          Le site utilise la balise Google (Google Ads) afin de mesurer les conversions issues de nos campagnes publicitaires. Aucune donnée nominative n&apos;est transmise à Google par cette balise.
+          Le site fonctionne sans cookie publicitaire. Avec votre accord, donné dans le bandeau affiché à la première visite et modifiable à tout moment via « Gérer les cookies » en pied de page, nous utilisons trois balises de mesure : Google Ads (balise Google, mode consentement v2), le pixel Meta (Facebook, Instagram) et le LinkedIn Insight Tag. Elles servent uniquement à savoir quelle campagne a conduit à une commande ou à une demande de devis. Sans accord, elles ne sont pas chargées et Google Ads ne dépose aucun cookie.
+        </p>
+        <p>
+          Votre choix est conservé six mois sur votre appareil. Les seules données techniques indispensables au fonctionnement (préférences du formulaire, attribution de la commande à la campagne d&apos;origine) sont stockées localement et ne sont transmises à aucun tiers publicitaire.
         </p>
       </section>
     </main>

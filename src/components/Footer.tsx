@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { Logo } from "@/components/Logo";
+import { ManageCookies } from "@/components/ManageCookies";
 import type { SiteContent } from "@/lib/types";
 
 export function Footer({ content }: { content: SiteContent }) {
@@ -48,6 +49,7 @@ export function Footer({ content }: { content: SiteContent }) {
             <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
             <li><Link href="/mentions-legales" className="hover:text-white">Mentions légales</Link></li>
             <li><Link href="/cgv" className="hover:text-white">Conditions générales de vente</Link></li>
+            <li><ManageCookies className="hover:text-white" /></li>
           </ul>
         </div>
       </div>
