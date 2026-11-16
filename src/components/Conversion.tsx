@@ -9,7 +9,7 @@ declare global {
 }
 
 /** Fires the paid-order conversion once per order (Google Ads, Meta Purchase, LinkedIn), guarded with sessionStorage. */
-export function Conversion({ reference, valueCents, sendTo }: { reference: string; valueCents: number | null; sendTo: string }) {
+export function Conversion({ reference, valueCents, sendTo, email }: { reference: string; valueCents: number | null; sendTo: string; email?: string | null }) {
   useEffect(() => {
     if (!reference) return;
     const key = `conv:${reference}`;
@@ -21,6 +21,8 @@ export function Conversion({ reference, valueCents, sendTo }: { reference: strin
     }
     const value = valueCents != null ? valueCents / 100 : undefined;
     const fire = () => {
+      // Conversions améliorées : l'e-mail est haché par gtag et n'est envoyé que si ad_user_data est « granted » (Consent Mode).
+      if (sendTo && email) window.gtag?.("set", "user_data", { email });
       if (sendTo) window.gtag?.("event", "conversion", { send_to: sendTo, value, currency: "EUR", transaction_id: reference });
       // Meta / LinkedIn only exist once the visitor accepted the ad cookies (AdTags).
       window.fbq?.("track", "Purchase", { value: value ?? 0, currency: "EUR", content_ids: [reference] });
@@ -28,6 +30,6 @@ export function Conversion({ reference, valueCents, sendTo }: { reference: strin
     };
     if (window.gtag || window.fbq) fire();
     else setTimeout(fire, 1500);
-  }, [reference, valueCents, sendTo]);
+  }, [reference, valueCents, sendTo, email]);
   return null;
 }
