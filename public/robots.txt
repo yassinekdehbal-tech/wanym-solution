@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://wanymsolution.com/sitemap.xml
+Sitemap: https://www.wanymsolution.com/sitemap.xml
