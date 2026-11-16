@@ -1,6 +1,6 @@
 # API wanymsolution.com
 
-Base : `https://wanymsolution.com/api`. Toutes les routes répondent en JSON.
+Base : `https://www.wanymsolution.com/api`. Toutes les routes répondent en JSON.
 Les routes **protégées** exigent `Authorization: Bearer <CONTENT_API_KEY>` (ou `x-api-key`).
 
 ## Contenu éditable (sans redéploiement)
@@ -14,7 +14,7 @@ Les routes **protégées** exigent `Authorization: Bearer <CONTENT_API_KEY>` (ou
 | DELETE | `/content/{key}` | protégé | Supprime une clé |
 
 ```bash
-curl -X PUT https://wanymsolution.com/api/content/hero.title \
+curl -X PUT https://www.wanymsolution.com/api/content/hero.title \
   -H "Authorization: Bearer $CONTENT_API_KEY" -H "content-type: application/json" \
   -d '{"value":"Le dernier kilomètre, sans engagement"}'
 ```
@@ -126,7 +126,7 @@ Un changement de `status` ou de `invoice_number` crée un événement visible pa
 ### SAV
 
 ```bash
-curl -X POST https://wanymsolution.com/api/orders/WS-2026-00012/events \
+curl -X POST https://www.wanymsolution.com/api/orders/WS-2026-00012/events \
   -H "Authorization: Bearer $CONTENT_API_KEY" -H "content-type: application/json" \
   -d '{"type":"sav","message":"Nous avons bien reçu votre réclamation, retour sous 24h.","notify_customer":true}'
 ```

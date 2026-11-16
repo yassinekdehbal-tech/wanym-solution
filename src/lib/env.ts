@@ -1,5 +1,5 @@
 export const env = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://wanymsolution.com",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.wanymsolution.com",
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
   supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
   supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
