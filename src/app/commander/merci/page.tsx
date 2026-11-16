@@ -54,7 +54,7 @@ async function Summary({ searchParams, c }: Props & { c: SiteContent }) {
           </p>
         </div>
       )}
-      {ref && paid && <Conversion reference={ref} valueCents={order?.total_cents ?? null} sendTo={sendTo} />}
+      {ref && paid && <Conversion reference={ref} valueCents={order?.total_cents ?? null} sendTo={sendTo} email={order?.email ?? null} />}
       {ref && !order && <Conversion reference={ref} valueCents={null} sendTo={sendTo} />}
     </>
   );

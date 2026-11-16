@@ -21,10 +21,25 @@ export function track(name: TrackEvent, params: Record<string, string | number |
   if (typeof window === "undefined") return;
   try {
     window.gtag?.("event", name, params);
+    if (name === "prix_confirme") fireLeadConversion();
     const meta = META_EVENTS[name];
     if (meta) window.fbq?.("track", meta, typeof params.value === "number" ? { value: params.value, currency: "EUR" } : {});
     if (name === "devis_envoye" && window.lintrk && process.env.NEXT_PUBLIC_LINKEDIN_CONVERSION_ID) window.lintrk("track", { conversion_id: process.env.NEXT_PUBLIC_LINKEDIN_CONVERSION_ID });
   } catch {
     /* la mesure n'est jamais bloquante */
   }
+}
+
+/** Conversion secondaire Google Ads « Prix affiché » : une fois par session, sans valeur (comptage « une »). */
+function fireLeadConversion() {
+  const id = process.env.NEXT_PUBLIC_GTAG_ID;
+  const label = process.env.NEXT_PUBLIC_GTAG_LEAD_LABEL;
+  if (!id || !label) return;
+  try {
+    if (sessionStorage.getItem("conv:lead")) return;
+    sessionStorage.setItem("conv:lead", "1");
+  } catch {
+    /* navigation privée : on envoie quand même, Google dédoublonne au comptage « une » */
+  }
+  window.gtag?.("event", "conversion", { send_to: `${id}/${label}` });
 }
