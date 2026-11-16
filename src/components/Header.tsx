@@ -4,8 +4,9 @@ import { Logo } from "@/components/Logo";
 import type { SiteContent } from "@/lib/types";
 
 const nav = [
-  { href: "/services", label: "Services" },
-  { href: "/#professionnels", label: "Professionnels" },
+  { href: "/livraison", label: "Livraison" },
+  { href: "/transport", label: "Transport" },
+  { href: "/entreprises", label: "Entreprises" },
   { href: "/#camions", label: "Tarifs" },
   { href: "/suivi", label: "Suivi" },
   { href: "/contact", label: "Contact" },
