@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { RouteSearch } from "@/components/RouteSearch";
-import type { SiteContent } from "@/lib/types";
+import type { Page, SiteContent } from "@/lib/types";
 
 export type Step = { t: string; d: string; icon?: string };
 
@@ -129,6 +129,40 @@ export function FinalCta({ c }: { c: SiteContent }) {
         <p className="mt-6 text-center text-sm text-slate-300">
           Ou appelez l&apos;exploitation : <a href={`tel:${c["contact.phone_e164"]}`} className="font-semibold text-white underline">{c["contact.phone"]}</a>
         </p>
+      </div>
+    </section>
+  );
+}
+
+/** « Ce que nous livrons » : les pages SEO de la section livraison + transport, avec les trois hubs. Masquée sans page. */
+export function PagesShowcase({ pages }: { pages: Page[] }) {
+  const shown = pages.filter((p) => p.section !== "entreprises").slice(0, 12);
+  if (!shown.length) return null;
+  return (
+    <section className="section bg-white" id="livraisons">
+      <div className="container-x">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="eyebrow">Ce que nous livrons</p>
+            <h2 className="h2 mt-2">Un objet, une occasion, une ville</h2>
+            <p className="lead mt-3 max-w-2xl">Chaque page dit ce qui est inclus, le bon camion et le délai. Le prix exact s&apos;affiche en 30 secondes avec vos deux adresses.</p>
+          </div>
+          <div className="flex flex-wrap gap-2 text-sm font-semibold">
+            <Link href="/livraison" className="chip-primary">Livraison</Link>
+            <Link href="/transport" className="chip-primary">Transport</Link>
+            <Link href="/entreprises" className="chip-primary">Entreprises</Link>
+          </div>
+        </div>
+        <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {shown.map((p) => (
+            <li key={p.id}>
+              <Link href={`/${p.section}/${p.slug}`} className="flex min-h-14 items-center justify-between gap-3 rounded-xl border border-slate-200 bg-surface px-4 py-3 font-medium text-brand-800 transition hover:border-primary-200 hover:bg-primary-50">
+                {p.title}
+                <Icon name="arrow" className="h-4 w-4 shrink-0 text-primary-700" />
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

@@ -1,14 +1,14 @@
 import { Faq, type FaqItem } from "@/components/Faq";
 import { Hero } from "@/components/home/Hero";
 import { Reassurance } from "@/components/home/Reassurance";
-import { FinalCta, GroupPillars, HowItWorks, ProSection, References, type Pillar, type Reference, type Step } from "@/components/home/Sections";
+import { FinalCta, GroupPillars, HowItWorks, PagesShowcase, ProSection, References, type Pillar, type Reference, type Step } from "@/components/home/Sections";
 import { VehicleCards } from "@/components/home/VehicleCards";
 import { ServiceCard } from "@/components/ServiceCard";
 import { getVehiculesVitrine } from "@/lib/namy";
-import { getContent, getServices, parseJson, splitList } from "@/lib/supabase/content";
+import { getContent, getPages, getServices, parseJson, splitList } from "@/lib/supabase/content";
 
 export default async function Home() {
-  const [c, services, vehicules] = await Promise.all([getContent(), getServices(), getVehiculesVitrine()]);
+  const [c, services, vehicules, pages] = await Promise.all([getContent(), getServices(), getVehiculesVitrine(), getPages()]);
   const namySlugs = splitList(c["order.namy_services"]);
   const faq = parseJson<FaqItem[]>(c["faq"], []);
   const faqLd = faq.length
@@ -21,6 +21,7 @@ export default async function Home() {
       <Reassurance items={splitList(c["reassurance.items"])} />
       <VehicleCards vehicules={vehicules} exemples={parseJson<Record<string, string>>(c["order.exemples_cartes"], {})} title={c["vehicles.title"] ?? "Quelle place vous faut-il ?"} lead={c["vehicles.lead"]} rayonKm={vehicules[0]?.rayon_km} inclus={splitList(c["vehicles.inclus"])} />
       <HowItWorks title={c["how.title"] ?? "Réservez en trois minutes"} steps={parseJson<Step[]>(c["how.steps"], [])} />
+      <PagesShowcase pages={pages} />
 
       <section className="section container-x" id="services">
         <p className="eyebrow">Services</p>
