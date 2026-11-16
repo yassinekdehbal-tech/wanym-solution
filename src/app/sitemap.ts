@@ -1,8 +1,12 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 import { env } from "@/lib/env";
 import { getPages, getServices } from "@/lib/supabase/content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Rendered per request (the lists below come from the tag-revalidated cache): a sitemap
+  // prerendered at build time kept its build-time list and ignored pages added through the API.
+  await connection();
   const [services, pages] = await Promise.all([getServices(), getPages()]);
   const base = env.siteUrl;
   return [
