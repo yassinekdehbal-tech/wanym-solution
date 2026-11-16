@@ -14,10 +14,16 @@ export type TrackEvent =
   | "paiement_debut"
   | "devis_envoye";
 
+/** Événements standard Meta déclenchés en miroir (le pixel n'existe qu'après consentement). */
+const META_EVENTS: Partial<Record<TrackEvent, string>> = { prix_confirme: "ViewContent", paiement_debut: "InitiateCheckout", devis_envoye: "Lead" };
+
 export function track(name: TrackEvent, params: Record<string, string | number | boolean | undefined> = {}) {
   if (typeof window === "undefined") return;
   try {
     window.gtag?.("event", name, params);
+    const meta = META_EVENTS[name];
+    if (meta) window.fbq?.("track", meta, typeof params.value === "number" ? { value: params.value, currency: "EUR" } : {});
+    if (name === "devis_envoye" && window.lintrk && process.env.NEXT_PUBLIC_LINKEDIN_CONVERSION_ID) window.lintrk("track", { conversion_id: process.env.NEXT_PUBLIC_LINKEDIN_CONVERSION_ID });
   } catch {
     /* la mesure n'est jamais bloquante */
   }

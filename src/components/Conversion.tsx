@@ -8,10 +8,10 @@ declare global {
   }
 }
 
-/** Fires the Google Ads conversion once per order (guarded with sessionStorage). */
+/** Fires the paid-order conversion once per order (Google Ads, Meta Purchase, LinkedIn), guarded with sessionStorage. */
 export function Conversion({ reference, valueCents, sendTo }: { reference: string; valueCents: number | null; sendTo: string }) {
   useEffect(() => {
-    if (!sendTo || !reference) return;
+    if (!reference) return;
     const key = `conv:${reference}`;
     try {
       if (sessionStorage.getItem(key)) return;
@@ -19,14 +19,14 @@ export function Conversion({ reference, valueCents, sendTo }: { reference: strin
     } catch {
       /* private mode */
     }
-    const fire = () =>
-      window.gtag?.("event", "conversion", {
-        send_to: sendTo,
-        value: valueCents != null ? valueCents / 100 : undefined,
-        currency: "EUR",
-        transaction_id: reference,
-      });
-    if (window.gtag) fire();
+    const value = valueCents != null ? valueCents / 100 : undefined;
+    const fire = () => {
+      if (sendTo) window.gtag?.("event", "conversion", { send_to: sendTo, value, currency: "EUR", transaction_id: reference });
+      // Meta / LinkedIn only exist once the visitor accepted the ad cookies (AdTags).
+      window.fbq?.("track", "Purchase", { value: value ?? 0, currency: "EUR", content_ids: [reference] });
+      if (window.lintrk && process.env.NEXT_PUBLIC_LINKEDIN_CONVERSION_ID) window.lintrk("track", { conversion_id: process.env.NEXT_PUBLIC_LINKEDIN_CONVERSION_ID });
+    };
+    if (window.gtag || window.fbq) fire();
     else setTimeout(fire, 1500);
   }, [reference, valueCents, sendTo]);
   return null;

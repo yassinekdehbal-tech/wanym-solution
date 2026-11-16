@@ -152,8 +152,8 @@ Les commandes se lisent avec `GET /api/orders?since=…` (champs `source`, `utm`
 | 1 | Stripe live : méthode de paiement « Cartes » activée pour l'EUR | Dashboard Stripe → Paramètres → Moyens de paiement (mode production) | **à faire** (bloque toute commande payée) |
 | 2 | Premier paiement réel de bout en bout (48 €, puis remboursement) | site + NAMY | après 1 |
 | 3 | `NEXT_PUBLIC_GTAG_ID` + `NEXT_PUBLIC_GTAG_CONVERSION_LABEL` | Google Ads → Conversions, puis Vercel Production | à faire |
-| 4 | Pixel Meta + API Conversions, LinkedIn Insight Tag | code du site (`src/components/`) | **pas encore implémenté** |
-| 5 | Bandeau de consentement (cookies publicitaires) | code du site | **pas encore implémenté** — obligatoire (CNIL) dès qu'un pixel Meta ou LinkedIn est posé ; Google Consent Mode v2 à activer en même temps |
+| 4 | Pixel Meta, LinkedIn Insight Tag | `AdTags.tsx`, chargés après consentement | ✅ code en place (16/11/2026) — poser `NEXT_PUBLIC_META_PIXEL_ID`, `NEXT_PUBLIC_LINKEDIN_PARTNER_ID` (+ `NEXT_PUBLIC_LINKEDIN_CONVERSION_ID`) sur Vercel Production |
+| 5 | Bandeau de consentement (cookies publicitaires) + Google Consent Mode v2 | `CookieConsent.tsx`, `GoogleTag.tsx` | ✅ en place (16/11/2026) : tout refusé par défaut, accepter / refuser au même niveau, choix 6 mois, « Gérer les cookies » en pied de page |
 | 6 | Domaine d'envoi Resend vérifié (DNS OVH) | Resend + OVH | à vérifier |
 | 7 | Vidéos : tournage Facebook (téléphone, 1 demi-journée), enregistrement d'écran NAMY pour LinkedIn | — | à produire |
 

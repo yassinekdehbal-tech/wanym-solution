@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
+import { AdTags } from "@/components/AdTags";
 import { AttributionCapture } from "@/components/AttributionCapture";
+import { CookieConsent } from "@/components/CookieConsent";
 import { Footer } from "@/components/Footer";
 import { GoogleTag } from "@/components/GoogleTag";
 import { Header } from "@/components/Header";
@@ -52,6 +54,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <StickyCta content={content} />
         <AttributionCapture />
         <GoogleTag />
+        <AdTags metaPixelId={env.metaPixelId} linkedinPartnerId={env.linkedinPartnerId} />
+        <CookieConsent enabled={Boolean(env.gtagId || env.metaPixelId || env.linkedinPartnerId)} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </body>
     </html>

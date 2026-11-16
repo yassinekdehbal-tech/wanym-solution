@@ -23,4 +23,7 @@ export const env = {
   googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY ?? "",
   gtagId: process.env.NEXT_PUBLIC_GTAG_ID ?? "",
   gtagConversionLabel: process.env.NEXT_PUBLIC_GTAG_CONVERSION_LABEL ?? "",
+  metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "",
+  linkedinPartnerId: process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID ?? "",
+  linkedinConversionId: process.env.NEXT_PUBLIC_LINKEDIN_CONVERSION_ID ?? "",
 };
