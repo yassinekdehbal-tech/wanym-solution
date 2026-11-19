@@ -22,6 +22,8 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(await req.text(), sig, env.stripeWebhookSecret);
   } catch (e) {
+    // A silent 400 here is a lost payment: Stripe retries for 3 days, then gives up. Make it visible in the runtime logs.
+    console.error("[stripe webhook] signature rejected — check STRIPE_WEBHOOK_SECRET matches the live endpoint", e instanceof Error ? e.message : e);
     return NextResponse.json({ error: `Invalid signature: ${e instanceof Error ? e.message : e}` }, { status: 400 });
   }
 
@@ -70,7 +72,9 @@ export async function POST(req: Request) {
         if (!order || order.payment_status === "paid") break;
         const failed = await updateOrder(order.id, { payment_status: "failed" });
         await logEvent(order.id, "payment", "Paiement différé refusé par la banque", { public: true, data: { session: session.id } });
-        after(() => sendOpsAlert(failed, "Paiement refusé", "Le paiement différé de cette commande a échoué. La course n'a pas été transmise à NAMY."));
+        after(async () => {
+          await sendOpsAlert(failed, "Paiement refusé", "Le paiement différé de cette commande a échoué. La course n'a pas été transmise à NAMY.");
+        });
         break;
       }
       case "invoice.paid": {
@@ -97,7 +101,9 @@ export async function POST(req: Request) {
         const order = orderId ? await getOrder(orderId) : null;
         if (!order || order.payment_status === "paid") break;
         await logEvent(order.id, "payment", `Échec de paiement de la facture ${invoice.number ?? invoice.id}`, { data: { invoice: invoice.id } });
-        after(() => sendOpsAlert(order, "Facture impayée", `Le paiement de la facture ${invoice.number ?? invoice.id} a échoué.`));
+        after(async () => {
+          await sendOpsAlert(order, "Facture impayée", `Le paiement de la facture ${invoice.number ?? invoice.id} a échoué.`);
+        });
         break;
       }
       case "charge.dispute.created": {
@@ -113,7 +119,9 @@ export async function POST(req: Request) {
         if (!order) break;
         const flagged = order.status === "sav" ? order : await updateOrder(order.id, { status: "sav" });
         await logEvent(order.id, "sav", `Litige bancaire ouvert (${(dispute.amount / 100).toFixed(2)} €, motif ${dispute.reason})`, { data: { dispute: dispute.id, due_by: dispute.evidence_details?.due_by ?? null } });
-        after(() => sendOpsAlert(flagged, "Litige bancaire (chargeback)", `Un litige de ${(dispute.amount / 100).toFixed(2)} € est ouvert sur cette commande (motif : ${dispute.reason}). Répondre dans Stripe → Paiements → Litiges avant l'échéance.`));
+        after(async () => {
+          await sendOpsAlert(flagged, "Litige bancaire (chargeback)", `Un litige de ${(dispute.amount / 100).toFixed(2)} € est ouvert sur cette commande (motif : ${dispute.reason}). Répondre dans Stripe → Paiements → Litiges avant l'échéance.`);
+        });
         break;
       }
       case "charge.refunded": {
