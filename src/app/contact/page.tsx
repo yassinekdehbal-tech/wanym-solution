@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { getContent } from "@/lib/supabase/content";
 
-export const metadata: Metadata = { title: "Contact", description: "Contactez l'exploitation WANYM SOLUTION, joignable 24h/24 : téléphone, e-mail, adresse à Enghien-les-Bains (95)." };
+export const metadata: Metadata = { title: "Contact", description: "Contactez l'exploitation WANYM SOLUTION, joignable 24h/24 : téléphone, e-mail, adresse à Enghien-les-Bains (95).", alternates: { canonical: "/contact" } };
 
 export default async function ContactPage() {
   const c = await getContent();

@@ -6,7 +6,7 @@ import { CATALOGUE_OBJETS, VEHICULES_CAPACITES } from "@/lib/catalogue-objets";
 import { getContent, getServices, parseJson, splitList } from "@/lib/supabase/content";
 import type { CatalogueItem, VehiculeCapacite } from "@/lib/vehicle-advisor";
 
-export const metadata: Metadata = { title: "Commander une livraison", description: "Commandez une livraison en quelques clics : prix affiché avant paiement, règlement en ligne, chauffeur dédié en Île-de-France. Hors barème, devis sous 24 h." };
+export const metadata: Metadata = { title: "Commander une livraison", description: "Commandez une livraison en quelques clics : prix affiché avant paiement, règlement en ligne, chauffeur dédié en Île-de-France. Hors barème, devis sous 24 h.", alternates: { canonical: "/commander" } };
 
 export default async function OrderPage() {
   const [c, services] = await Promise.all([getContent(), getServices()]);

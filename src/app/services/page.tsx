@@ -4,7 +4,7 @@ import { Icon } from "@/components/Icon";
 import { ServiceCard } from "@/components/ServiceCard";
 import { getContent, getServices, splitList } from "@/lib/supabase/content";
 
-export const metadata: Metadata = { title: "Nos services de transport et livraison", description: "Livraison externalisée pour professionnels, course express à la demande et transport dédié au départ de l'Île-de-France." };
+export const metadata: Metadata = { title: "Nos services de transport et livraison", description: "Livraison externalisée pour professionnels, course express à la demande et transport dédié au départ de l'Île-de-France.", alternates: { canonical: "/services" } };
 
 export default async function ServicesPage() {
   const [c, services] = await Promise.all([getContent(), getServices()]);

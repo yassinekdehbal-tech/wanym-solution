@@ -17,7 +17,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const service = await getService((await params).slug);
   if (!service) return {};
-  return { title: service.title, description: service.summary ?? undefined };
+  return { title: service.title, description: service.summary ?? undefined, alternates: { canonical: `/services/${service.slug}` } };
 }
 
 /** Gabarit éditorial (300 à 1 500 mots) : hiérarchie de titres, encadrés, CTA contextuels, aside collante. */
