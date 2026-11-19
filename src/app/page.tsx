@@ -5,7 +5,10 @@ import { FinalCta, GroupPillars, HowItWorks, PagesShowcase, ProSection, Referenc
 import { VehicleCards } from "@/components/home/VehicleCards";
 import { ServiceCard } from "@/components/ServiceCard";
 import { getVehiculesVitrine } from "@/lib/namy";
+import type { Metadata } from "next";
 import { getContent, getPages, getServices, parseJson, splitList } from "@/lib/supabase/content";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default async function Home() {
   const [c, services, vehicules, pages] = await Promise.all([getContent(), getServices(), getVehiculesVitrine(), getPages()]);

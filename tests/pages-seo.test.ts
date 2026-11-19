@@ -28,7 +28,8 @@ test("slugs are unique per section and related links resolve", () => {
 
 test("titles and meta descriptions fit the SERP", () => {
   for (const p of pages) {
-    assert.ok((p.title as string).length <= 70, `${p.slug}: titre > 70 caractères`);
+    // The layout appends « · WANYM SOLUTION » (17 chars): 53 keeps the rendered <title> within ~70.
+    assert.ok((p.title as string).length <= 53, `${p.slug}: titre > 53 caractères`);
     assert.ok((p.meta_description as string).length >= 70 && (p.meta_description as string).length <= 180, `${p.slug}: meta description hors 70-180`);
     assert.ok((p.faq as unknown[]).length >= 2, `${p.slug}: au moins 2 questions`);
   }

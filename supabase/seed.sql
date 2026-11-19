@@ -5,6 +5,8 @@
 insert into public.site_content (key, value) values
   ('site.name', 'WANYM SOLUTION'),
   ('site.tagline', 'Livraison et transport en Île-de-France, commandés en quelques clics'),
+  ('site.seo_title', 'Livraison avec chauffeur en Île-de-France'),
+  ('site.meta_description', 'Camion et chauffeur dédié pour livrer meubles, électroménager, cartons et plantes en Île-de-France. Prix affiché avant paiement, commande en quelques clics.'),
   ('site.description', 'WANYM SOLUTION, transporteur en Île-de-France depuis 2016 : livraison à la demande au prix affiché (commande en ligne, chauffeur dédié), livraison externalisée pour les enseignes et les entreprises, et NAMY, notre plateforme de gestion de transport qui suit chaque course.'),
   ('hero.badge', 'Transporteur en Île-de-France depuis 2016'),
   ('hero.title', 'Un camion et un chauffeur, au prix affiché, en quelques clics.'),

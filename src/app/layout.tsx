@@ -17,10 +17,13 @@ const manrope = Manrope({ subsets: ["latin"], display: "swap", variable: "--font
 export async function generateMetadata(): Promise<Metadata> {
   const c = await getContent();
   const title = c["site.name"] ?? "WANYM SOLUTION";
+  // `site.seo_title` / `site.meta_description` are the SERP-sized versions (≤ 60 / ≤ 160 chars);
+  // the tagline and the long description stay for the footer and the JSON-LD.
+  const seoTitle = c["site.seo_title"] ?? c["site.tagline"] ?? "Livraison et transport en Île-de-France";
   return {
     metadataBase: new URL(env.siteUrl),
-    title: { default: `${title} — ${c["site.tagline"] ?? "Livraison et transport en Île-de-France"}`, template: `%s · ${title}` },
-    description: c["site.description"],
+    title: { default: `${seoTitle} · ${title}`, template: `%s · ${title}` },
+    description: c["site.meta_description"] ?? c["site.description"],
     openGraph: { type: "website", locale: "fr_FR", siteName: title, images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }] },
     robots: { index: true, follow: true },
   };
