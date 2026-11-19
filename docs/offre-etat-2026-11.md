@@ -14,7 +14,7 @@
 | **Service** | 7 j/7, jour même jusqu'à 12 h, créneaux 08-12 / 13-17 / 08-18 en semaine et samedi. |
 | **Annulation / échecs (NAMY)** | gratuite jusqu'à 24 h avant le créneau, 50 % ensuite jusqu'au retrait ; échec de retrait 50 % ; échec de livraison **150 %** (non annoncé sur le site). |
 | **Pas de plafond de distance** | un trajet de 135 km est vendu 311 € HT au prix immédiat ; le paramètre « rayon maximal 30 km » du compte n'est pas appliqué au canal site. |
-| **Prix « en direct » : 10 à 13 s et 1 devis sur 3 en échec** en rafale (relevé du 19/11). Cause identifiée côté NAMY, corrigeable sans toucher aux prix (§ 5). |
+| **Prix « en direct »** : 10 à 13 s et 1 devis sur 3 en échec le matin du 19/11 ; **corrigé le jour même côté NAMY, 1,0 s médian et 0 échec après déploiement** (§ 5). |
 | **Face à Supervan** | compétitif sur le 1 m² et la longue distance ; **30 à 185 % plus cher** sur 2 / 4 / 8 m² à 14 km (relevé du 02/11). |
 
 ## 2. La grille en vigueur dans NAMY (« SITE WANYM », compte « WANYM SOLUTION — Site web »)
@@ -122,7 +122,18 @@ Relevé du 19/11/2026, 55 appels à `POST /api/quote` :
 
 Cause : la fonction NAMY `creer-commande-publique` recharge **à chaque appel** le contexte du compte site par **9 requêtes séquentielles** (entreprise, grilles, lignes, modes, options, véhicules, majorations…), sans cache, avant même de géocoder. Les géocodages BAN et l'itinéraire OSRM ont chacun un délai de 5 s sans nouvelle tentative : quand la BAN répond lentement, le devis tombe en « adresse introuvable » et le site affiche « devis sous 24 h » à la place du prix.
 
-Conséquence commerciale : le visiteur attend plus de 10 s pour voir un prix, et une fois sur trois il ne le voit pas du tout. C'est la première chose à corriger, **avant** toute campagne : mettre le contexte en cache 5 min dans la fonction (comme la clé), paralléliser les lectures, retenter le géocodage une fois. Gain attendu : 1 à 2 s par devis, quasi plus d'échecs. Changement dans NAMY uniquement, sans effet sur les prix.
+Conséquence commerciale : le visiteur attendait plus de 10 s pour voir un prix, et une fois sur trois il ne le voyait pas du tout.
+
+**Corrigé le 19/11/2026** (NAMY, PR #599, déployé à 10 h 34 UTC) : contexte lu en 3 salves parallèles et gardé 5 min en mémoire, géocodage et itinéraire retentés une fois. Mesure après déploiement, 24 devis en rafale sur `POST /api/quote` :
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Temps de réponse médian d'un devis | 11 à 13 s | **1,0 s** |
+| Fonction NAMY à chaud | 10,8 à 14,5 s | **0,34 à 0,60 s** |
+| Première requête d'une instance froide | idem | 3 à 11 s (une fois, puis cache) |
+| Devis en échec en rafale | 4 sur 11 | **0 sur 12** sur la 2e série (1 sur 12 sur la 1re, pendant la bascule) |
+
+Un prix modifié dans l'écran Grilles de NAMY apparaît sur le site au plus tard 5 min après. Aucun prix n'a changé.
 
 ## 6. Face au marché
 
@@ -149,4 +160,4 @@ Chaque ligne se règle dans NAMY (écran Grilles / Comptes / Tarification dynami
 7. **Échec de livraison** : 150 % (NAMY) à ramener à 100 % ou à écrire dans les CGV.
 8. **Dépassement de temps** : tarif à la minute à fixer et à afficher.
 9. **Jour même** : garder sans majoration, ou vendre un « au plus vite » (+9 € chez Supervan).
-10. **Vitesse et fiabilité du devis** (§ 5) : feu vert pour le correctif côté NAMY.
+10. ~~Vitesse et fiabilité du devis~~ : corrigé et mesuré le 19/11 (§ 5).
