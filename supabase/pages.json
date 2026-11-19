@@ -827,5 +827,423 @@
   "keyword": "plateforme suivi livraison TMS enseignes retail",
   "sort_order": 60,
   "published": true
+ },
+ {
+  "section": "livraison",
+  "slug": "colis-volumineux-encombrant",
+  "title": "Transport de colis volumineux et encombrants",
+  "meta_description": "Un colis trop lourd ou trop grand pour la messagerie ? Un camion et un chauffeur dédié le prennent en charge en Île-de-France, en course directe, prix affiché avant paiement.",
+  "intro": "Plus de 30 kg, plus d'1,50 m, hors gabarit : ce que les transporteurs de colis refusent, un chauffeur dédié le livre en une seule course.",
+  "body": "## Ce qu'on appelle un colis volumineux\n\nUn carton de plus de 30 kg, un objet de plus d'1,50 m, un lot de cartons qui ne tient pas dans une voiture, un colis que la messagerie refuse ou facture au « hors gabarit » : caisse de matériel, vélo en carton, tringle, rouleau de moquette, panneau, poussette, pièce détachée. Ici il n'y a pas de gabarit : vous choisissez la surface au sol du camion, le chauffeur charge.\n\n## Une course directe, pas un réseau\n\nVotre colis ne passe par aucun entrepôt, aucun tri, aucune rupture de charge : le chauffeur le prend chez vous, chez le vendeur ou au magasin, et le dépose à l'arrivée. Vous choisissez le créneau, vous recevez la preuve de livraison.\n\n## Choisir la bonne taille\n\n- **1 m²** : un colis volumineux seul ou quelques cartons.\n- **2 m²** : un gros colis plus des cartons, ou deux colis volumineux.\n- **4 m²** : plusieurs colis encombrants, un lot de cartons de déménagement.\n\nIndiquez la plus grande dimension à l'assistant : il choisit le camion. Au-delà de 30 kg ou d'1,50 m, prenez un **équipier**, le chauffeur ne porte pas seul.\n\n## Professionnels\n\nUn colis hors gabarit à livrer à un client, un retour fournisseur, une pièce pour un chantier : commandez en ligne au prix affiché, la facture arrive par e-mail. Pour des volumes réguliers, voir [la livraison e-commerce](/entreprises/e-commerce-livraison-ile-de-france).\n\n## Ce qui est inclus\n\n- **Un chauffeur dédié** qui aide au chargement et au déchargement : votre marchandise ne partage pas le camion.\n- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.\n- **30 minutes cumulées sur place** (chargement + déchargement). Besoin de plus ? Réservez un pack de temps à la commande, c'est moins cher qu'un dépassement.\n- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison. Remise à la porte, étage sans ascenseur et équipier en option.\n\n## Comment ça marche\n\n1. Vos deux adresses : la distance est calculée aussitôt.\n2. La taille du camion, de 1 à 8 m² au sol. Un assistant vous suggère la bonne d'après vos objets.\n3. Date et créneau, 7 jours sur 7, le jour même si vous commandez avant 12h.\n4. Paiement sécurisé : c'est réservé, sans créer de compte. Vous recevez la confirmation, puis un lien de suivi.\n\n## Annulation\n\nGratuite jusqu'à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %.",
+  "faq": [
+   {
+    "q": "Mon colis fait 2,40 m de long, ça passe ?",
+    "a": "Indiquez la plus grande dimension à l'assistant de taille : il propose le camion adapté. Si l'objet dépasse ce que nos utilitaires acceptent, le site vous le dit et vous recevez un devis sous 24 h."
+   },
+   {
+    "q": "Plusieurs colis pour plusieurs adresses ?",
+    "a": "Une commande = un trajet, de A à B. Pour plusieurs adresses d'arrivée, passez une commande par destination, ou, si c'est régulier, voyez nos tournées dédiées pour les entreprises."
+   },
+   {
+    "q": "Faut-il créer un compte ?",
+    "a": "Non. Vous entrez vos adresses, vous choisissez la taille du camion, vous payez : la commande part immédiatement à notre exploitation et vous recevez la confirmation par e-mail."
+   },
+   {
+    "q": "Le prix peut-il changer après le paiement ?",
+    "a": "Non. Le prix affiché avant paiement est ferme pour la prestation décrite. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000022"
+  },
+  "related": [
+   "palette",
+   "materiaux-bricolage",
+   "e-commerce-livraison-ile-de-france",
+   "transport-urgent-jour-meme"
+  ],
+  "keyword": "transport colis volumineux encombrant livraison hors gabarit",
+  "sort_order": 110,
+  "published": true
+ },
+ {
+  "section": "livraison",
+  "slug": "palette",
+  "title": "Livraison de palette en Île-de-France",
+  "meta_description": "Une ou deux palettes à livrer en Île-de-France : camion et chauffeur dédié, course directe du quai à l'adresse, prix affiché avant paiement, le jour même avant 12h.",
+  "intro": "Une palette à sortir d'un entrepôt, à amener sur un chantier ou à livrer à un client : un chauffeur dédié part la chercher, sans groupage ni attente.",
+  "body": "## Une palette, un camion, un trajet\n\nPalette Europe (120 × 80 cm), palette de carrelage, de sacs, de cartons ou de matériel : elle occupe environ 1 m² au sol. Prenez un camion **2 m²** pour une palette avec de la marge, **4 m²** pour deux palettes ou une palette plus du vrac. La course est directe : votre palette ne partage pas le camion et n'attend pas dans un entrepôt de tri.\n\n## Le chargement, parlons-en avant\n\nUne palette chargée pèse souvent plusieurs centaines de kilos. Indiquez dans les notes de la commande ce qui existe à chaque bout : **quai, transpalette, chariot élévateur**. Si l'un des deux bouts n'a aucun moyen de manutention, dites-le aussi : le chauffeur peut dépoter la palette carton par carton avec vous (réservez un pack de temps sur place), ou nous vous proposons un devis sous 24 h avec un véhicule équipé.\n\n## Pour qui\n\n- **Entreprises et artisans** : une palette de matériaux pour un chantier, un réassort entre deux sites, une commande fournisseur à récupérer au dépôt.\n- **Commerces** : la palette de la semaine à aller chercher chez le grossiste.\n- **Particuliers** : une palette de carrelage, de parquet ou de poêle à granulés livrée au pied du camion, dans votre créneau.\n\nPour des palettes toutes les semaines, voir [la livraison externalisée](/entreprises/externaliser-ses-livraisons).\n\n## Ce qui est inclus\n\n- **Un chauffeur dédié** qui aide au chargement et au déchargement : votre marchandise ne partage pas le camion.\n- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.\n- **30 minutes cumulées sur place** (chargement + déchargement). Besoin de plus ? Réservez un pack de temps à la commande, c'est moins cher qu'un dépassement.\n- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison. Remise à la porte, étage sans ascenseur et équipier en option.\n\n## Comment ça marche\n\n1. Vos deux adresses : la distance est calculée aussitôt.\n2. La taille du camion, de 1 à 8 m² au sol. Un assistant vous suggère la bonne d'après vos objets.\n3. Date et créneau, 7 jours sur 7, le jour même si vous commandez avant 12h.\n4. Paiement sécurisé : c'est réservé, sans créer de compte. Vous recevez la confirmation, puis un lien de suivi.\n\n## Annulation\n\nGratuite jusqu'à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %.",
+  "faq": [
+   {
+    "q": "Jusqu'à quel poids ?",
+    "a": "Nos utilitaires acceptent les charges courantes d'une palette de matériaux ou de cartons. Indiquez le poids dans les notes : si la charge dépasse ce que le véhicule choisi accepte, le site vous propose un devis sous 24 h au lieu d'un prix immédiat."
+   },
+   {
+    "q": "Le chauffeur a-t-il un transpalette ?",
+    "a": "Précisez à la commande les moyens disponibles au départ et à l'arrivée. Sans quai ni transpalette à l'un des deux bouts, le chauffeur dépote la palette avec vous, ou nous organisons un véhicule équipé sur devis."
+   },
+   {
+    "q": "Livrez-vous le jour même ?",
+    "a": "Oui, en commandant en ligne avant 12h. Après, appelez l'exploitation : elle vous dit en direct quel chauffeur est disponible."
+   },
+   {
+    "q": "Le prix peut-il changer après le paiement ?",
+    "a": "Non. Le prix affiché avant paiement est ferme pour la prestation décrite. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000023"
+  },
+  "related": [
+   "colis-volumineux-encombrant",
+   "materiaux-bricolage",
+   "externaliser-ses-livraisons",
+   "transport-urgent-jour-meme"
+  ],
+  "keyword": "livraison palette paris transport palette île-de-france",
+  "sort_order": 120,
+  "published": true
+ },
+ {
+  "section": "livraison",
+  "slug": "objets-fragiles-tableaux",
+  "title": "Transport d'objets fragiles : tableau, miroir",
+  "meta_description": "Faire transporter un tableau, un miroir, une vitrine ou un luminaire en Île-de-France : course directe sans rupture de charge, chauffeur dédié, prix affiché avant paiement.",
+  "intro": "Un objet qui ne supporte ni le groupage ni les manipulations : il voyage seul dans le camion, calé et sanglé, d'une porte à l'autre.",
+  "body": "## Pourquoi une course directe\n\nUn tableau, un miroir, une vitrine, un lustre, une sculpture, un aquarium vide, un écran : le risque, c'est le nombre de mains et de ruptures de charge. Ici il n'y en a aucune. Le chauffeur charge chez vous ou chez le vendeur, cale l'objet contre la paroi, le sangle, et le décharge à l'arrivée. Personne d'autre n'y touche.\n\n## Ce que vous préparez\n\n- **L'emballage** est à votre charge : couverture, carton, film bulle, coins de protection pour un cadre, carton rigide pour un miroir. Le chauffeur cale et sangle, il n'emballe pas.\n- **Les dimensions** à l'assistant de taille : un grand miroir ou une vitrine voyage debout, indiquez la plus grande longueur.\n- **La valeur** dans les notes de la commande. Notre responsabilité s'exerce dans les conditions du contrat type des transports routiers de marchandises ; une valeur non déclarée n'est pas couverte.\n\n## Remise à la porte conseillée\n\nPour un objet fragile, prenez la **remise à la porte** à l'arrivée plutôt que le trottoir : le chauffeur monte jusque chez vous. Au-delà d'1,50 m ou de 30 kg, ajoutez un **équipier** : un miroir de deux mètres se porte à deux.\n\n## Professionnels\n\nGaleries, encadreurs, antiquaires, décorateurs, agenceurs : une livraison chez un client au prix affiché, la facture par e-mail. Pour des livraisons régulières, voir [la livraison externalisée](/entreprises/externaliser-ses-livraisons).\n\n## Ce qui est inclus\n\n- **Un chauffeur dédié** qui aide au chargement et au déchargement : votre marchandise ne partage pas le camion.\n- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.\n- **30 minutes cumulées sur place** (chargement + déchargement). Besoin de plus ? Réservez un pack de temps à la commande, c'est moins cher qu'un dépassement.\n- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison. Remise à la porte, étage sans ascenseur et équipier en option.\n\n## Comment ça marche\n\n1. Vos deux adresses : la distance est calculée aussitôt.\n2. La taille du camion, de 1 à 8 m² au sol. Un assistant vous suggère la bonne d'après vos objets.\n3. Date et créneau, 7 jours sur 7, le jour même si vous commandez avant 12h.\n4. Paiement sécurisé : c'est réservé, sans créer de compte. Vous recevez la confirmation, puis un lien de suivi.\n\n## Annulation\n\nGratuite jusqu'à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %.",
+  "faq": [
+   {
+    "q": "L'objet est-il assuré ?",
+    "a": "Notre responsabilité s'exerce dans les conditions du contrat type applicable aux transports routiers de marchandises. Déclarez la valeur de l'objet dans les notes de la commande : une valeur non déclarée n'est pas couverte. Pour une pièce de grande valeur, demandez un devis, nous adaptons la couverture."
+   },
+   {
+    "q": "Pouvez-vous emballer l'objet ?",
+    "a": "Non. Le chauffeur cale et sangle dans le camion, mais l'emballage (couverture, carton, coins) doit être fait avant son arrivée."
+   },
+   {
+    "q": "Faut-il être présent au départ ?",
+    "a": "Pas forcément. Indiquez la personne présente (vendeur, gardien, galerie) dans « Quelqu'un d'autre sur place au départ » : le chauffeur l'appelle en arrivant."
+   },
+   {
+    "q": "Le prix peut-il changer après le paiement ?",
+    "a": "Non. Le prix affiché avant paiement est ferme pour la prestation décrite. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000021"
+  },
+  "related": [
+   "armoire-meuble",
+   "achat-leboncoin",
+   "achat-particulier-marketplace",
+   "camionnette-avec-chauffeur-paris"
+  ],
+  "keyword": "transport objet fragile tableau miroir vitrine livraison",
+  "sort_order": 130,
+  "published": true
+ },
+ {
+  "section": "livraison",
+  "slug": "achat-particulier-marketplace",
+  "title": "Récupérer un meuble acheté à un particulier",
+  "meta_description": "Meuble trouvé sur Facebook Marketplace, Vinted, un site de dons ou chez un proche : un camion et un chauffeur le récupèrent et le livrent chez vous. Prix affiché avant paiement.",
+  "intro": "Vous avez trouvé la bonne affaire, il faut maintenant aller la chercher : un chauffeur dédié passe chez le vendeur et livre chez vous.",
+  "body": "## Le cas classique\n\nUn canapé sur Facebook Marketplace, une commode sur Vinted, une table donnée sur Geev ou dans un groupe de quartier, le lit de la chambre d'amis chez vos parents. Le vendeur veut que ça parte vite, vous n'avez ni camion ni deuxième paire de bras. Entrez son adresse au départ, la vôtre à l'arrivée : le prix s'affiche, vous choisissez le créneau, c'est réservé.\n\n## Sans vous déplacer\n\nVous n'avez pas besoin d'être présent au départ. Indiquez le **nom et le téléphone du vendeur** dans « Quelqu'un d'autre sur place au départ » : le chauffeur l'appelle en arrivant, charge, et vous retrouve à l'arrivée. Le vendeur reçoit l'heure de passage, vous recevez le suivi.\n\n## Les bons réflexes\n\n- Demandez au vendeur les **dimensions** et l'**étage** : l'assistant de taille choisit le camion, et l'étage sans ascenseur se déclare à la commande.\n- Au-delà de 30 kg ou d'1,50 m, prenez un **équipier** : le vendeur n'est pas tenu d'aider à descendre son armoire.\n- Réglez le vendeur avant ou à distance : **le chauffeur ne manipule pas d'argent** et ne négocie pas.\n- Un meuble à démonter ? Faites-le avant, ou réservez un pack de temps sur place.\n\n## Plusieurs vendeurs\n\nDeux achats dans deux arrondissements ? Une commande = un trajet. Passez une commande par vendeur, ou appelez l'exploitation pour un enchaînement sur devis.\n\nUn achat sur Leboncoin ? La page [livraison d'un achat Leboncoin](/livraison/achat-leboncoin) détaille le même service.\n\n## Ce qui est inclus\n\n- **Un chauffeur dédié** qui aide au chargement et au déchargement : votre marchandise ne partage pas le camion.\n- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.\n- **30 minutes cumulées sur place** (chargement + déchargement). Besoin de plus ? Réservez un pack de temps à la commande, c'est moins cher qu'un dépassement.\n- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison. Remise à la porte, étage sans ascenseur et équipier en option.\n\n## Comment ça marche\n\n1. Vos deux adresses : la distance est calculée aussitôt.\n2. La taille du camion, de 1 à 8 m² au sol. Un assistant vous suggère la bonne d'après vos objets.\n3. Date et créneau, 7 jours sur 7, le jour même si vous commandez avant 12h.\n4. Paiement sécurisé : c'est réservé, sans créer de compte. Vous recevez la confirmation, puis un lien de suivi.\n\n## Annulation\n\nGratuite jusqu'à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %.",
+  "faq": [
+   {
+    "q": "Le vendeur peut-il annuler la vente à l'arrivée du chauffeur ?",
+    "a": "Si le chauffeur se présente et que rien n'est à charger, c'est un échec de retrait : 50 % du prix de la course reste dû. Confirmez la vente et le créneau avec le vendeur avant de commander."
+   },
+   {
+    "q": "Le chauffeur peut-il vérifier l'objet avant de le charger ?",
+    "a": "Il vous envoie une photo au chargement si vous le demandez dans les notes, mais il ne juge pas l'état d'un meuble à votre place : la vérification reste entre vous et le vendeur."
+   },
+   {
+    "q": "Faut-il créer un compte ?",
+    "a": "Non. Vous entrez vos adresses, vous choisissez la taille du camion, vous payez : la commande part immédiatement à notre exploitation et vous recevez la confirmation par e-mail."
+   },
+   {
+    "q": "Le prix peut-il changer après le paiement ?",
+    "a": "Non. Le prix affiché avant paiement est ferme pour la prestation décrite. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000022"
+  },
+  "related": [
+   "achat-leboncoin",
+   "canape",
+   "armoire-meuble",
+   "objets-fragiles-tableaux"
+  ],
+  "keyword": "récupérer un meuble avec camionnette facebook marketplace vinted don",
+  "sort_order": 140,
+  "published": true
+ },
+ {
+  "section": "transport",
+  "slug": "val-de-marne",
+  "title": "Livraison et transport dans le Val-de-Marne (94)",
+  "meta_description": "Camion avec chauffeur à Créteil, Vincennes, Saint-Maur, Ivry, Vitry, Champigny, Nogent, Maisons-Alfort : prix affiché avant paiement, chauffeur dédié, 7 jours sur 7.",
+  "intro": "De Vincennes à Villeneuve-Saint-Georges, un utilitaire et un chauffeur pour vos meubles, votre électroménager et vos cartons.",
+  "body": "## Les communes\n\nVincennes, Saint-Mandé, Fontenay-sous-Bois, Nogent-sur-Marne, Le Perreux, Champigny-sur-Marne, Saint-Maur-des-Fossés, Créteil, Maisons-Alfort, Alfortville, Charenton-le-Pont, Ivry-sur-Seine, Vitry-sur-Seine, Villejuif, L'Haÿ-les-Roses, Choisy-le-Roi, Orly, Thiais, Villeneuve-Saint-Georges. Entrez vos deux adresses : la distance est calculée, les 20 premiers kilomètres sont inclus, le reste est affiché avant paiement.\n\n## Aux portes de Paris\n\nUn meuble acheté dans le 12e ou le 13e à ramener à Vincennes ou à Ivry, un électroménager du magasin de Créteil Soleil ou de Thiais Village à livrer chez vous, un déménagement de studio de Saint-Maur vers Paris : la course est directe, dans le créneau que vous choisissez, le jour même avant 12h.\n\n## Professionnels\n\nRungis, Orly, les zones d'activité de Créteil et de Bonneuil : une palette à sortir d'un dépôt, une commande à livrer à un client, un transfert entre deux sites. Commandez en ligne au prix affiché, ou voyez [la livraison externalisée](/entreprises/externaliser-ses-livraisons) pour des flux réguliers.\n\n## Pavillons et immeubles\n\nBeaucoup de pavillons à Saint-Maur, Champigny ou L'Haÿ : la remise au trottoir suffit souvent, le chauffeur dépose devant le garage. En immeuble sans ascenseur, déclarez l'étage à la commande et prenez un équipier pour le lourd.\n\n## Ce qui est inclus\n\n- **Un chauffeur dédié** qui aide au chargement et au déchargement : votre marchandise ne partage pas le camion.\n- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.\n- **30 minutes cumulées sur place** (chargement + déchargement). Besoin de plus ? Réservez un pack de temps à la commande, c'est moins cher qu'un dépassement.\n- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison. Remise à la porte, étage sans ascenseur et équipier en option.\n\n## Comment ça marche\n\n1. Vos deux adresses : la distance est calculée aussitôt.\n2. La taille du camion, de 1 à 8 m² au sol. Un assistant vous suggère la bonne d'après vos objets.\n3. Date et créneau, 7 jours sur 7, le jour même si vous commandez avant 12h.\n4. Paiement sécurisé : c'est réservé, sans créer de compte. Vous recevez la confirmation, puis un lien de suivi.\n\n## Annulation\n\nGratuite jusqu'à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %.",
+  "faq": [
+   {
+    "q": "Pouvez-vous livrer un meuble acheté à Paris vers Créteil ?",
+    "a": "Oui. Entrez l'adresse du vendeur ou du magasin au départ et la vôtre à l'arrivée : la distance est calculée, le prix s'affiche, un chauffeur dédié fait le trajet."
+   },
+   {
+    "q": "Je suis à Villeneuve-Saint-Georges, au-delà des 20 km : comment est calculé le prix ?",
+    "a": "Les 20 premiers kilomètres du trajet sont inclus dans le forfait du camion ; chaque kilomètre au-delà est ajouté et affiché avant paiement. Rien n'est facturé après coup pour la distance."
+   },
+   {
+    "q": "Faut-il créer un compte ?",
+    "a": "Non. Vous entrez vos adresses, vous choisissez la taille du camion, vous payez : la commande part immédiatement à notre exploitation et vous recevez la confirmation par e-mail."
+   },
+   {
+    "q": "Le prix peut-il changer après le paiement ?",
+    "a": "Non. Le prix affiché avant paiement est ferme pour la prestation décrite. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000022",
+   "to": "Créteil"
+  },
+  "related": [
+   "camionnette-avec-chauffeur-paris",
+   "seine-saint-denis",
+   "essonne",
+   "petit-demenagement-studio"
+  ],
+  "keyword": "livraison camionnette chauffeur val-de-marne créteil vincennes",
+  "sort_order": 80,
+  "published": true
+ },
+ {
+  "section": "transport",
+  "slug": "essonne",
+  "title": "Livraison et transport en Essonne (91)",
+  "meta_description": "Camion avec chauffeur à Massy, Palaiseau, Évry-Courcouronnes, Corbeil, Savigny, Athis-Mons, Les Ulis, Brétigny : prix affiché avant paiement, chauffeur dédié, 7 jours sur 7.",
+  "intro": "Du plateau de Saclay à Évry, un utilitaire et un chauffeur pour vos meubles, votre électroménager, vos plantes et vos cartons.",
+  "body": "## Les communes\n\nMassy, Palaiseau, Orsay, Gif-sur-Yvette, Les Ulis, Longjumeau, Chilly-Mazarin, Savigny-sur-Orge, Athis-Mons, Juvisy, Viry-Châtillon, Draveil, Montgeron, Brunoy, Yerres, Évry-Courcouronnes, Corbeil-Essonnes, Ris-Orangis, Brétigny-sur-Orge, Sainte-Geneviève-des-Bois, Arpajon, Étampes. Le trajet est calculé entre vos deux adresses : 20 km inclus, le reste affiché avant paiement.\n\n## Ce qu'on livre souvent en Essonne\n\nUn canapé ou une table acheté à Paris et à ramener à Massy ou Savigny, un lave-linge du magasin de Vélizy ou d'Évry 2, des plantes et des sapins de jardinerie, des matériaux pour la maison, le studio d'un étudiant du plateau de Saclay à déménager. Une course directe, le chauffeur aide au chargement et au déchargement.\n\n## Maisons et jardins\n\nBeaucoup de maisons individuelles : la remise au trottoir suffit en général, le chauffeur dépose devant le garage ou le portail. Pour un salon de jardin ou une serre, réservez un pack de temps sur place si vous voulez de l'aide pour la mise en place.\n\n## Professionnels\n\nZones d'activité de Massy, Courtabœuf, Évry et Corbeil : une palette, un retour fournisseur, une livraison chez un client. Commandez en ligne au prix affiché ; pour des flux réguliers, voir [le transport dédié](/entreprises/transport-dedie-tournees).\n\n## Ce qui est inclus\n\n- **Un chauffeur dédié** qui aide au chargement et au déchargement : votre marchandise ne partage pas le camion.\n- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.\n- **30 minutes cumulées sur place** (chargement + déchargement). Besoin de plus ? Réservez un pack de temps à la commande, c'est moins cher qu'un dépassement.\n- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison. Remise à la porte, étage sans ascenseur et équipier en option.\n\n## Comment ça marche\n\n1. Vos deux adresses : la distance est calculée aussitôt.\n2. La taille du camion, de 1 à 8 m² au sol. Un assistant vous suggère la bonne d'après vos objets.\n3. Date et créneau, 7 jours sur 7, le jour même si vous commandez avant 12h.\n4. Paiement sécurisé : c'est réservé, sans créer de compte. Vous recevez la confirmation, puis un lien de suivi.\n\n## Annulation\n\nGratuite jusqu'à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %.",
+  "faq": [
+   {
+    "q": "Pouvez-vous livrer un meuble acheté à Paris vers Massy ?",
+    "a": "Oui. Entrez l'adresse du vendeur ou du magasin au départ et la vôtre à l'arrivée : la distance est calculée, le prix s'affiche, un chauffeur dédié fait le trajet."
+   },
+   {
+    "q": "Je suis à Étampes, au-delà des 20 km : comment est calculé le prix ?",
+    "a": "Les 20 premiers kilomètres du trajet sont inclus dans le forfait du camion ; chaque kilomètre au-delà est ajouté et affiché avant paiement. Rien n'est facturé après coup pour la distance."
+   },
+   {
+    "q": "Faut-il créer un compte ?",
+    "a": "Non. Vous entrez vos adresses, vous choisissez la taille du camion, vous payez : la commande part immédiatement à notre exploitation et vous recevez la confirmation par e-mail."
+   },
+   {
+    "q": "Le prix peut-il changer après le paiement ?",
+    "a": "Non. Le prix affiché avant paiement est ferme pour la prestation décrite. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000022",
+   "to": "Massy"
+  },
+  "related": [
+   "versailles-yvelines",
+   "val-de-marne",
+   "plantes-sapins-jardinerie",
+   "petit-demenagement-studio"
+  ],
+  "keyword": "livraison camionnette chauffeur essonne massy évry",
+  "sort_order": 90,
+  "published": true
+ },
+ {
+  "section": "transport",
+  "slug": "seine-et-marne",
+  "title": "Livraison et transport en Seine-et-Marne (77)",
+  "meta_description": "Camion avec chauffeur à Chelles, Torcy, Lagny, Meaux, Pontault-Combault, Melun, Fontainebleau, Val d'Europe : prix affiché avant paiement, chauffeur dédié, 7 jours sur 7.",
+  "intro": "De Chelles à Fontainebleau, un utilitaire et un chauffeur pour vos meubles, votre électroménager et vos cartons, le kilomètre affiché avant paiement.",
+  "body": "## Les communes\n\nChelles, Champs-sur-Marne, Noisiel, Torcy, Lognes, Bussy-Saint-Georges, Lagny-sur-Marne, Serris et le Val d'Europe, Meaux, Pontault-Combault, Roissy-en-Brie, Ozoir-la-Ferrière, Brie-Comte-Robert, Savigny-le-Temple, Melun, Dammarie-les-Lys, Fontainebleau, Nemours, Provins, Coulommiers. Les distances sont plus longues qu'en petite couronne : 20 km inclus, chaque kilomètre au-delà est affiché avant paiement, rien n'est ajouté après.\n\n## Les cas fréquents\n\nUn meuble acheté à Paris ou à Rosny à ramener à Chelles ou Torcy, un achat d'usine au Val d'Europe, un électroménager pour une maison neuve à Bussy, un studio à déménager de Melun vers Paris, des matériaux pour une rénovation en Brie. Une course directe, aller simple, dans votre créneau.\n\n## Maisons individuelles\n\nLa Seine-et-Marne, c'est surtout des maisons : la remise au trottoir ou devant le garage suffit le plus souvent. Pour un objet lourd à rentrer, ajoutez un équipier et la remise à la porte à l'arrivée.\n\n## Professionnels\n\nPlateformes logistiques de Marne-la-Vallée, Roissy-en-Brie et Melun-Sénart : une palette à sortir, un colis volumineux à livrer, une tournée hebdomadaire. Commandez en ligne au prix affiché ; pour des flux réguliers, voir [la livraison externalisée](/entreprises/externaliser-ses-livraisons).\n\n## Ce qui est inclus\n\n- **Un chauffeur dédié** qui aide au chargement et au déchargement : votre marchandise ne partage pas le camion.\n- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.\n- **30 minutes cumulées sur place** (chargement + déchargement). Besoin de plus ? Réservez un pack de temps à la commande, c'est moins cher qu'un dépassement.\n- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison. Remise à la porte, étage sans ascenseur et équipier en option.\n\n## Comment ça marche\n\n1. Vos deux adresses : la distance est calculée aussitôt.\n2. La taille du camion, de 1 à 8 m² au sol. Un assistant vous suggère la bonne d'après vos objets.\n3. Date et créneau, 7 jours sur 7, le jour même si vous commandez avant 12h.\n4. Paiement sécurisé : c'est réservé, sans créer de compte. Vous recevez la confirmation, puis un lien de suivi.\n\n## Annulation\n\nGratuite jusqu'à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %.",
+  "faq": [
+   {
+    "q": "Pouvez-vous livrer un meuble acheté à Paris vers Chelles ?",
+    "a": "Oui. Entrez l'adresse du vendeur ou du magasin au départ et la vôtre à l'arrivée : la distance est calculée, le prix s'affiche, un chauffeur dédié fait le trajet."
+   },
+   {
+    "q": "Je suis à Fontainebleau, au-delà des 20 km : comment est calculé le prix ?",
+    "a": "Les 20 premiers kilomètres du trajet sont inclus dans le forfait du camion ; chaque kilomètre au-delà est ajouté et affiché avant paiement. Rien n'est facturé après coup pour la distance."
+   },
+   {
+    "q": "Faut-il créer un compte ?",
+    "a": "Non. Vous entrez vos adresses, vous choisissez la taille du camion, vous payez : la commande part immédiatement à notre exploitation et vous recevez la confirmation par e-mail."
+   },
+   {
+    "q": "Le prix peut-il changer après le paiement ?",
+    "a": "Non. Le prix affiché avant paiement est ferme pour la prestation décrite. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000022",
+   "to": "Chelles"
+  },
+  "related": [
+   "seine-saint-denis",
+   "val-de-marne",
+   "palette",
+   "petit-demenagement-studio"
+  ],
+  "keyword": "livraison camionnette chauffeur seine-et-marne chelles meaux melun",
+  "sort_order": 100,
+  "published": true
+ },
+ {
+  "section": "transport",
+  "slug": "livraison-dimanche-soiree",
+  "title": "Livraison le dimanche et en soirée en Île-de-France",
+  "meta_description": "Faire livrer un meuble ou un électroménager le dimanche ou après 18h en Île-de-France : créneaux en ligne, majoration affichée avant paiement, chauffeur dédié.",
+  "intro": "Vous n'êtes chez vous ni en semaine ni en journée ? Choisissez un créneau du dimanche ou de soirée : le prix, majoration comprise, s'affiche avant de payer.",
+  "body": "## Les créneaux\n\n- **Le dimanche** : deux créneaux, le matin et l'après-midi, affichés à la commande.\n- **En soirée** : un créneau **18h-21h** du lundi au samedi.\n- **Le jour même** : commandez avant 12h pour une livraison aujourd'hui, soirée comprise.\n\nLes livraisons du dimanche, des jours fériés et en soirée sont majorées : la majoration apparaît sur le créneau avant que vous payiez, jamais après.\n\n## Pour qui c'est fait\n\n- Vous récupérez un canapé ou un frigo chez un vendeur qui n'est libre que le dimanche.\n- Vous emménagez un samedi et le lit n'arrive que le lendemain.\n- Vous travaillez en journée et personne ne peut réceptionner avant 18h.\n- Un restaurant, une boutique, un cabinet : livrer avant l'ouverture ou après la fermeture, sans bloquer l'activité.\n\n## Le même service\n\nUn chauffeur dédié, une course directe, l'aide au chargement et au déchargement, la preuve de livraison : rien ne change le dimanche ou le soir, seul le créneau est majoré. Les options (remise à la porte, équipier, étage, temps sur place) se réservent de la même façon.\n\n## Entreprises\n\nLivraisons de fin de journée à vos clients, réassorts le dimanche matin, événements : pour des créneaux décalés toutes les semaines, voyez [le transport dédié](/entreprises/transport-dedie-tournees).\n\n## Ce qui est inclus\n\n- **Un chauffeur dédié** qui aide au chargement et au déchargement : votre marchandise ne partage pas le camion.\n- **20 km** au départ de l'Île-de-France ; au-delà, le kilomètre est affiché avant paiement.\n- **30 minutes cumulées sur place** (chargement + déchargement). Besoin de plus ? Réservez un pack de temps à la commande, c'est moins cher qu'un dépassement.\n- **La remise au trottoir** ou en pied d'immeuble, avec preuve de livraison. Remise à la porte, étage sans ascenseur et équipier en option.\n\n## Comment ça marche\n\n1. Vos deux adresses : la distance est calculée aussitôt.\n2. La taille du camion, de 1 à 8 m² au sol. Un assistant vous suggère la bonne d'après vos objets.\n3. Date et créneau, 7 jours sur 7, le jour même si vous commandez avant 12h.\n4. Paiement sécurisé : c'est réservé, sans créer de compte. Vous recevez la confirmation, puis un lien de suivi.\n\n## Annulation\n\nGratuite jusqu'à 24 h avant le début du créneau. Moins de 24 h avant, 50 % du prix reste dû ; chauffeur déjà en route ou absence au retrait, 100 %.",
+  "faq": [
+   {
+    "q": "De combien est la majoration ?",
+    "a": "Elle dépend du créneau et de la date : elle est calculée par notre moteur de prix et affichée sur le créneau, avant paiement. Comparez les créneaux proposés pour un même jour : le prix de chacun est indiqué."
+   },
+   {
+    "q": "Peut-on commander le dimanche pour le dimanche ?",
+    "a": "Oui, en ligne avant 12h, selon disponibilité des chauffeurs. Après 12h, appelez l'exploitation, joignable 24h/24."
+   },
+   {
+    "q": "Livrez-vous les jours fériés ?",
+    "a": "Oui, avec une majoration affichée avant paiement, comme le dimanche. Le calendrier de commande indique les jours où aucune livraison n'est possible."
+   },
+   {
+    "q": "Le prix peut-il changer après le paiement ?",
+    "a": "Non. Le prix affiché avant paiement est ferme pour la prestation décrite. Seuls les suppléments constatés sur place (temps au-delà du temps réservé, étage non déclaré, échec de retrait) sont facturés après la course, avec un détail par e-mail."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000022"
+  },
+  "related": [
+   "transport-urgent-jour-meme",
+   "achat-leboncoin",
+   "refrigerateur-electromenager",
+   "camionnette-avec-chauffeur-paris"
+  ],
+  "keyword": "livraison dimanche paris livraison soir camionnette chauffeur",
+  "sort_order": 110,
+  "published": true
+ },
+ {
+  "section": "entreprises",
+  "slug": "sous-traitance-transport",
+  "title": "Sous-traitance de livraison en Île-de-France",
+  "meta_description": "Transporteurs, messageries, logisticiens, déménageurs : un sous-traitant en Île-de-France pour vos pics, vos débords et le volumineux, avec suivi et preuve à chaque course.",
+  "intro": "Vos volumes dépassent votre flotte, un chauffeur manque, un client demande du volumineux que votre réseau ne prend pas : nous prenons la course, à vos conditions de service.",
+  "body": "## Ce que nous reprenons\n\n- **Les débords** : la semaine de pic, le mois de décembre, le lancement d'un client.\n- **Les absences** : un chauffeur malade, un véhicule immobilisé, une tournée à couvrir dès demain matin.\n- **Le volumineux et le lourd** que votre réseau colis refuse : meubles, électroménager, palettes, matériaux.\n- **Le dernier kilomètre** d'un flux que vous massifiez jusqu'en Île-de-France.\n- **Les courses dédiées** que vous ne pouvez pas insérer dans vos tournées.\n\n## À vos conditions\n\nVous fixez les créneaux promis à vos clients, les consignes de remise, le niveau de preuve. Nous livrons sous votre nom ou sous le nôtre, selon ce que vous décidez. Le chauffeur aide au chargement et au déchargement, remet au trottoir ou à la porte, monte l'étage si c'est prévu.\n\n## Visible de bout en bout\n\nChaque course est dans NAMY, notre plateforme : statut en temps réel, preuve photo, signature, position du véhicule, tchat avec le destinataire, ponctualité mesurée. Vous suivez nos courses comme les vôtres, et vos clients ont un lien de suivi.\n\n## Comment on démarre\n\n1. Vous nous envoyez un type de flux et une semaine de volumes.\n2. Nous revenons sous 24 h avec un prix à la course, sans minimum ni engagement de durée.\n3. Vos courses arrivent par fichier, par API ou saisies dans NAMY ; nous les dispatchons le jour même.\n4. Facture détaillée, une ligne par course, avec le lien vers chaque preuve.\n\nPour un besoin ponctuel aujourd'hui, [commandez en ligne](/commander) au prix affiché : la facture arrive par e-mail.",
+  "faq": [
+   {
+    "q": "Quels véhicules ?",
+    "a": "Des utilitaires de 1 à 8 m² au sol pour les courses à la demande, et des véhicules jusqu'à 3,5 t avec chauffeur pour les tournées et les mises à disposition."
+   },
+   {
+    "q": "Livrez-vous sous notre marque ?",
+    "a": "Oui si vous le souhaitez : tenue neutre, documents à votre en-tête, lien de suivi à vos couleurs dans NAMY. Sinon nous livrons sous le nom WANYM SOLUTION."
+   },
+   {
+    "q": "Y a-t-il un minimum de courses ?",
+    "a": "Non. Vous testez sur un débord ou une semaine, et vous décidez ensuite. Le prix est à la course."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande"
+  },
+  "related": [
+   "externaliser-ses-livraisons",
+   "transport-dedie-tournees",
+   "e-commerce-livraison-ile-de-france",
+   "namy-plateforme-suivi"
+  ],
+  "keyword": "sous-traitance transport île-de-france sous-traitant livraison messagerie",
+  "sort_order": 70,
+  "published": true
+ },
+ {
+  "section": "entreprises",
+  "slug": "evenementiel-salons-stands",
+  "title": "Transport événementiel : salons, stands et matériel",
+  "meta_description": "Livraison et reprise de matériel pour vos salons, stands, lancements et tournages en Île-de-France : chauffeur dédié, horaires de montage et de démontage respectés, prix affiché.",
+  "intro": "Un stand à monter à 7h Porte de Versailles, du matériel à reprendre à 22h à Villepinte : une course dédiée, dans l'horaire imposé par l'organisateur.",
+  "body": "## Ce qu'on transporte\n\nStands démontés, kakémonos et PLV, mobilier de réception, écrans et sonorisation, matériel de tournage, décors, cartons de goodies et de catalogues, plantes et compositions pour un événement. Le chauffeur aide au chargement et au déchargement et dépose à l'emplacement si l'accès le permet.\n\n## Les horaires des organisateurs\n\nMontage tôt le matin, démontage le soir ou le dimanche : les créneaux de soirée (18h-21h) et du dimanche sont disponibles en ligne, majoration affichée avant paiement. Pour un créneau plus précis imposé par le site, indiquez-le dans les notes ; l'exploitation vous confirme.\n\n## Les lieux\n\nParis Expo Porte de Versailles, Paris Nord Villepinte, Le Bourget, le Carrousel du Louvre, les Docks de Paris, La Défense, les hôtels et lieux privatisés d'Île-de-France. Indiquez le hall, le numéro de stand et le point d'accès logistique : le chauffeur s'y présente avec les documents demandés.\n\n## Aller et retour\n\nUn événement, c'est deux courses : la livraison avant, la reprise après. Commandez les deux en ligne, ou demandez un devis pour l'ensemble si vous voulez un seul interlocuteur, un seul prix et le même chauffeur. Pour une attente sur place (déchargement sur un quai saturé), réservez un pack de temps.\n\n## Agences et prestataires\n\nAgences événementielles, standistes, loueurs de mobilier, traiteurs, fleuristes : une facture par course par e-mail, ou un compte avec suivi de toutes vos courses dans NAMY. Pour des événements toutes les semaines, voyez [le transport dédié](/entreprises/transport-dedie-tournees).",
+  "faq": [
+   {
+    "q": "Le chauffeur peut-il attendre sur le quai de déchargement ?",
+    "a": "30 minutes cumulées sur place sont incluses. Les quais de salon sont souvent saturés aux heures de montage : réservez un pack de temps à la commande, c'est moins cher qu'un dépassement facturé au quart d'heure."
+   },
+   {
+    "q": "Pouvez-vous livrer un dimanche ou la nuit ?",
+    "a": "Le dimanche et le créneau 18h-21h sont disponibles en ligne, majorés. Pour un horaire de nuit imposé par l'organisateur, demandez un devis : l'exploitation organise la course."
+   },
+   {
+    "q": "Faut-il un badge ou une accréditation ?",
+    "a": "Si le site l'exige, transmettez-nous le document ou le nom à inscrire dans les notes de la commande : le chauffeur se présente avec."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande",
+   "vehicule": "5173e000-0000-4000-8000-000000000023"
+  },
+  "related": [
+   "transport-dedie-tournees",
+   "colis-volumineux-encombrant",
+   "livraison-dimanche-soiree",
+   "transport-urgent-jour-meme"
+  ],
+  "keyword": "transport événementiel paris livraison stand salon matériel",
+  "sort_order": 80,
+  "published": true
+ },
+ {
+  "section": "entreprises",
+  "slug": "retours-reprise-sav",
+  "title": "Logistique des retours : reprise, SAV, échange",
+  "meta_description": "Reprise de l'ancien appareil à la livraison, retour atelier, échange standard : un transporteur en Île-de-France pour vos flux retours, avec preuve photo et suivi à chaque étape.",
+  "intro": "Un produit à reprendre chez le client, un appareil à ramener à l'atelier, un échange à faire en une seule visite : le flux retour est organisé comme une livraison, avec sa preuve.",
+  "body": "## Les trois cas\n\n- **Reprise à la livraison** : le chauffeur livre le neuf et repart avec l'ancien (canapé, matelas, lave-linge, réfrigérateur). Une seule visite, une seule preuve.\n- **Retour atelier ou entrepôt** : le produit est repris chez le client et ramené à votre site, pour réparation, reconditionnement ou remboursement.\n- **Échange standard** : un appareil remplacé par un autre, le défectueux repart dans le même camion.\n\n## Ce que ça change pour vous\n\nUn retour mal géré coûte un client. Ici le créneau est choisi avec le destinataire, il reçoit un lien de suivi, le chauffeur photographie le produit repris et son état, et la preuve est dans NAMY dès la fin de la course. Votre SAV sait quoi attendre, et quand.\n\n## Comment ça s'organise\n\n1. Vous nous transmettez les retours à faire : par fichier, par API, ou saisis dans NAMY par vos équipes.\n2. Nous planifions avec le destinataire, dans vos créneaux.\n3. Le chauffeur reprend, photographie, et dépose à votre entrepôt ou atelier.\n4. Vous suivez chaque retour en temps réel et vous recevez le bilan.\n\n## Pour qui\n\nMagasins d'ameublement et d'électroménager, e-commerçants, loueurs de matériel, fabricants qui assurent le SAV de leurs produits. Pour les livraisons sortantes du même flux, voir [la livraison pour magasins de meubles](/entreprises/magasins-ameublement-electromenager) et [la livraison e-commerce](/entreprises/e-commerce-livraison-ile-de-france).\n\nUn retour isolé à faire aujourd'hui ? [Commandez en ligne](/commander) : adresse du client au départ, votre site à l'arrivée, prix affiché.",
+  "faq": [
+   {
+    "q": "Le chauffeur vérifie-t-il l'état du produit repris ?",
+    "a": "Il le photographie au moment de la reprise, sous tous les angles si vous le demandez, et la photo est attachée à la course dans NAMY. Il ne teste pas le produit et ne juge pas une panne."
+   },
+   {
+    "q": "Que devient l'ancien appareil ?",
+    "a": "Il est déposé là où vous le décidez : votre entrepôt, un atelier, un point de collecte. La reprise pour mise au rebut se prévoit avec vous à l'avance."
+   },
+   {
+    "q": "Peut-on reprendre sans livrer ?",
+    "a": "Oui : un retour seul se commande comme une livraison, l'adresse du client au départ et la vôtre à l'arrivée."
+   }
+  ],
+  "order_prefill": {
+   "service": "livraison-express-a-la-demande"
+  },
+  "related": [
+   "magasins-ameublement-electromenager",
+   "e-commerce-livraison-ile-de-france",
+   "externaliser-ses-livraisons",
+   "namy-plateforme-suivi"
+  ],
+  "keyword": "logistique retours reprise ancien appareil sav transporteur",
+  "sort_order": 90,
+  "published": true
  }
 ]
